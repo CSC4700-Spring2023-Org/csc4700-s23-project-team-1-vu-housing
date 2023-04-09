@@ -1,0 +1,6 @@
+module Pods_VUHousing {
+  umbrella header "Pods-VUHousing-umbrella.h"
+
+  export *
+  module * { export * }
+}
