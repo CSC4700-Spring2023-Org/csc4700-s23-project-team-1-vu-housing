@@ -59,7 +59,7 @@ function Section({children, title}: SectionProps): JSX.Element {
 export default function Welcome({navigation}) {
   return (
     <View>
-        <Text>Home Screen</Text>
+        <Text>Welcome Screen</Text>
         <Button title='Navigate to Home Screen' 
         onPress={()=>navigation.navigate("HomeScreen")}></Button>
     </View>

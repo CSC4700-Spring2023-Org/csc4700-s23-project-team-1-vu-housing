@@ -26,7 +26,11 @@ export default function HomeScreen({navigation}) {
 
     return (
       <View>
-          <Text>HomeScreen</Text>
+          <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>VUHousing</Text>
+        <Button title='Login' 
+        onPress={()=>navigation.navigate("LoginScreen")}></Button>
+        <Button title='Sign Up' 
+        onPress={()=>navigation.navigate("Signup")}></Button>
       </View>
     );
   }
