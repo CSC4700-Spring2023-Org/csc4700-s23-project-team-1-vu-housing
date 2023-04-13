@@ -61,13 +61,21 @@ function Section({children, title}: SectionProps): JSX.Element {
 export default function Welcome({navigation}) {
   return (
     //Section for the Logo Image and the Band around it
-    
+    <View>
         <View style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
          <Image
          style={{height:125,width:125}}
          source = {require('VUHousing/images/Logo.png')}
          />
         </View>
+        <View style={{alignItems:'center'}}>
+          <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
+        </View>
+        
+    </View>
+
+       
+       
   );
 }
 
