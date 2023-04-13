@@ -16,6 +16,8 @@ import {
   Text,
   useColorScheme,
   View,
+  Dimensions,
+  Image,
 } from 'react-native';
 
 import {
@@ -58,18 +60,20 @@ function Section({children, title}: SectionProps): JSX.Element {
 
 export default function Welcome({navigation}) {
   return (
-    <View>
-        <Text>Home Screen</Text>
-        <Button title='Navigate to Home Screen' 
-        onPress={()=>navigation.navigate("HomeScreen")}></Button>
-    </View>
+    //Section for the Logo Image and the Band around it
+    
+        <View style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
+         <Image
+         style={{height:125,width:125}}
+         source = {require('VUHousing/images/Logo.png')}
+         />
+        </View>
   );
 }
 
 const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
-    paddingHorizontal: 24,
   },
   sectionTitle: {
     fontSize: 24,
