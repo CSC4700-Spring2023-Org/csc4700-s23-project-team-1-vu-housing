@@ -71,7 +71,10 @@ export default function Welcome({navigation}) {
         <View style={{alignItems:'center'}}>
           <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
         </View>
-        
+        <View>
+          <Button title='Login' onPress={()=>navigation.navigate('AddListing')}  />
+          <Button title='Signup'onPress={()=>navigation.navigate('HomeScreen')}/>
+        </View>
     </View>
 
        
