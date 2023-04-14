@@ -18,6 +18,7 @@ import {
   View,
   Dimensions,
   Image,
+  TouchableOpacity
 } from 'react-native';
 
 import {
@@ -61,20 +62,31 @@ function Section({children, title}: SectionProps): JSX.Element {
 export default function Welcome({navigation}) {
   return (
     //Section for the Logo Image and the Band around it
-    <View>
-        <View style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
+    <View id="main">
+        <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
          <Image
          style={{height:125,width:125}}
          source = {require('VUHousing/images/Logo.png')}
          />
         </View>
-        <View style={{alignItems:'center'}}>
+
+        <View id="NovaHouse Title" style={{alignItems:'center'}}>
           <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
         </View>
-        <View>
-          <Button title='Login' onPress={()=>navigation.navigate('AddListing')}  />
-          <Button title='Signup'onPress={()=>navigation.navigate('HomeScreen')}/>
+
+        <View id="Login/SignUp Buttons"style={{paddingVertical:65,paddingHorizontal:50}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('AddListing')} style={{alignItems:'center',padding:20}}>
+            <View>
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:10}}>
+            <View >
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
+            </View>
+          </TouchableOpacity>
         </View>
+
     </View>
 
        
