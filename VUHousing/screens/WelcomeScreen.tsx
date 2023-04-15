@@ -60,8 +60,8 @@ export default function Welcome({navigation}) {
   return (
     <View>
         <Text>Home Screen</Text>
-        <Button title='Navigate to Home Screen' 
-        onPress={()=>navigation.navigate("HomeScreen")}></Button>
+        <Button title='Navigate to Signup Screen' 
+        onPress={()=>navigation.navigate("Signup")}></Button>
 
         <Text>Add Listing Screen</Text>
         <Button title='Navigate to Add Listing Screen' 

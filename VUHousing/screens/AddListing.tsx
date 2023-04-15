@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import type { PropsWithChildren } from 'react';
-import { Joke } from '../interfaces';
-import axios, { AxiosResponse } from 'axios';
+import React, { useState } from 'react';
+import type {PropsWithChildren} from 'react';
 import {
-  Button,
+  Alert,
+    Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
+  TouchableOpacity,
   useColorScheme,
   View,
-  ActivityIndicator,
-  TextInput,
 } from 'react-native';
 
 import {
@@ -23,7 +22,16 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+
+
+
 export default function AddListing({navigation}) {
+
+  const [address, setAddress] = useState('');
+  const [bedrooms, setBedrooms] = useState('');
+  const [bathrooms, setBathrooms] = useState('');
+  const [houseType, setHouseType] = useState('');
+  const [price, setPrice] = useState('');
 
   return (
     <View style={styles.container}>
@@ -33,7 +41,8 @@ export default function AddListing({navigation}) {
         <TextInput
           style={styles.input}
           placeholder="800 E Lancaster Ave, Villanova, PA 19085"
-          keyboardType="email-address" />
+          keyboardType="email-address"
+          onChangeText={(val) => setAddress(val)} />
           
           <View style={styles.row}>
             <Text style={styles.rowTitles}>Bedrooms</Text>
@@ -44,50 +53,36 @@ export default function AddListing({navigation}) {
             <TextInput
             style={styles.BBRInput}
             placeholder="3"
-            keyboardType="numeric"/>
+            keyboardType="numeric"
+            onChangeText={(val) => setBedrooms(val)}/>
             <TextInput
             style={styles.BBRInput}
             placeholder="2.5"
-            keyboardType="numeric"/>
+            keyboardType="numeric"
+            onChangeText={(val) => setBathrooms(val)}/>
           </View>  
         
         <Text style={styles.titles}>Type of house</Text>
         <TextInput
           style={styles.input}
           placeholder="ex: apartment, house, town-home"
-          keyboardType="email-address" />
+          keyboardType="email-address"
+          onChangeText={(val) => setHouseType(val)} />
         <Text style={styles.titles}>Monthly Price</Text>
         <TextInput
           style={styles.input}
           placeholder="$1,700"
-          keyboardType="default"/>
-          <Button title='Submit'
-            color='#001E58'
-          onPress={()=>navigation.navigate("HomeScreen")}></Button>
+          keyboardType="numeric"
+          onChangeText={(val) => setPrice(val)}/>
+          <TouchableOpacity onPress={() => Alert.alert(address)} style={{alignItems:'center',padding:20, marginVertical:10, 
+            borderWidth: 2, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'}}>
+            <View >
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
+            </View>
+          </TouchableOpacity>
     </View>
   );
 }
-// export default function AddListing({ navigation }) {
-//   // const [jokeData, setJokeData] = useState<Joke[]>([]);
-//   // useEffect(() => {
-//   //   axios
-//   //     .get('https://v2.jokeapi.dev/joke/pun')
-//   //     .then((response: AxiosResponse) => {
-//   //       console.clear();
-//   //       console.log('Response: ', response.data);
-//   //     });
-//   // }, []);
-//   return (
-//     <View style={styles.container}>
-//       <Text>Enter the Address of the house you would like to list</Text>
-//       <TextInput
-//         placeholder='800 E Lancaster Ave, Villanova, PA 19085'
-//         style={styles.input}
-//         onChangeText={(value) => setName(value)} />
-//       );
-    
-//   }
-
       const styles = StyleSheet.create({
         container: {
           flex: 1, 
@@ -102,14 +97,14 @@ export default function AddListing({navigation}) {
             fontSize: 40,
             margin: 10,
             alignSelf: "center",
-            fontFamily: "Tahoma",
+            fontFamily: 'Roboto',
             color: "#292828",
           },
           titles: {
             fontSize: 25,
             margin: 10,
             alignSelf: "center",
-            fontFamily: "Georgia",
+            fontFamily:'AlNile-Bold',
           },
           rowTitles: {
             fontSize: 25,
@@ -117,7 +112,7 @@ export default function AddListing({navigation}) {
             marginRight:20,
             marginLeft:20,
             alignSelf: "center",
-            fontFamily: "Georgia",
+            fontFamily:'AlNile-Bold',
           },
           BBRInput: {
             borderWidth: 1,
@@ -140,3 +135,24 @@ export default function AddListing({navigation}) {
             width: 300,
           },
   });
+
+// export default function AddListing({ navigation }) {
+//   // const [jokeData, setJokeData] = useState<Joke[]>([]);
+//   // useEffect(() => {
+//   //   axios
+//   //     .get('https://v2.jokeapi.dev/joke/pun')
+//   //     .then((response: AxiosResponse) => {
+//   //       console.clear();
+//   //       console.log('Response: ', response.data);
+//   //     });
+//   // }, []);
+//   return (
+//     <View style={styles.container}>
+//       <Text>Enter the Address of the house you would like to list</Text>
+//       <TextInput
+//         placeholder='800 E Lancaster Ave, Villanova, PA 19085'
+//         style={styles.input}
+//         onChangeText={(value) => setName(value)} />
+//       );
+    
+//   }
