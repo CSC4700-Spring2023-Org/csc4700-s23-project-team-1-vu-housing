@@ -81,7 +81,7 @@ export default function AddListing({navigation}) {
             fontSize: 40,
             margin: 10,
             alignSelf: "center",
-            fontFamily: "Tahoma",
+            fontFamily: "Georgia",
             color: "#292828",
           },
           titles: {

@@ -59,7 +59,7 @@ function Section({children, title}: SectionProps): JSX.Element {
   );
 }
 
-export default function Welcome({navigation}) {
+export default function HomeInfo({navigation}) {
   return (
     //TODO: CHange Navigation
     <View id="main">
