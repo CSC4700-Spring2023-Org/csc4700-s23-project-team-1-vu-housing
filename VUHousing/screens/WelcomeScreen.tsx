@@ -60,7 +60,7 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 export default function Welcome({navigation}) {
-  return (
+  return ( 
     //TODO: CHange Navigation
     <View id="main">
         <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
@@ -86,7 +86,6 @@ export default function Welcome({navigation}) {
             </View>
           </TouchableOpacity>
         </View>
-
     </View>
 
        
