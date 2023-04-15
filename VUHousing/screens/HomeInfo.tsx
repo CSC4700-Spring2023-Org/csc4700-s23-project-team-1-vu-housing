@@ -63,34 +63,32 @@ export default function HomeInfo({navigation}) {
   return (
     //TODO: CHange Navigation
     <View id="main">
-        <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
+         <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:100}}>
          <Image
          style={{height:125,width:125}}
          source = {require('VUHousing/images/Logo.png')}
          />
         </View>
 
-        <View id="NovaHouse Title" style={{alignItems:'center'}}>
-          <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
-        </View>
-
-        <View id="Login/SignUp Buttons"style={{paddingVertical:65,paddingHorizontal:50}}>
-          <TouchableOpacity onPress={()=>navigation.navigate('AddListing')} style={{alignItems:'center',padding:20}}>
-            <View>
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
+        <View id="TextInformation">
+            <View id="Address information" style={{margin:20}}>
+                <Text style={styles.headers}>Address:</Text>
+                <Text style={styles.information}>FillerAddress</Text>
+            </View>   
+            <View id ="BedAndBath" style={{flexDirection:'row', margin:10}}>
+                <View id="bed"style={{marginLeft:10,marginRight:45}}>
+                    <Text style={styles.headers}>Beds</Text>
+                    <Text style={styles.information}>FillerBeds</Text>
+                </View>
+                <View id="Bath" style={{marginLeft:45}}>
+                    <Text style={styles.headers}>Bath</Text>
+                    <Text style={styles.information}>Filler Baths</Text>
+                </View>
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:10}}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:10}}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Home Info</Text>
-            </View>
-          </TouchableOpacity>
-          
+            <View id="price" style={{margin:20}}>
+                <Text style={styles.headers}>Price</Text>
+                <Text style={styles.information}>Filler Price</Text>
+            </View>      
         </View>
 
     </View>
@@ -116,6 +114,14 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
+  headers:{
+    fontFamily:"AlNile-Bold",
+    fontSize:35
+  },
+  information:{
+    fontFamily:"AlNile",
+    fontSize:20
+  }
 });
 
 
