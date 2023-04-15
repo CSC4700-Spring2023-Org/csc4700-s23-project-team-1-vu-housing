@@ -29,6 +29,7 @@ import Welcome from './screens/WelcomeScreen';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import Signup from './screens/Signup';
+import HomeInfo from './screens/HomeInfo';
 import AddListing from './screens/AddListing';
 import FindListing from './screens/FindListing';
 import ListingCreated from './screens/ListingCreated';
@@ -47,6 +48,7 @@ export default function App(){
         <Stack.Screen name="LoginScreen" component={LoginScreen} options={{headerShown: false}}/>
         <Stack.Screen name="Signup" component={Signup} options={{headerShown: false}}/>
         <Stack.Screen name="ListingCreated" component={ListingCreated} options={{headerShown: false}}/>
+        <Stack.Screen name="HomeInfo" component={HomeInfo} options={{headerShown: false}}/>
         <Stack.Screen name="AddListing" component={AddListing} options={{headerShown: false}}/>
         <Stack.Screen name="FindListing" component={FindListing} options={{headerShown: false}}/>
       </Stack.Navigator>
