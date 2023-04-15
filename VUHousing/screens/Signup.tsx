@@ -27,7 +27,7 @@ export default function Signup({ navigation }) {
 
   return (
     <View>
-      <Text style={styles.header}>Create a listing</Text>
+      <Text style={styles.header}>Create An Account</Text>
 
       <Text style={styles.titles}>First Name</Text>
       <TextInput
@@ -76,14 +76,14 @@ const styles = StyleSheet.create({
       fontSize: 40,
       margin: 10,
       alignSelf: "center",
-      fontFamily: "Tahoma",
+      fontFamily: 'Roboto',
       color: "#292828",
     },
     titles: {
       fontSize: 25,
       margin: 10,
       alignSelf: "center",
-      fontFamily: "Georgia",
+      fontFamily: 'AlNile-Bold',
     },
     input: {
       alignSelf: "center",

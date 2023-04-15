@@ -63,7 +63,7 @@ export default function AddListing({navigation}) {
           placeholder="$1,700"
           keyboardType="default"/>
           <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:10, 
-            borderWidth: 1, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'}}>
+            borderWidth: 2, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'}}>
             <View >
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
             </View>
@@ -85,7 +85,7 @@ export default function AddListing({navigation}) {
             fontSize: 40,
             margin: 10,
             alignSelf: "center",
-            fontFamily: "Tahoma",
+            fontFamily: 'Roboto',
             color: "#292828",
           },
           titles: {
