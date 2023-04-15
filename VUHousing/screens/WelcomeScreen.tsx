@@ -74,22 +74,33 @@ export default function Welcome({navigation}) {
           <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
         </View>
 
-        <View id="Login/SignUp Buttons"style={{paddingVertical:65,paddingHorizontal:50}}>
+        <View id="Login/SignUp Buttons"style={{paddingVertical:50,paddingHorizontal:50}}>
           <TouchableOpacity onPress={()=>navigation.navigate('AddListing')} style={{alignItems:'center',padding:20}}>
             <View>
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>AddListing</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:10}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
             <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>HomeScreen</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('HomeInfo')} style={{alignItems:'center',padding:20, marginVertical:10}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('HomeInfo')} style={{alignItems:'center',padding:20, marginVertical:5}}>
             <View >
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Home Info</Text>
             </View>
           </TouchableOpacity>
+          <TouchableOpacity onPress={()=>navigation.navigate('LoginScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
+            <View >
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>navigation.navigate('ListingCreated')} style={{alignItems:'center',padding:20, marginVertical:5}}>
+            <View >
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>ListingCreated</Text>
+            </View>
+          </TouchableOpacity>
+          
           
         </View>
     </View>
