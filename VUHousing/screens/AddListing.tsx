@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -61,9 +62,12 @@ export default function AddListing({navigation}) {
           style={styles.input}
           placeholder="$1,700"
           keyboardType="default"/>
-          <Button title='Submit'
-            color='#001E58'
-          onPress={()=>navigation.navigate("HomeScreen")}></Button>
+          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:10, 
+            borderWidth: 1, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'}}>
+            <View >
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
+            </View>
+          </TouchableOpacity>
     </View>
   );
 }
@@ -88,7 +92,7 @@ export default function AddListing({navigation}) {
             fontSize: 25,
             margin: 10,
             alignSelf: "center",
-            fontFamily: "Georgia",
+            fontFamily:'AlNile-Bold',
           },
           rowTitles: {
             fontSize: 25,
@@ -96,7 +100,7 @@ export default function AddListing({navigation}) {
             marginRight:20,
             marginLeft:20,
             alignSelf: "center",
-            fontFamily: "Georgia",
+            fontFamily:'AlNile-Bold',
           },
           BBRInput: {
             borderWidth: 1,
