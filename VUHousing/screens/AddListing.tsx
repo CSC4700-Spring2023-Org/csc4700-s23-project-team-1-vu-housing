@@ -31,10 +31,12 @@ export default function AddListing({navigation}) {
   const [bedrooms, setBedrooms] = useState('');
   const [bathrooms, setBathrooms] = useState('');
   const [houseType, setHouseType] = useState('');
+  const [landlordContact, setLandlordContact] = useState('');
   const [price, setPrice] = useState('');
 
   return (
     <View style={styles.container}>
+      <ScrollView>
         <Text style={styles.header}>Create a listing</Text>
 
         <Text style={styles.titles}>Address</Text>
@@ -68,6 +70,14 @@ export default function AddListing({navigation}) {
           placeholder="ex: apartment, house, town-home"
           keyboardType="email-address"
           onChangeText={(val) => setHouseType(val)} />
+
+        <Text style={styles.titles}>Landlord Contact Information</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="email or cell number"
+          keyboardType="email-address"
+          onChangeText={(val) => setLandlordContact(val)} />
+
         <Text style={styles.titles}>Monthly Price</Text>
         <TextInput
           style={styles.input}
@@ -80,6 +90,7 @@ export default function AddListing({navigation}) {
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
             </View>
           </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
@@ -87,7 +98,7 @@ export default function AddListing({navigation}) {
         container: {
           flex: 1, 
           alignItems: 'center',
-          marginTop:60,
+          marginTop:10,
         },
           row: {
             flexDirection: 'row', 

@@ -27,66 +27,85 @@ import {
 
 export default function Signup({ navigation }) {
 
-  const [first, setFirst] = useState('');
-  const [last, setLast] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRE, setPasswordRE] = useState('');
 
-  var slicedEmail = email.slice(email.indexOf('@'))
-  var invalidEmail = "This is not a valid email address. Please use a villanova.edu email to register."
+  const onSubmitPress = () => {
+    if (password !== passwordRE) {
+      Alert.alert("Password Error", "Passwords don't match. Please try again")
+    }
+
+    var slicedEmail = email.slice(email.indexOf('@'))
+    var invalidEmail = "This is not a valid email address. Please use a villanova.edu email to register."
+    if (slicedEmail !== '@villanova.edu') {
+      Alert.alert('Invalid Email', invalidEmail);
+    }
+    
+    var phoneFormat = phoneCheck(phone.substring(0,3)) && phone.substring(3,4).includes('-')
+      && phoneCheck(phone.substring(4,7)) && phone.substring(7,8).includes('-') 
+      && phoneCheck(phone.substring(8,12)) && phone.length == 12
+
+    if (phoneFormat == false) {
+      Alert.alert("Phone Number Error", "Invalid Phone Number Please input it using this format '###-###-####'")
+    }
+  }
+  
 
   return (
     
     <View>
-      <Text style={styles.header}>Create An Account</Text>
+      <ScrollView>
+        <Text style={styles.header}>Create An Account</Text>
 
-      <Text style={styles.titles}>First Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Jay"
-        keyboardType="default"
-        onChangeText={(val) => setFirst(val)} />
+        <Text style={styles.titles}>Full Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Jay Wright"
+          keyboardType="default"
+          onChangeText={(val) => setName(val)} />
 
-      <Text style={styles.titles}>Last Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Wright"
-        keyboardType="default"
-        onChangeText={(val) => setLast(val)} />
+        <Text style={styles.titles}>Enter Phone Number</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="425-391-1665"
+          keyboardType="numeric"
+          onChangeText={(val) => setPhoneNumber(val)} />
 
-      <Text style={styles.titles}>Enter Villanova Email</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="jwright@villanova.edu"
-        keyboardType="default"
-        onChangeText={(val) => setEmail(val)} />
+        <Text style={styles.titles}>Enter Villanova Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="jwright@villanova.edu"
+          keyboardType="default"
+          onChangeText={(val) => setEmail(val)} />
 
-      <Text style={styles.titles}>Enter Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Go Cats!"
-        secureTextEntry={true}
-        keyboardType="default"
-        onChangeText={(val) => setPassword(val)} />
+        <Text style={styles.titles}>Enter Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Go Cats!"
+          secureTextEntry={true}
+          keyboardType="default"
+          onChangeText={(val) => setPassword(val)} />
 
-      <Text style={styles.titles}>Re-enter Password</Text>
-      <TextInput
-        style={styles.input}
-        secureTextEntry={true}
-        placeholder='Go Cats!'
-        keyboardType="default"
-        onChangeText={(val) => setPasswordRE(val)} />
-      <TouchableOpacity onPress={() => { slicedEmail !== '@villanova.edu' ? Alert.alert(invalidEmail): null }} style={{
-        alignSelf: 'center', alignItems:"center", padding: 20, marginVertical: 10, width: 150,
-        borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
-      }}>
-        <View >
-          <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>Submit</Text>
-        </View>
-      </TouchableOpacity>
+        <Text style={styles.titles}>Re-enter Password</Text>
+        <TextInput
+          style={styles.input}
+          secureTextEntry={true}
+          placeholder='Go Cats!'
+          keyboardType="default"
+          onChangeText={(val) => setPasswordRE(val)} />
+        <TouchableOpacity onPress={() => onSubmitPress()} style={{
+          alignSelf: 'center', alignItems:"center", padding: 20, marginVertical: 10, width: 150,
+          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
+        }}>
+          <View >
+            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>Submit</Text>
+          </View>
+        </TouchableOpacity>
 
-      
+      </ScrollView> 
     </View>
     
   );
@@ -122,3 +141,21 @@ const styles = StyleSheet.create({
     width: 300,
   },
 });
+
+function isNumeric(str: string) {
+  if (str == "1" || str == "2" || str == "3" || str ==  "4" 
+  || str ==  "5" || str ==  "6" || str ==  "7" || str ==  "8" || str ==  "9" || str ==  "0") {
+    return true
+  }
+  else {
+    return false
+  }
+}
+  function phoneCheck(str: string) {
+    for(var counter:number = 0; counter<str.length; counter++) {
+      if (isNumeric(str.substring(counter, counter+1)) == false) {
+        return false
+      }
+    }
+    return true
+  }
