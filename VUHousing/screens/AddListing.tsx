@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Alert,
     Button,
   SafeAreaView,
   ScrollView,
@@ -26,15 +27,24 @@ import {
 
 export default function AddListing({navigation}) {
 
+  const [address, setAddress] = useState('');
+  const [bedrooms, setBedrooms] = useState('');
+  const [bathrooms, setBathrooms] = useState('');
+  const [houseType, setHouseType] = useState('');
+  const [landlordContact, setLandlordContact] = useState('');
+  const [price, setPrice] = useState('');
+
   return (
     <View style={styles.container}>
+      <ScrollView>
         <Text style={styles.header}>Create a listing</Text>
 
         <Text style={styles.titles}>Address</Text>
         <TextInput
           style={styles.input}
           placeholder="800 E Lancaster Ave, Villanova, PA 19085"
-          keyboardType="email-address" />
+          keyboardType="email-address"
+          onChangeText={(val) => setAddress(val)} />
           
           <View style={styles.row}>
             <Text style={styles.rowTitles}>Bedrooms</Text>
@@ -45,29 +55,42 @@ export default function AddListing({navigation}) {
             <TextInput
             style={styles.BBRInput}
             placeholder="3"
-            keyboardType="numeric"/>
+            keyboardType="numeric"
+            onChangeText={(val) => setBedrooms(val)}/>
             <TextInput
             style={styles.BBRInput}
             placeholder="2.5"
-            keyboardType="numeric"/>
+            keyboardType="numeric"
+            onChangeText={(val) => setBathrooms(val)}/>
           </View>  
         
         <Text style={styles.titles}>Type of house</Text>
         <TextInput
           style={styles.input}
           placeholder="ex: apartment, house, town-home"
-          keyboardType="email-address" />
+          keyboardType="email-address"
+          onChangeText={(val) => setHouseType(val)} />
+
+        <Text style={styles.titles}>Landlord Contact Information</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="email or cell number"
+          keyboardType="email-address"
+          onChangeText={(val) => setLandlordContact(val)} />
+
         <Text style={styles.titles}>Monthly Price</Text>
         <TextInput
           style={styles.input}
           placeholder="$1,700"
-          keyboardType="default"/>
-          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:10, 
+          keyboardType="numeric"
+          onChangeText={(val) => setPrice(val)}/>
+          <TouchableOpacity onPress={() => Alert.alert(address)} style={{alignItems:'center',padding:20, marginVertical:10, 
             borderWidth: 2, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'}}>
             <View >
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
             </View>
           </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
@@ -75,7 +98,7 @@ export default function AddListing({navigation}) {
         container: {
           flex: 1, 
           alignItems: 'center',
-          marginTop:60,
+          marginTop:10,
         },
           row: {
             flexDirection: 'row', 
@@ -85,7 +108,7 @@ export default function AddListing({navigation}) {
             fontSize: 40,
             margin: 10,
             alignSelf: "center",
-            fontFamily: "Georgia",
+            fontFamily: 'Roboto',
             color: "#292828",
           },
           titles: {
