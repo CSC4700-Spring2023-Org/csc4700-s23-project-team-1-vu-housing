@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
+import React, { useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   Alert,
@@ -33,6 +34,74 @@ export default function AddListing({navigation}) {
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   const [price, setPrice] = useState('');
+
+  const [houseAddress, setHouseAddress] = useState('');
+  const [houseBedrooms, setHouseBedrooms] = useState('');
+  const [houseBathrooms, setHouseBathrooms] = useState('');
+    const houseInfo = {
+      method: 'GET',
+      url: 'https://zillow56.p.rapidapi.com/search',
+      params: {
+        location: address
+      },
+      headers: {
+        'X-RapidAPI-Key': 'd5fb5a5337msh26bd1b9bc6d6ce2p195aaejsn54c2c9427c9d',
+        'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+      }
+    };
+    const onSubmitPress = () => {   
+        var streetAddress = ""
+        var city = ""
+        var state = ""
+        var zipcode = ""
+        axios
+        .request(houseInfo)
+        .then(function (response) {
+          streetAddress = response.data.abbreviatedAddress
+          city = response.data.city
+          state = response.data.state
+          zipcode = response.data.zipcode
+          setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
+          setHouseBathrooms(response.data.bathrooms)
+          setHouseBedrooms(response.data.bedrooms)
+          console.log(streetAddress)
+          console.log(houseBathrooms)
+      })
+        .catch(function (error) {
+          if (error.response) {
+            console.log(error.response.data);
+            console.log(error.response.status);
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+        
+      }); 
+
+      var correctAddy = true
+      var correctBath = true;
+      var correctBed = true;
+      if (houseAddress == undefined) {
+        correctAddy = false
+        Alert.alert("Address Error", "This is not a valid address. Please try again")
+      }
+      if (parseInt(bathrooms) !== parseInt(houseBathrooms)) {
+        correctBath = false
+        Alert.alert("Bathroom Error", "This is not the number zillow lists. (" + houseBathrooms + ") Please adjust value and re-submit")
+      }
+      if (parseInt(bedrooms) !== parseInt(houseBedrooms)) {
+        correctBed = false
+        Alert.alert("Bedroom Error", "This is not the number zillow lists. (" + houseBedrooms + ") Please adjust value and re-submit")
+      }
+
+      if (correctAddy && correctBath && correctBed) {
+        Alert.alert("All good", "Insert database method call here")
+      }
+    }
+    
+    
+    
 
   return (
     <View style={styles.container}>
@@ -84,8 +153,10 @@ export default function AddListing({navigation}) {
           placeholder="$1,700"
           keyboardType="numeric"
           onChangeText={(val) => setPrice(val)}/>
-          <TouchableOpacity onPress={() => Alert.alert(address)} style={{alignItems:'center',padding:20, marginVertical:10, 
-            borderWidth: 2, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'}}>
+          <TouchableOpacity onPress={() => onSubmitPress()} style={{
+            alignItems:'center',padding:20, marginVertical:10, 
+            borderWidth: 2, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'
+            }}>
             <View >
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
             </View>
@@ -146,24 +217,3 @@ export default function AddListing({navigation}) {
             width: 300,
           },
   });
-
-// export default function AddListing({ navigation }) {
-//   // const [jokeData, setJokeData] = useState<Joke[]>([]);
-//   // useEffect(() => {
-//   //   axios
-//   //     .get('https://v2.jokeapi.dev/joke/pun')
-//   //     .then((response: AxiosResponse) => {
-//   //       console.clear();
-//   //       console.log('Response: ', response.data);
-//   //     });
-//   // }, []);
-//   return (
-//     <View style={styles.container}>
-//       <Text>Enter the Address of the house you would like to list</Text>
-//       <TextInput
-//         placeholder='800 E Lancaster Ave, Villanova, PA 19085'
-//         style={styles.input}
-//         onChangeText={(value) => setName(value)} />
-//       );
-    
-//   }
