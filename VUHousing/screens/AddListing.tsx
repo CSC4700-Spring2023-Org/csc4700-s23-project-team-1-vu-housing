@@ -98,6 +98,22 @@ export default function AddListing({navigation}) {
       if (correctAddy && correctBath && correctBed) {
         Alert.alert("All good", "Insert database method call here")
       }
+
+
+
+      firestore()
+        .collection('Houses')
+        .add({
+          Address: '2 Test Stree Villanova PA 19070',
+          Beds: 1,
+          Baths:1,
+          price:2000,
+          Type:"Apartment",
+          Landlord:"jgamboli@villanova.edu"
+      })
+      .then(() => {
+        console.log('User added!');
+      });
     }
     
     
