@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1098603327018",
+    "project_id": "vu-housing",
+    "storage_bucket": "vu-housing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098603327018:android:c00423969d80b476585d53",
+        "android_client_info": {
+          "package_name": "com.vuhousing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1098603327018-l4ihtjnp53k7vc3m1mefclag0v35af6h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnpL_bDfxHk8k1b-eCBdrkr6DTko-myxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1098603327018-l4ihtjnp53k7vc3m1mefclag0v35af6h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1098603327018-02ee5dsg8pasp7q6ica66gufrlj8p1c6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.VUHousing"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
