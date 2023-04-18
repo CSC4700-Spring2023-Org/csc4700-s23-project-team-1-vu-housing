@@ -1,8 +1,6 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import { useState } from "react";
-import SortableTable from '../components/SortableTable';
-import data from '../data.json';
 import {
     Button,
   SafeAreaView,
@@ -23,6 +21,8 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import TableExample from '../components/DataTable';
+
 
 function HouseSearch({navigation}) {
 
@@ -33,7 +33,7 @@ function HouseSearch({navigation}) {
           
         <Button title='Filter' 
          style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}></Button>
-        <SortableTable data={data} />
+         <TableExample />
       </View>   
     );
   }
