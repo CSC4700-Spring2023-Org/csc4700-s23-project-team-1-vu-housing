@@ -38,8 +38,8 @@ export default function AddListing({navigation}) {
   const [price, setPrice] = useState(0);
 
   const [houseAddress, setHouseAddress] = useState('');
-  const [houseBedrooms, setHouseBedrooms] = useState('');
-  const [houseBathrooms, setHouseBathrooms] = useState('');
+  const [houseBedrooms, setHouseBedrooms] = useState(0);
+  const [houseBathrooms, setHouseBathrooms] = useState(0);
     const houseInfo = {
       method: 'GET',
       url: 'https://zillow56.p.rapidapi.com/search',
@@ -97,23 +97,26 @@ export default function AddListing({navigation}) {
 
       if (correctAddy && correctBath && correctBed) {
         Alert.alert("All good", "Insert database method call here")
+
+        firestore()
+        .collection('Houses')
+        .add({
+          Address: houseAddress,
+          Beds: houseBedrooms,
+          Baths: houseBathrooms,
+          price:price,
+          Type:houseType,
+          Landlord:landlordContact
+      })
+      .then(() => {
+        console.log('House added!');
+      });
+      
       }
 
 
 
-      firestore()
-        .collection('Houses')
-        .add({
-          Address: '2 Test Stree Villanova PA 19070',
-          Beds: 1,
-          Baths:1,
-          price:2000,
-          Type:"Apartment",
-          Landlord:"jgamboli@villanova.edu"
-      })
-      .then(() => {
-        console.log('User added!');
-      });
+      
     }
     
     
