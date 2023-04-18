@@ -31,7 +31,7 @@ import LoginScreen from './screens/LoginScreen';
 import Signup from './screens/Signup';
 import HomeInfo from './screens/HomeInfo';
 import AddListing from './screens/AddListing';
-import FindListing from './screens/FindListing';
+import HouseSearch from './screens/HouseSearch';
 import ListingCreated from './screens/ListingCreated';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -50,7 +50,7 @@ export default function App(){
         <Stack.Screen name="ListingCreated" component={ListingCreated} options={{headerShown: false}}/>
         <Stack.Screen name="HomeInfo" component={HomeInfo} options={{headerShown: false}}/>
         <Stack.Screen name="AddListing" component={AddListing} options={{headerShown: false}}/>
-        <Stack.Screen name="FindListing" component={FindListing} options={{headerShown: false}}/>
+        <Stack.Screen name="HouseSearch" component={HouseSearch} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
     
