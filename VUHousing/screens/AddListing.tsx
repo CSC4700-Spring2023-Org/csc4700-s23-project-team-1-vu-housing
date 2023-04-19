@@ -15,6 +15,9 @@ import {
   View,
 } from 'react-native';
 
+import firestore from '@react-native-firebase/firestore';
+import { DataTable } from 'react-native-paper';
+
 import {
   Colors,
   DebugInstructions,
@@ -29,15 +32,15 @@ import {
 export default function AddListing({navigation}) {
 
   const [address, setAddress] = useState('');
-  const [bedrooms, setBedrooms] = useState('');
-  const [bathrooms, setBathrooms] = useState('');
+  const [bedrooms, setBedrooms] = useState(0);
+  const [bathrooms, setBathrooms] = useState(0);
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
-  const [price, setPrice] = useState('');
+  const [price, setPrice] = useState(0);
 
   const [houseAddress, setHouseAddress] = useState('');
-  const [houseBedrooms, setHouseBedrooms] = useState('');
-  const [houseBathrooms, setHouseBathrooms] = useState('');
+  const [houseBedrooms, setHouseBedrooms] = useState(0);
+  const [houseBathrooms, setHouseBathrooms] = useState(0);
     const houseInfo = {
       method: 'GET',
       url: 'https://zillow56.p.rapidapi.com/search',
@@ -95,7 +98,26 @@ export default function AddListing({navigation}) {
 
       if (correctAddy && correctBath && correctBed) {
         Alert.alert("All good", "Insert database method call here")
+
+        firestore()
+        .collection('Houses')
+        .add({
+          Address: houseAddress,
+          Beds: houseBedrooms,
+          Baths: houseBathrooms,
+          price:price,
+          Type:houseType,
+          Landlord:landlordContact
+      })
+      .then(() => {
+        console.log('House added!');
+      });
+      
       }
+
+
+
+      
     }
     
     
