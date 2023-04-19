@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
+import { DataTable } from 'react-native-paper';
 
 import {
   Colors,

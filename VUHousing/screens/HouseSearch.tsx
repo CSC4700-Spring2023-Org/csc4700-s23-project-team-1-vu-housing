@@ -24,6 +24,7 @@ import {
 
 import TableExample from '../components/DataTable';
 import firestore from '@react-native-firebase/firestore';
+import { DataTable } from 'react-native-paper';
 
 
 function HouseSearch({navigation}) {
@@ -40,10 +41,12 @@ function HouseSearch({navigation}) {
         users.push({
           key: documentSnapshot.id,
           address:documentSnapshot.data().Address,
-          beds:documentSnapshot.data().beds
+          beds:documentSnapshot.data().Beds,
+          price: documentSnapshot.data().Price,
+          baths: documentSnapshot.data().Baths
         });
       });
-
+      console.log(users)
       setUsers(users);
       setLoading(false);
     });
@@ -55,15 +58,17 @@ function HouseSearch({navigation}) {
           
         <Button title='Filter' 
          style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}></Button>
-         
+         <TableExample></TableExample>
 
          <FlatList
           data={users}
           renderItem={({ item }) => (
-          <View style={{ height: 50, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>User ID: {item.id}</Text>
-          <Text>User Name: {item.address}</Text>
-        </View>
+         <DataTable.Row>
+          <DataTable.Cell>{item.address}</DataTable.Cell>
+          <DataTable.Cell>{item.beds}</DataTable.Cell>
+          <DataTable.Cell>{item.baths}</DataTable.Cell>
+          <DataTable.Cell>{item.price}</DataTable.Cell>
+         </DataTable.Row>
       )}
     />
       </View>   
