@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
     Button,
@@ -21,6 +21,8 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+import firestore from '@react-native-firebase/firestore';
+
 import {
   Colors,
   DebugInstructions,
@@ -33,33 +35,29 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
-export default function HomeInfo({navigation}) {
+
+export default function HomeInfo({route,navigation}) {
+  const obj=route.params
+  console.log(obj.docID)
+  const [address,setAddress]= useState("fill")
+  const [beds,setBeds]= useState(0)
+  const [baths,setBaths]= useState(0)
+  const [price,setPrice]= useState(0)
+
+  const events=firestore()
+  .collection('Houses')
+  .doc(obj.docID)
+  .get()
+  .then(documentSnapshot => {
+   setAddress(documentSnapshot.data().Address)
+   setBeds(documentSnapshot.data().Beds)
+   setBaths(documentSnapshot.data().Baths)
+   setPrice(documentSnapshot.data().Price)
+  });
+  
+  
+
   return (
     //TODO: CHange Navigation
     <View id="main">
@@ -73,21 +71,21 @@ export default function HomeInfo({navigation}) {
         <View id="TextInformation">
             <View id="Address information" style={{margin:20}}>
                 <Text style={styles.headers}>Address:</Text>
-                <Text style={styles.information}>FillerAddress</Text>
+                <Text style={styles.information}>{address}</Text>
             </View>   
             <View id ="BedAndBath" style={{flexDirection:'row', margin:10}}>
                 <View id="bed"style={{marginLeft:10,marginRight:45}}>
                     <Text style={styles.headers}>Beds</Text>
-                    <Text style={styles.information}>FillerBeds</Text>
+                    <Text style={styles.information}>{beds}</Text>
                 </View>
                 <View id="Bath" style={{marginLeft:45}}>
                     <Text style={styles.headers}>Bath</Text>
-                    <Text style={styles.information}>Filler Baths</Text>
+                    <Text style={styles.information}>{baths}</Text>
                 </View>
             </View>
             <View id="price" style={{margin:20}}>
                 <Text style={styles.headers}>Price</Text>
-                <Text style={styles.information}>Filler Price</Text>
+                <Text style={styles.information}>{price}</Text>
             </View>      
         </View>
 

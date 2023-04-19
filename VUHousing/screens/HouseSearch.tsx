@@ -14,6 +14,8 @@ import {
   FlatList,
 } from 'react-native';
 
+
+
 import {
   Colors,
   DebugInstructions,
@@ -32,24 +34,17 @@ function HouseSearch({navigation}) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
 
-  const subscriber = firestore()
-    .collection('Houses')
-    .onSnapshot(querySnapshot => {
-      const users = [];
+  
 
-      querySnapshot.forEach(documentSnapshot => {
-        users.push({
-          key: documentSnapshot.id,
-          address:documentSnapshot.data().Address,
-          beds:documentSnapshot.data().Beds,
-          price: documentSnapshot.data().Price,
-          baths: documentSnapshot.data().Baths
-        });
-      });
-      console.log(users)
-      setUsers(users);
-      setLoading(false);
-    });
+  const events = firestore().collection('Houses')
+  events.get().then((querySnapshot) => {
+      const user = []
+      querySnapshot.forEach((doc) => {
+         user.push({ id: doc.id, ...doc.data() })
+      })
+      setUsers(user)
+   })
+    
 
 
     return (
@@ -63,11 +58,11 @@ function HouseSearch({navigation}) {
          <FlatList
           data={users}
           renderItem={({ item }) => (
-         <DataTable.Row>
-          <DataTable.Cell>{item.address}</DataTable.Cell>
-          <DataTable.Cell>{item.beds}</DataTable.Cell>
-          <DataTable.Cell>{item.baths}</DataTable.Cell>
-          <DataTable.Cell>{item.price}</DataTable.Cell>
+         <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
+          <DataTable.Cell>{item.Address}</DataTable.Cell>
+          <DataTable.Cell>{item.Beds}</DataTable.Cell>
+          <DataTable.Cell>{item.Baths}</DataTable.Cell>
+          <DataTable.Cell>{item.Price}</DataTable.Cell>
          </DataTable.Row>
       )}
     />

@@ -10,7 +10,6 @@ const TableExample = () => {
         <DataTable.Title>Beds</DataTable.Title>
         <DataTable.Title>Bath</DataTable.Title>
         <DataTable.Title>Price</DataTable.Title>
-        <DataTable.Title>Link</DataTable.Title>
         
       </DataTable.Header>
     </DataTable>
