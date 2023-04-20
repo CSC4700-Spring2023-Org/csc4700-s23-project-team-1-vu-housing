@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
-import React, { useEffect, useState } from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import type { PropsWithChildren } from 'react';
 import {
   Alert,
-    Button,
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -29,7 +29,7 @@ import {
 
 
 
-export default function AddListing({navigation}) {
+export default function AddListing({ navigation }) {
 
   const [address, setAddress] = useState('');
   const [bedrooms, setBedrooms] = useState(0);
@@ -39,67 +39,75 @@ export default function AddListing({navigation}) {
   const [price, setPrice] = useState(0);
 
   const [houseAddress, setHouseAddress] = useState('');
-  const [houseBedrooms, setHouseBedrooms] = useState(0);
-  const [houseBathrooms, setHouseBathrooms] = useState(0);
-    const houseInfo = {
-      method: 'GET',
-      url: 'https://zillow56.p.rapidapi.com/search',
-      params: {
-        location: address
-      },
-      headers: {
-        'X-RapidAPI-Key': 'd5fb5a5337msh26bd1b9bc6d6ce2p195aaejsn54c2c9427c9d',
-        'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
-      }
-    };
-    const onSubmitPress = () => {   
-        var streetAddress = ""
-        var city = ""
-        var state = ""
-        var zipcode = ""
-        axios
-        .request(houseInfo)
-        .then(function (response) {
-          streetAddress = response.data.abbreviatedAddress
-          city = response.data.city
-          state = response.data.state
-          zipcode = response.data.zipcode
-          setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
-          setHouseBathrooms(response.data.bathrooms)
-          setHouseBedrooms(response.data.bedrooms)
+  const [houseBedrooms, setHouseBedrooms] = useState('');
+  const [houseBathrooms, setHouseBathrooms] = useState('');
+
+  const [submitText, setSubmitText] = useState('')
+  const [enterHouseText, setEnterHouseText] = useState('')
+
+  var houseItems = [address, bedrooms, bathrooms, houseType, landlordContact, price]
+  var fieldsFilled: boolean
+  for (var counter: number = 0; counter < 6; counter++) {
+    if (ifFieldsEmpty(String(houseItems[counter]))) {
+      fieldsFilled = false
+      break
+    }
+    fieldsFilled = true
+  }
+  
+  setEnterHouseText("Enter House Info")
+  const onHouseEnterPress = () => {
+    if (fieldsFilled) {
+      var houseInfo = {
+        method: 'GET',
+        url: 'https://zillow56.p.rapidapi.com/search',
+        params: {
+          location: address
+        },
+        headers: {
+          'X-RapidAPI-Key': '7064d0047amshfb448f45be1bc9ap151bdajsn57d95c7f971b',
+          'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+        }
+      };
+
+      axios
+      .request(houseInfo)
+      .then(function (response) {
+        var streetAddress = response.data.abbreviatedAddress
+        var city = response.data.city
+        var state = response.data.state
+        var zipcode = response.data.zipcode
+        var bath = response.data.bathrooms
+        var bed = response.data.bedrooms
+
+        setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
+        setHouseBathrooms(bath)
+        setHouseBedrooms(bed)
       })
-        .catch(function (error) {
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-          } else if (error.request) {
-            console.log(error.request);
-          } else {
-            console.log('Error', error.message);
-          }
-        
-      }); 
+      .catch(function (error) {
+        if (error.response) {
+          console.log("Error Code: " + error.response.status);
+          console.log(error.response.data);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+      });
+      setSubmitText("Submit House")
+      setEnterHouseText("")
+    } 
+    else {
+      Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then click "Enter House Info" button again")
+    }
 
-      var correctAddy = true
-      var correctBath = true;
-      var correctBed = true;
-      if (houseAddress == undefined) {
-        correctAddy = false
-        Alert.alert("Address Error", "This is not a valid address. Please try again")
-      }
-      if (parseInt(bathrooms) !== parseInt(houseBathrooms)) {
-        correctBath = false
-        Alert.alert("Bathroom Error", "This is not the number zillow lists. (" + houseBathrooms + ") Please adjust value and re-submit")
-      }
-      if (parseInt(bedrooms) !== parseInt(houseBedrooms)) {
-        correctBed = false
-        Alert.alert("Bedroom Error", "This is not the number zillow lists. (" + houseBedrooms + ") Please adjust value and re-submit")
-      }
+  }
 
-      if (correctAddy && correctBath && correctBed) {
-        Alert.alert("All good", "Insert database method call here")
-
-        firestore()
+  var apiItems = [houseAddress, houseBedrooms, houseBathrooms]
+  const onSubmitPress = () => {
+    if (apiCheck(apiItems)) {
+      //New Writing to data base Section
+      firestore()
         .collection('Houses')
         .add({
           Address: houseAddress,
@@ -112,16 +120,14 @@ export default function AddListing({navigation}) {
       .then(() => {
         console.log('House added!');
       });
-      
-      }
-
-
-
-      
     }
-    
-    
-    
+    else {
+      setSubmitText("")
+      setEnterHouseText("Enter House Info")
+      Alert.alert("Invalid address","Please input a valid address and click the "Enter House Info" button again")
+    }
+  }
+
 
   return (
     <View style={styles.container}>
@@ -134,25 +140,25 @@ export default function AddListing({navigation}) {
           placeholder="800 E Lancaster Ave, Villanova, PA 19085"
           keyboardType="email-address"
           onChangeText={(val) => setAddress(val)} />
-          
-          <View style={styles.row}>
-            <Text style={styles.rowTitles}>Bedrooms</Text>
-            <Text style={styles.rowTitles}>Bathrooms</Text>  
-          </View>
 
-          <View style={styles.row}>
-            <TextInput
+        <View style={styles.row}>
+          <Text style={styles.rowTitles}>Bedrooms</Text>
+          <Text style={styles.rowTitles}>Bathrooms</Text>
+        </View>
+
+        <View style={styles.row}>
+          <TextInput
             style={styles.BBRInput}
             placeholder="3"
             keyboardType="numeric"
-            onChangeText={(val) => setBedrooms(val)}/>
-            <TextInput
+            onChangeText={(val) => setBedrooms(val)} />
+          <TextInput
             style={styles.BBRInput}
             placeholder="2.5"
             keyboardType="numeric"
-            onChangeText={(val) => setBathrooms(val)}/>
-          </View>  
-        
+            onChangeText={(val) => setBathrooms(val)} />
+        </View>
+
         <Text style={styles.titles}>Type of house</Text>
         <TextInput
           style={styles.input}
@@ -172,68 +178,99 @@ export default function AddListing({navigation}) {
           style={styles.input}
           placeholder="$1,700"
           keyboardType="numeric"
-          onChangeText={(val) => setPrice(val)}/>
-          <TouchableOpacity onPress={() => onSubmitPress()} style={{
-            alignItems:'center',padding:20, marginVertical:10, 
-            borderWidth: 2, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'
-            }}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
-            </View>
-          </TouchableOpacity>
+          onChangeText={(val) => setPrice(val)} />
+        <TouchableOpacity onPress={() => onHouseEnterPress()} style={{
+          alignItems: 'center', padding: 20, marginVertical: 10,
+          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
+        }}>
+          <View >
+            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{enterHouseText}</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => onSubmitPress()} style={{
+          alignItems: 'center', padding: 20, marginVertical: 10,
+          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
+        }}>
+          <View >
+            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{submitText}</Text>
+          </View>
+        </TouchableOpacity>
+        <Text style={styles.titles}>{houseAddress + " " + houseBathrooms + " " + houseBedrooms}</Text>
       </ScrollView>
     </View>
   );
 }
-      const styles = StyleSheet.create({
-        container: {
-          flex: 1, 
-          alignItems: 'center',
-          marginTop:10,
-        },
-          row: {
-            flexDirection: 'row', 
-            alignSelf: 'center',
-          },
-          header: {
-            fontSize: 40,
-            margin: 10,
-            alignSelf: "center",
-            fontFamily: 'Roboto',
-            color: "#292828",
-          },
-          titles: {
-            fontSize: 25,
-            margin: 10,
-            alignSelf: "center",
-            fontFamily:'AlNile-Bold',
-          },
-          rowTitles: {
-            fontSize: 25,
-            margin: 10,
-            marginRight:20,
-            marginLeft:20,
-            alignSelf: "center",
-            fontFamily:'AlNile-Bold',
-          },
-          BBRInput: {
-            borderWidth: 1,
-            borderRadius: 15,
-            borderColor: 'black',
-            padding: 8,
-            marginLeft: 30,
-            marginRight: 30,
-            width: 100,
-            backgroundColor: "#D9D9D9",
-          },
-          input: {
-            alignSelf: "center",
-            borderRadius: 15,
-            borderWidth: 1,
-            borderColor: 'black',
-            backgroundColor: "#D9D9D9",
-            padding: 8,
-            margin: 10,
-            width: 300,
-          },
-  });
+
+function apiCheck(arr: string[]) {
+  for (var counter: number = 0; counter < arr.length; counter++) {
+    if (arr[counter].includes("undefined") || arr[counter].length == 0) {
+      return false
+    }
+    else {
+      return true
+    }
+  }
+}
+
+function ifFieldsEmpty(str: string) {
+  if (str.length == 0) {
+    return true
+  }
+  else {
+    return false
+  }
+
+}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    marginTop: 0,
+  },
+  row: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
+  header: {
+    fontSize: 40,
+    margin: 3,
+    alignSelf: "center",
+    fontFamily: 'Roboto',
+    color: "#292828",
+  },
+  titles: {
+    fontSize: 25,
+    margin: 3,
+    alignSelf: "center",
+    fontFamily: 'AlNile-Bold',
+  },
+  rowTitles: {
+    fontSize: 25,
+    margin: 3,
+    marginRight: 20,
+    marginLeft: 20,
+    alignSelf: "center",
+    fontFamily: 'AlNile-Bold',
+  },
+  BBRInput: {
+    borderWidth: 1,
+    borderRadius: 15,
+    borderColor: 'black',
+    padding: 8,
+    marginLeft: 30,
+    marginRight: 30,
+    width: 100,
+    backgroundColor: "#D9D9D9",
+  },
+  input: {
+    alignSelf: "center",
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'black',
+    backgroundColor: "#D9D9D9",
+    padding: 8,
+    margin: 10,
+    width: 300,
+  },
+});
