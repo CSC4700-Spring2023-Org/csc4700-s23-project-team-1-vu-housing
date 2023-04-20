@@ -63,6 +63,7 @@ export default function Welcome({navigation}) {
   return ( 
     //TODO: CHange Navigation
     <View id="main">
+      <ScrollView>
         <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
          <Image
          style={{height:125,width:125}}
@@ -95,6 +96,11 @@ export default function Welcome({navigation}) {
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
             </View>
           </TouchableOpacity>
+          <TouchableOpacity onPress={()=>navigation.navigate('Signup')} style={{alignItems:'center',padding:20, marginVertical:5}}>
+            <View >
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>SignUp</Text>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={()=>navigation.navigate('ListingCreated')} style={{alignItems:'center',padding:20, marginVertical:5}}>
             <View >
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>ListingCreated</Text>
@@ -103,6 +109,7 @@ export default function Welcome({navigation}) {
           
           
         </View>
+      </ScrollView>
     </View>
 
        
