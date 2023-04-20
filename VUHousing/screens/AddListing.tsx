@@ -15,6 +15,9 @@ import {
   View,
 } from 'react-native';
 
+import firestore from '@react-native-firebase/firestore';
+import { DataTable } from 'react-native-paper';
+
 import {
   Colors,
   DebugInstructions,
@@ -29,17 +32,18 @@ import {
 export default function AddListing({ navigation }) {
 
   const [address, setAddress] = useState('');
-  const [bedrooms, setBedrooms] = useState('');
-  const [bathrooms, setBathrooms] = useState('');
+  const [bedrooms, setBedrooms] = useState(0);
+  const [bathrooms, setBathrooms] = useState(0);
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
-  const [price, setPrice] = useState('');
+  const [price, setPrice] = useState(0);
 
   const [houseAddress, setHouseAddress] = useState('');
   const [houseBedrooms, setHouseBedrooms] = useState('');
   const [houseBathrooms, setHouseBathrooms] = useState('');
 
   const [submitText, setSubmitText] = useState('')
+  const [enterHouseText, setEnterHouseText] = useState('')
 
   var houseItems = [address, bedrooms, bathrooms, houseType, landlordContact, price]
   var fieldsFilled: boolean
@@ -51,7 +55,7 @@ export default function AddListing({ navigation }) {
     fieldsFilled = true
   }
   
-
+  setEnterHouseText("Enter House Info")
   const onHouseEnterPress = () => {
     if (fieldsFilled) {
       var houseInfo = {
@@ -91,10 +95,10 @@ export default function AddListing({ navigation }) {
         }
       });
       setSubmitText("Submit House")
-      console.log(houseAddress)
+      setEnterHouseText("")
     } 
     else {
-      Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then click validate house button again")
+      Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then click "Enter House Info" button again")
     }
 
   }
@@ -102,11 +106,25 @@ export default function AddListing({ navigation }) {
   var apiItems = [houseAddress, houseBedrooms, houseBathrooms]
   const onSubmitPress = () => {
     if (apiCheck(apiItems)) {
-      Alert.alert("All Good" , "Insert method call here")
+      //New Writing to data base Section
+      firestore()
+        .collection('Houses')
+        .add({
+          Address: houseAddress,
+          Beds: houseBedrooms,
+          Baths: houseBathrooms,
+          price:price,
+          Type:houseType,
+          Landlord:landlordContact
+      })
+      .then(() => {
+        console.log('House added!');
+      });
     }
     else {
       setSubmitText("")
-      Alert.alert("Invalid address","Please input a valid address and click the 'Enter House Info' button again")
+      setEnterHouseText("Enter House Info")
+      Alert.alert("Invalid address","Please input a valid address and click the "Enter House Info" button again")
     }
   }
 
@@ -166,7 +184,7 @@ export default function AddListing({ navigation }) {
           borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
         }}>
           <View >
-            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>Enter House Info</Text>
+            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{enterHouseText}</Text>
           </View>
         </TouchableOpacity>
 
