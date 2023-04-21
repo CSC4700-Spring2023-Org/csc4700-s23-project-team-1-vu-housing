@@ -32,11 +32,11 @@ import {
 export default function AddListing({ navigation }) {
 
   const [address, setAddress] = useState('');
-  const [bedrooms, setBedrooms] = useState(0);
-  const [bathrooms, setBathrooms] = useState(0);
+  const [bedrooms, setBedrooms] = useState('0');
+  const [bathrooms, setBathrooms] = useState('0');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState('0');
 
   const [houseAddress, setHouseAddress] = useState('');
   const [houseBedrooms, setHouseBedrooms] = useState('');
@@ -98,7 +98,7 @@ export default function AddListing({ navigation }) {
       setEnterHouseText("")
     } 
     else {
-      Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then click "Enter House Info" button again")
+      Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then click 'Enter House Info' button again")
     }
 
   }
@@ -124,7 +124,7 @@ export default function AddListing({ navigation }) {
     else {
       setSubmitText("")
       setEnterHouseText("Enter House Info")
-      Alert.alert("Invalid address","Please input a valid address and click the "Enter House Info" button again")
+      Alert.alert("Invalid address","Please input a valid address and click the 'Enter House Info' button again")
     }
   }
 
