@@ -43,7 +43,7 @@ export default function AddListing({ navigation }) {
   const [houseBathrooms, setHouseBathrooms] = useState('');
 
   const [submitText, setSubmitText] = useState('')
-  const [enterHouseText, setEnterHouseText] = useState('')
+  const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
 
   var houseItems = [address, bedrooms, bathrooms, houseType, landlordContact, price]
   var fieldsFilled: boolean
@@ -55,7 +55,7 @@ export default function AddListing({ navigation }) {
     fieldsFilled = true
   }
 
-  setEnterHouseText("Enter House Info")
+ 
   const onHouseEnterPress = () => {
     if (fieldsFilled) {
       var houseInfo = {
@@ -77,12 +77,12 @@ export default function AddListing({ navigation }) {
           var city = response.data.city
           var state = response.data.state
           var zipcode = response.data.zipcode
-          var bath = response.data.bathrooms
-          var bed = response.data.bedrooms
+          var resBath = response.data.bathrooms
+          var resBed = response.data.bedrooms
 
           setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
-          setHouseBathrooms(bath)
-          setHouseBedrooms(bed)
+          setHouseBathrooms(resBath)
+          setHouseBedrooms(resBed)
         })
         .catch(function (error) {
           if (error.response) {
@@ -197,7 +197,6 @@ export default function AddListing({ navigation }) {
             <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{submitText}</Text>
           </View>
         </TouchableOpacity>
-        <Text style={styles.titles}>{houseAddress + " " + houseBathrooms + " " + houseBedrooms}</Text>
       </ScrollView>
     </View>
   );
