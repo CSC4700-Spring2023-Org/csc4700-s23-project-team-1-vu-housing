@@ -54,7 +54,7 @@ export default function AddListing({ navigation }) {
     }
     fieldsFilled = true
   }
-  
+
   setEnterHouseText("Enter House Info")
   const onHouseEnterPress = () => {
     if (fieldsFilled) {
@@ -71,32 +71,32 @@ export default function AddListing({ navigation }) {
       };
 
       axios
-      .request(houseInfo)
-      .then(function (response) {
-        var streetAddress = response.data.abbreviatedAddress
-        var city = response.data.city
-        var state = response.data.state
-        var zipcode = response.data.zipcode
-        var bath = response.data.bathrooms
-        var bed = response.data.bedrooms
+        .request(houseInfo)
+        .then(function (response) {
+          var streetAddress = response.data.abbreviatedAddress
+          var city = response.data.city
+          var state = response.data.state
+          var zipcode = response.data.zipcode
+          var bath = response.data.bathrooms
+          var bed = response.data.bedrooms
 
-        setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
-        setHouseBathrooms(bath)
-        setHouseBedrooms(bed)
-      })
-      .catch(function (error) {
-        if (error.response) {
-          console.log("Error Code: " + error.response.status);
-          console.log(error.response.data);
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log('Error', error.message);
-        }
-      });
+          setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
+          setHouseBathrooms(bath)
+          setHouseBedrooms(bed)
+        })
+        .catch(function (error) {
+          if (error.response) {
+            console.log("Error Code: " + error.response.status);
+            console.log(error.response.data);
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+        });
       setSubmitText("Submit House")
       setEnterHouseText("")
-    } 
+    }
     else {
       Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then click 'Enter House Info' button again")
     }
@@ -113,18 +113,18 @@ export default function AddListing({ navigation }) {
           Address: houseAddress,
           Beds: houseBedrooms,
           Baths: houseBathrooms,
-          price:price,
-          Type:houseType,
-          Landlord:landlordContact
-      })
-      .then(() => {
-        console.log('House added!');
-      });
+          price: price,
+          Type: houseType,
+          Landlord: landlordContact
+        })
+        .then(() => {
+          console.log('House added!');
+        });
     }
     else {
       setSubmitText("")
       setEnterHouseText("Enter House Info")
-      Alert.alert("Invalid address","Please input a valid address and click the 'Enter House Info' button again")
+      Alert.alert("Invalid address", "Please input a valid address and click the 'Enter House Info' button again")
     }
   }
 
@@ -179,6 +179,7 @@ export default function AddListing({ navigation }) {
           placeholder="$1,700"
           keyboardType="numeric"
           onChangeText={(val) => setPrice(val)} />
+
         <TouchableOpacity onPress={() => onHouseEnterPress()} style={{
           alignItems: 'center', padding: 20, marginVertical: 10,
           borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
