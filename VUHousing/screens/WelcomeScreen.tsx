@@ -76,7 +76,7 @@ export default function Welcome({navigation}) {
         </View>
 
         <View id="Login/SignUp Buttons"style={{paddingVertical:50,paddingHorizontal:50}}>
-          <TouchableOpacity onPress={()=>navigation.navigate('AddListing')} style={{alignItems:'center',padding:20}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('Signup')} style={{alignItems:'center',padding:20}}>
             <View>
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
             </View>
@@ -87,11 +87,6 @@ export default function Welcome({navigation}) {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={()=>navigation.navigate('Signup')} style={{alignItems:'center',padding:20, marginVertical:5}}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>SignUp</Text>
-            </View>
-          </TouchableOpacity> 
         </View>
       </ScrollView>
     </View>

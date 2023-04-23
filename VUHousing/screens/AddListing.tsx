@@ -43,7 +43,7 @@ export default function AddListing({ navigation }) {
   const [houseBathrooms, setHouseBathrooms] = useState('');
 
   const [submitText, setSubmitText] = useState('')
-  const [enterHouseText, setEnterHouseText] = useState('')
+  const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
 
   var houseItems = [address, bedrooms, bathrooms, houseType, landlordContact, price]
   var fieldsFilled: boolean
@@ -55,7 +55,6 @@ export default function AddListing({ navigation }) {
     fieldsFilled = true
   }
   
-  setEnterHouseText("Enter House Info")
   const onHouseEnterPress = () => {
     if (fieldsFilled) {
       var houseInfo = {
@@ -98,7 +97,7 @@ export default function AddListing({ navigation }) {
       setEnterHouseText("")
     } 
     else {
-      Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then click "Enter House Info" button again")
+      Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then resubmit")
     }
 
   }
@@ -124,7 +123,7 @@ export default function AddListing({ navigation }) {
     else {
       setSubmitText("")
       setEnterHouseText("Enter House Info")
-      Alert.alert("Invalid address","Please input a valid address and click the "Enter House Info" button again")
+      Alert.alert("Invalid address","Please input a valid address and click then resubmit")
     }
   }
 
@@ -204,6 +203,8 @@ export default function AddListing({ navigation }) {
 
 function apiCheck(arr: string[]) {
   for (var counter: number = 0; counter < arr.length; counter++) {
+    console.log("GUHHHH")
+    console.log(arr[counter])
     if (arr[counter].includes("undefined") || arr[counter].length == 0) {
       return false
     }
