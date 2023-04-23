@@ -86,7 +86,6 @@ export default function Welcome({navigation}) {
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
             </View>
           </TouchableOpacity>
-
         </View>
       </ScrollView>
     </View>
