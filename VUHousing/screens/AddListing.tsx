@@ -32,11 +32,11 @@ import {
 export default function AddListing({ navigation }) {
 
   const [address, setAddress] = useState('');
-  const [bedrooms, setBedrooms] = useState(0);
-  const [bathrooms, setBathrooms] = useState(0);
+  const [bedrooms, setBedrooms] = useState('0');
+  const [bathrooms, setBathrooms] = useState('0');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState('0');
 
   const [houseAddress, setHouseAddress] = useState('');
   const [houseBedrooms, setHouseBedrooms] = useState('');
@@ -54,7 +54,6 @@ export default function AddListing({ navigation }) {
     }
     fieldsFilled = true
   }
-  
   const onHouseEnterPress = () => {
     if (fieldsFilled) {
       var houseInfo = {
@@ -70,32 +69,32 @@ export default function AddListing({ navigation }) {
       };
 
       axios
-      .request(houseInfo)
-      .then(function (response) {
-        var streetAddress = response.data.abbreviatedAddress
-        var city = response.data.city
-        var state = response.data.state
-        var zipcode = response.data.zipcode
-        var bath = response.data.bathrooms
-        var bed = response.data.bedrooms
+        .request(houseInfo)
+        .then(function (response) {
+          var streetAddress = response.data.abbreviatedAddress
+          var city = response.data.city
+          var state = response.data.state
+          var zipcode = response.data.zipcode
+          var resBath = response.data.bathrooms
+          var resBed = response.data.bedrooms
 
-        setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
-        setHouseBathrooms(bath)
-        setHouseBedrooms(bed)
-      })
-      .catch(function (error) {
-        if (error.response) {
-          console.log("Error Code: " + error.response.status);
-          console.log(error.response.data);
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log('Error', error.message);
-        }
-      });
+          setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
+          setHouseBathrooms(resBath)
+          setHouseBedrooms(resBed)
+        })
+        .catch(function (error) {
+          if (error.response) {
+            console.log("Error Code: " + error.response.status);
+            console.log(error.response.data);
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+        });
       setSubmitText("Submit House")
       setEnterHouseText("")
-    } 
+    }
     else {
       Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then resubmit")
     }
@@ -112,13 +111,14 @@ export default function AddListing({ navigation }) {
           Address: houseAddress,
           Beds: houseBedrooms,
           Baths: houseBathrooms,
-          price:price,
-          Type:houseType,
-          Landlord:landlordContact
-      })
-      .then(() => {
-        console.log('House added!');
-      });
+          price: price,
+          Type: houseType,
+          Landlord: landlordContact
+        })
+        .then(() => {
+          console.log('House added!');
+        });
+        navigation.navigate("ListingCreated")
     }
     else {
       setSubmitText("")
@@ -178,6 +178,7 @@ export default function AddListing({ navigation }) {
           placeholder="$1,700"
           keyboardType="numeric"
           onChangeText={(val) => setPrice(val)} />
+
         <TouchableOpacity onPress={() => onHouseEnterPress()} style={{
           alignItems: 'center', padding: 20, marginVertical: 10,
           borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
@@ -195,7 +196,6 @@ export default function AddListing({ navigation }) {
             <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{submitText}</Text>
           </View>
         </TouchableOpacity>
-        <Text style={styles.titles}>{houseAddress + " " + houseBathrooms + " " + houseBedrooms}</Text>
       </ScrollView>
     </View>
   );
