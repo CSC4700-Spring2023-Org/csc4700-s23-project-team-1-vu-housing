@@ -120,6 +120,7 @@ export default function AddListing({ navigation }) {
         .then(() => {
           console.log('House added!');
         });
+        navigation.navigate("ListingCreated")
     }
     else {
       setSubmitText("")
