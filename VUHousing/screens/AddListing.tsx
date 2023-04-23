@@ -203,8 +203,8 @@ export default function AddListing({ navigation }) {
 
 function apiCheck(arr: string[]) {
   for (var counter: number = 0; counter < arr.length; counter++) {
-    console.log("GUHHHH")
-    console.log(arr[counter])
+   // console.log("GUHHHH")
+   // console.log(arr[counter])
     if (arr[counter].includes("undefined") || arr[counter].length == 0) {
       return false
     }
