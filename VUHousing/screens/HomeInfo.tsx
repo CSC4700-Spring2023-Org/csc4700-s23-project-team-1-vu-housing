@@ -39,11 +39,12 @@ type SectionProps = PropsWithChildren<{
 
 export default function HomeInfo({route,navigation}) {
   const obj=route.params
-  console.log(obj.docID)
-  const [address,setAddress]= useState("fill")
+  //console.log(obj.docID)
+  const [address,setAddress]= useState("")
   const [beds,setBeds]= useState(0)
   const [baths,setBaths]= useState(0)
   const [price,setPrice]= useState(0)
+  const [landlord,setLandlord]=useState("")
 
   const events=firestore()
   .collection('Houses')
@@ -54,6 +55,7 @@ export default function HomeInfo({route,navigation}) {
    setBeds(documentSnapshot.data().Beds)
    setBaths(documentSnapshot.data().Baths)
    setPrice(documentSnapshot.data().Price)
+   setLandlord(documentSnapshot.data().Landlord)
   });
   
   
@@ -83,9 +85,13 @@ export default function HomeInfo({route,navigation}) {
                     <Text style={styles.information}>{baths}</Text>
                 </View>
             </View>
-            <View id="price" style={{margin:20}}>
+            <View id="price" style={{margin:10}}>
                 <Text style={styles.headers}>Price</Text>
                 <Text style={styles.information}>{price}</Text>
+            </View>  
+            <View id="landlord" style={{margin:10}}>
+                <Text style={styles.headers}>Landlord Contact</Text>
+                <Text style={styles.information}>{landlord}</Text>
             </View>      
         </View>
 
