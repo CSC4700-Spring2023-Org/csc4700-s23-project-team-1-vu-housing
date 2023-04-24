@@ -123,7 +123,7 @@ export default function AddListing({ navigation }) {
     else {
       setSubmitText("")
       setEnterHouseText("Enter House Info")
-      Alert.alert("Invalid address","Please input a valid address and click then resubmit")
+      Alert.alert("Invalid address","Please input a valid address and click \"Enter House Info\" again, then resubmit")
     }
   }
 
