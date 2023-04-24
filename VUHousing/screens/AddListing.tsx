@@ -36,7 +36,7 @@ export default function AddListing({ navigation }) {
   const [bathrooms, setBathrooms] = useState('0');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
-  const [price, setPrice] = useState('0');
+  const [price, setPrice] = useState(0);
 
   const [houseAddress, setHouseAddress] = useState('');
   const [houseBedrooms, setHouseBedrooms] = useState('');
@@ -63,7 +63,7 @@ export default function AddListing({ navigation }) {
           location: address
         },
         headers: {
-          'X-RapidAPI-Key': '7064d0047amshfb448f45be1bc9ap151bdajsn57d95c7f971b',
+          'X-RapidAPI-Key': 'e5593e93cbmsh3475caf562c8ad2p108302jsn37e8f8946713',
           'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
         }
       };
@@ -111,7 +111,7 @@ export default function AddListing({ navigation }) {
           Address: houseAddress,
           Beds: houseBedrooms,
           Baths: houseBathrooms,
-          price: price,
+          Price: price,
           Type: houseType,
           Landlord: landlordContact
         })
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     margin: 3,
     alignSelf: "center",
-    fontFamily: 'Roboto',
+    fontFamily: 'AlNile-Bold',
     color: "#292828",
   },
   titles: {
