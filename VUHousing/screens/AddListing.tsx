@@ -63,7 +63,7 @@ export default function AddListing({ navigation }) {
           location: address
         },
         headers: {
-          'X-RapidAPI-Key': 'e5593e93cbmsh3475caf562c8ad2p108302jsn37e8f8946713',
+          'X-RapidAPI-Key': '7f09fbb57amsha4e11a8558271ccp17ff92jsn86612c501041',
           'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
         }
       };
