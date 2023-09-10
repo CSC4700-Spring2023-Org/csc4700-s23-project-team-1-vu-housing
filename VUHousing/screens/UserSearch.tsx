@@ -44,7 +44,7 @@ function HouseSearch({navigation}) {
       setUsers(user)
    })
     
-
+  //TODO: ADD Query that just gets everyone who has the needsRoomate attribute
 
     return (
     <NativeBaseProvider>
