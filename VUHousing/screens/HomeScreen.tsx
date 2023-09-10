@@ -34,6 +34,8 @@ export default function HomeScreen({navigation}) {
         onPress={()=>navigation.navigate("HouseSearch")} style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 32, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}></Button>
         <Button title='Create Listing' 
         onPress={()=>navigation.navigate("AddListing")}></Button>
+        <Button title='Search for Roommate' 
+        onPress={()=>navigation.navigate("UserSearch")}></Button>
       </View>
     );
   }

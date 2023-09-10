@@ -1,47 +1,75 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
-    Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   TextInput,
   useColorScheme,
   View,
+  Alert
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { NativeBaseProvider, Text, Box, Input,Button,useToast } from "native-base";
+import firestore from '@react-native-firebase/firestore';
 
 
 
 
 export default function LoginScreen({navigation}) {
+  const [email, setEmail] = useState(""); // Email that is inputted
+  const [password, setPassword] = useState(""); // Password that is inputted
+
+  
+
+  async function checkLogin() {
+    const userCollection = firestore().collection('Users')
+    //Create an alert if the password field or email field is Empty
+    if(password.length==0){
+      Alert.alert("Password Field Empty", "Please Enter a non-empty password to login")
+    }
+    if(email.length == 0){
+      Alert.alert("Email Field Empty", "Please Enter a non-empty email to login")
+    }
+    //Otherwise Query the database on email and password
+    else{
+    const user =  await userCollection.where('Email',"==",email).where("Password","==",password).get()
+      //if not user exists, throw and alert... Otherwise navigate to homeScreen.
+    if(user.empty){
+      Alert.alert("No User Found","Unable to find user with specified credential. Please Retry")
+    }
+    else{
+     navigation.navigate("HomeScreen")
+    }
+  }
+    
+  }
+  
 
   return (
-    <View>
-      <Text style={styles.header}>Login</Text>
+    <NativeBaseProvider>
+      <Box flex={1} bg="#ffffff" alignItems="center"  >
+        <Box margin="100">
+          <Text >Welcome Back!</Text>
+        </Box>
 
-      <Text style={styles.titles}>Enter Villanova Email</Text>
-      <TextInput
-      style={styles.input}
-      placeholder="jwright@villanova.edu"
-      keyboardType="default" />
+        <Box bg="#ff0000">
+          <Text>Enter Email</Text>
+          <Input mx="3" placeholder="Input" w="50%" autoCapitalize="none" onChangeText={(val) => setEmail(val)}/>
+        </Box>
 
-      <Text style={styles.titles}>Enter Password</Text>
-        <TextInput
-        style={styles.input}
-        placeholder="Go Cats!"
-        secureTextEntry={true}
-        keyboardType="default" />
-      </View>
+        <Box bg="#0000ff">
+          <Text>Enter Password</Text>
+          <Input mx="3" placeholder="Input" w="75%" type="password" onChangeText={(val) => setPassword(val)}/>
+        </Box>
+      </Box>
+
+      <Box>
+        <Button onPress={() => checkLogin()}>Submit</Button>
+      </Box>
+
+    </NativeBaseProvider>
     );
 }
 

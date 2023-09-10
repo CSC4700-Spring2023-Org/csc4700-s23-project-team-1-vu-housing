@@ -24,7 +24,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import HouseTable from '../components/HouseTable';
+import UserTable from '../components/UserTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
 
@@ -49,16 +49,15 @@ function HouseSearch({navigation}) {
 
     return (
     <View>
-          <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>House Search</Text>
+          <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>Roommate Search</Text>
           
-        <Button title='Filter' 
-         style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}></Button>
-         <HouseTable></HouseTable>
+       
+         <UserTable></UserTable>
 
          <FlatList
           data={users}
           renderItem={({ item }) => (
-         <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
+         <DataTable.Row>
           <DataTable.Cell>{item.Address}</DataTable.Cell>
           <DataTable.Cell>{item.Beds}</DataTable.Cell>
           <DataTable.Cell>{item.Baths}</DataTable.Cell>
