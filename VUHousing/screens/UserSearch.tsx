@@ -2,13 +2,11 @@ import React from 'react';
 import type {PropsWithChildren} from 'react';
 import { useState } from "react";
 import {
-    Button,
   SafeAreaView,
   ScrollView,
   VirtualizedList,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
   FlatList,
@@ -27,6 +25,7 @@ import {
 import UserTable from '../components/UserTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
+import { NativeBaseProvider, Text, Box, Input,Button,useToast } from "native-base";
 
 
 function HouseSearch({navigation}) {
@@ -36,7 +35,7 @@ function HouseSearch({navigation}) {
 
   
 
-  const events = firestore().collection('Houses')
+  const events = firestore().collection('Users')
   events.get().then((querySnapshot) => {
       const user = []
       querySnapshot.forEach((doc) => {
@@ -48,24 +47,26 @@ function HouseSearch({navigation}) {
 
 
     return (
-    <View>
-          <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>Roommate Search</Text>
+    <NativeBaseProvider>
+      <Box alignItems="center" marginTop="10" marginBottom="5" >
+        <Text fontSize="4xl" bold>Roommate Search</Text>
+      </Box>
+     
           
        
-         <UserTable></UserTable>
-
-         <FlatList
-          data={users}
-          renderItem={({ item }) => (
-         <DataTable.Row>
-          <DataTable.Cell>{item.Address}</DataTable.Cell>
-          <DataTable.Cell>{item.Beds}</DataTable.Cell>
-          <DataTable.Cell>{item.Baths}</DataTable.Cell>
-          <DataTable.Cell>{item.Price}</DataTable.Cell>
-         </DataTable.Row>
-      )}
-    />
-      </View>   
+          <UserTable></UserTable>
+ 
+          <FlatList
+           data={users}
+           renderItem={({ item }) => (
+          <DataTable.Row>
+           <DataTable.Cell>{item.Name}</DataTable.Cell>
+           <DataTable.Cell>{item.Email}</DataTable.Cell>
+           <DataTable.Cell>{item.PhoneNumber}</DataTable.Cell>
+          </DataTable.Row>
+       )}
+     />
+    </NativeBaseProvider>
 
       
     );
