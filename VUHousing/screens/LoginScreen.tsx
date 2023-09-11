@@ -50,24 +50,32 @@ export default function LoginScreen({navigation}) {
   return (
     <NativeBaseProvider>
       <Box flex={1} bg="#ffffff" alignItems="center"  >
-        <Box margin="100">
-          <Text >Welcome Back!</Text>
+        <Box marginTop="75"  width="75%" alignItems="center">
+          <Text fontSize="4xl" bold>Welcome Back!</Text>
+          <Text fontSize="lg" marginTop="5">Enter Login Information Below</Text>
         </Box>
 
-        <Box bg="#ff0000">
-          <Text>Enter Email</Text>
-          <Input mx="3" placeholder="Input" w="50%" autoCapitalize="none" onChangeText={(val) => setEmail(val)}/>
+        <Box width='75%' marginTop="50">
+        <Box flexDirection="column" >
+          <Text color="#001F58"fontSize="2xl" bold >Enter Email</Text>
+          <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" w="100%" autoCapitalize="none" h="50" onChangeText={(val) => setEmail(val)}/>
         </Box>
 
-        <Box bg="#0000ff">
-          <Text>Enter Password</Text>
-          <Input mx="3" placeholder="Input" w="75%" type="password" onChangeText={(val) => setPassword(val)}/>
+        <Box marginTop="25">
+          <Text color="#001F58"fontSize="2xl" bold>Enter Password</Text>
+          <Input  borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" w="100%" type="password" h="50" onChangeText={(val) => setPassword(val)}/>
         </Box>
+        </Box>
+
+      <Box marginTop="9" >
+        <Button bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }} onPress={() => checkLogin()} >Submit</Button>
       </Box>
 
-      <Box>
-        <Button onPress={() => checkLogin()}>Submit</Button>
       </Box>
+
+      <Text alignSelf="center">©VUHousing 2023</Text>
+
+      
 
     </NativeBaseProvider>
     );

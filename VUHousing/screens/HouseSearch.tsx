@@ -12,6 +12,7 @@ import {
   useColorScheme,
   View,
   FlatList,
+  
 } from 'react-native';
 
 
@@ -27,6 +28,7 @@ import {
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
+import { SectionList } from 'native-base';
 
 
 function HouseSearch({navigation}) {
@@ -54,8 +56,8 @@ function HouseSearch({navigation}) {
         <Button title='Filter' 
          style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}></Button>
          <HouseTable></HouseTable>
-
-         <FlatList
+       
+        <FlatList
           data={users}
           renderItem={({ item }) => (
          <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
@@ -66,6 +68,8 @@ function HouseSearch({navigation}) {
          </DataTable.Row>
       )}
     />
+        
+        
       </View>   
 
       
