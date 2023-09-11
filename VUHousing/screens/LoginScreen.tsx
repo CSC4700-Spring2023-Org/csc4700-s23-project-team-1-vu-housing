@@ -58,12 +58,12 @@ export default function LoginScreen({navigation}) {
         <Box width='75%' marginTop="50">
         <Box flexDirection="column" >
           <Text color="#001F58"fontSize="2xl" bold >Enter Email</Text>
-          <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" w="100%" autoCapitalize="none" h="50" onChangeText={(val) => setEmail(val)}/>
+          <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" w="100%" autoCapitalize="none" h="50" fontSize="lg" onChangeText={(val) => setEmail(val)}/>
         </Box>
 
         <Box marginTop="25">
           <Text color="#001F58"fontSize="2xl" bold>Enter Password</Text>
-          <Input  borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" w="100%" type="password" h="50" onChangeText={(val) => setPassword(val)}/>
+          <Input  borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" fontSize="lg" w="100%" type="password" h="50" onChangeText={(val) => setPassword(val)}/>
         </Box>
         </Box>
 
