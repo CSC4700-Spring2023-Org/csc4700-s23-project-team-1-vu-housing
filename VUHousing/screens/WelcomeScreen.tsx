@@ -63,6 +63,7 @@ export default function Welcome({navigation}) {
   return ( 
     //TODO: CHange Navigation
     <View id="main">
+      <ScrollView>
         <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
          <Image
          style={{height:125,width:125}}
@@ -75,34 +76,18 @@ export default function Welcome({navigation}) {
         </View>
 
         <View id="Login/SignUp Buttons"style={{paddingVertical:50,paddingHorizontal:50}}>
-          <TouchableOpacity onPress={()=>navigation.navigate('AddListing')} style={{alignItems:'center',padding:20}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('Signup')} style={{alignItems:'center',padding:20}}>
             <View>
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>AddListing</Text>
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
             <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>HomeScreen</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('HomeInfo')} style={{alignItems:'center',padding:20, marginVertical:5}}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Home Info</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('LoginScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
-            <View >
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('ListingCreated')} style={{alignItems:'center',padding:20, marginVertical:5}}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>ListingCreated</Text>
-            </View>
-          </TouchableOpacity>
-          
-          
         </View>
+      </ScrollView>
     </View>
 
        
