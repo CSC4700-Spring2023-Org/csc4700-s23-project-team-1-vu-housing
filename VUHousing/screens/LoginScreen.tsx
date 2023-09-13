@@ -1,47 +1,83 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
-    Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   TextInput,
   useColorScheme,
   View,
+  Alert
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { NativeBaseProvider, Text, Box, Input,Button,useToast } from "native-base";
+import firestore from '@react-native-firebase/firestore';
 
 
 
 
 export default function LoginScreen({navigation}) {
+  const [email, setEmail] = useState(""); // Email that is inputted
+  const [password, setPassword] = useState(""); // Password that is inputted
+
+  
+
+  async function checkLogin() {
+    const userCollection = firestore().collection('Users')
+    //Create an alert if the password field or email field is Empty
+    if(password.length==0){
+      Alert.alert("Password Field Empty", "Please Enter a non-empty password to login")
+    }
+    if(email.length == 0){
+      Alert.alert("Email Field Empty", "Please Enter a non-empty email to login")
+    }
+    //Otherwise Query the database on email and password
+    else{
+    const user =  await userCollection.where('Email',"==",email).where("Password","==",password).get()
+      //if not user exists, throw and alert... Otherwise navigate to homeScreen.
+    if(user.empty){
+      Alert.alert("No User Found","Unable to find user with specified credential. Please Retry")
+    }
+    else{
+     navigation.navigate("HomeScreen")
+    }
+  }
+    
+  }
+  
 
   return (
-    <View>
-      <Text style={styles.header}>Login</Text>
+    <NativeBaseProvider>
+      <Box flex={1} bg="#ffffff" alignItems="center"  >
+        <Box marginTop="75"  width="75%" alignItems="center">
+          <Text fontSize="4xl" bold>Welcome Back!</Text>
+          <Text fontSize="lg" marginTop="5">Enter Login Information Below</Text>
+        </Box>
 
-      <Text style={styles.titles}>Enter Villanova Email</Text>
-      <TextInput
-      style={styles.input}
-      placeholder="jwright@villanova.edu"
-      keyboardType="default" />
+        <Box width='75%' marginTop="50">
+        <Box flexDirection="column" >
+          <Text color="#001F58"fontSize="2xl" bold >Enter Email</Text>
+          <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" w="100%" autoCapitalize="none" h="50" fontSize="lg" onChangeText={(val) => setEmail(val)}/>
+        </Box>
 
-      <Text style={styles.titles}>Enter Password</Text>
-        <TextInput
-        style={styles.input}
-        placeholder="Go Cats!"
-        secureTextEntry={true}
-        keyboardType="default" />
-      </View>
+        <Box marginTop="25">
+          <Text color="#001F58"fontSize="2xl" bold>Enter Password</Text>
+          <Input  borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="Input" fontSize="lg" w="100%" type="password" h="50" onChangeText={(val) => setPassword(val)}/>
+        </Box>
+        </Box>
+
+      <Box marginTop="9" >
+        <Button bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }} onPress={() => checkLogin()} >Submit</Button>
+      </Box>
+
+      </Box>
+
+      <Text alignSelf="center">©VUHousing 2023</Text>
+
+      
+
+    </NativeBaseProvider>
     );
 }
 
