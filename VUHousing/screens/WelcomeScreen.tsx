@@ -81,7 +81,7 @@ export default function Welcome({navigation}) {
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('LoginScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
             <View >
               <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
             </View>
