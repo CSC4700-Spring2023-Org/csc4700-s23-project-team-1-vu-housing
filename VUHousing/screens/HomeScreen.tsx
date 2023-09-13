@@ -38,14 +38,7 @@ export default function HomeScreen({navigation}) {
         <Button title='Create Listing' 
         onPress={()=>navigation.navigate("AddListing")}></Button>
 
-        <TouchableOpacity onPress={navigation.navigate("HouseSearch")} style={{
-          alignItems: 'center', padding: 20, marginVertical: 10,
-          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
-        }}>
-          <View >
-            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{enterHouseText}</Text>
-          </View>
-        </TouchableOpacity>
+        
       </View>
     );
   }
