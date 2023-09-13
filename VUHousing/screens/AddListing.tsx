@@ -3,12 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
   Alert,
-  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   useColorScheme,
@@ -25,17 +23,17 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { NativeBaseProvider, Box, Input } from 'native-base';
-
-
-
+import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
 export default function AddListing({ navigation }) {
-
   const [address, setAddress] = useState('');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
-  const [price, setPrice] = useState(0);
+  var [price, setPrice] = useState('0');
+  // price = priceToNum(price)
+
+  const [enterButtonStyle, setEnterButtonStyle] = useState("flex");
+  const [submitButtonStyle, setSubmitButtonStyle] = useState("none");
 
   const [houseAddress, setHouseAddress] = useState('');
   const [houseBedrooms, setHouseBedrooms] = useState('');
@@ -43,6 +41,8 @@ export default function AddListing({ navigation }) {
 
   const [submitText, setSubmitText] = useState('')
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
+
+  
 
   var houseItems = [address, houseType, landlordContact, price]
   var fieldsFilled: boolean
@@ -54,44 +54,45 @@ export default function AddListing({ navigation }) {
     fieldsFilled = true
   }
 
-  const onHouseEnterPress = () => {
+  var onHouseEnterPress = () => {
+    console.log("GUHHH")
     if (fieldsFilled) {
-      var houseInfo = {
-        method: 'GET',
-        url: 'https://zillow56.p.rapidapi.com/search',
-        params: {
-          location: address
-        },
-        headers: {
-          'X-RapidAPI-Key': '7f09fbb57amsha4e11a8558271ccp17ff92jsn86612c501041',
-          'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
-        }
-      };
+      // var houseInfo = {
+      //   method: 'GET',
+      //   url: 'https://zillow56.p.rapidapi.com/search',
+      //   params: {
+      //     location: address
+      //   },
+      //   headers: {
+      //     'X-RapidAPI-Key': '7f09fbb57amsha4e11a8558271ccp17ff92jsn86612c501041',
+      //     'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
+      //   }
+      // };
 
-      axios
-        .request(houseInfo)
-        .then(function (response) {
-          var streetAddress = response.data.abbreviatedAddress
-          var city = response.data.city
-          var state = response.data.state
-          var zipcode = response.data.zipcode
-          var resBath = response.data.bathrooms
-          var resBed = response.data.bedrooms
+      // axios
+      //   .request(houseInfo)
+      //   .then(function (response) {
+      //     var streetAddress = response.data.abbreviatedAddress
+      //     var city = response.data.city
+      //     var state = response.data.state
+      //     var zipcode = response.data.zipcode
+      //     var resBath = response.data.bathrooms
+      //     var resBed = response.data.bedrooms
 
-          setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
-          setHouseBathrooms(resBath)
-          setHouseBedrooms(resBed)
-        })
-        .catch(function (error) {
-          if (error.response) {
-            console.log("Error Code: " + error.response.status);
-            console.log(error.response.data);
-          } else if (error.request) {
-            console.log(error.request);
-          } else {
-            console.log('Error', error.message);
-          }
-        });
+      //     setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
+      //     setHouseBathrooms(resBath)
+      //     setHouseBedrooms(resBed)
+      //   })
+      //   .catch(function (error) {
+      //     if (error.response) {
+      //       console.log("Error Code: " + error.response.status);
+      //       console.log(error.response.data);
+      //     } else if (error.request) {
+      //       console.log(error.request);
+      //     } else {
+      //       console.log('Error', error.message);
+      //     }
+      //   });
       setSubmitText("Submit House")
       setEnterHouseText("")
     }
@@ -102,8 +103,11 @@ export default function AddListing({ navigation }) {
   }
 
   var apiItems = [houseAddress, houseBedrooms, houseBathrooms]
-  const onSubmitPress = () => {
-    if (phoneCheck(landlordContact) || emailCheck(landlordContact)) {
+  var onSubmitPress = () => {
+    var phoneFormat = phoneCheck(landlordContact.substring(0, 3)) && landlordContact.substring(3, 4).includes('-')
+      && phoneCheck(landlordContact.substring(4, 7)) && landlordContact.substring(7, 8).includes('-')
+      && phoneCheck(landlordContact.substring(8, 12)) && landlordContact.length == 12
+    if (phoneFormat || emailCheck(landlordContact)) {
 
       if (apiCheck(apiItems)) {
         //New Writing to data base Section
@@ -125,12 +129,12 @@ export default function AddListing({ navigation }) {
       else {
         setSubmitText("")
         setEnterHouseText("Enter House Info")
-        Alert.alert("Invalid address", "Please input a valid address and click \"Enter House Info\" again, then the submit button")
+        Alert.alert("Invalid address", "Please input a valid address and click \"Enter House Info\" again, then the verify button")
       }
 
     }
     else {
-      Alert.alert("Please input a cell as ###-####-#### or an valid email then click \"Enter House Info\" again, then the submit button")
+      Alert.alert("Please input a cell as ###-###-#### or a valid email then click \"Enter House Info\" again, then the verify button")
       Alert.alert("Landlord contact information is formatted incorrectly.")
     }
   }
@@ -141,63 +145,49 @@ export default function AddListing({ navigation }) {
       <Box flex={1} bg="#ffffff" alignItems="center"  >
         <View style={styles.container}>
           <ScrollView>
-            <Text style={styles.header}>Create a listing</Text>
+            <Text color="#001F58"fontSize="4xl" bold>Create a Listing</Text>
 
             <Box flexDirection="column" >
-              <Text style={styles.titles}>Address</Text>
-              <Text color="#001F58" fontSize="2xl" bold >Enter Address</Text>
-              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="JWright@villanova.edu" w="100%" autoCapitalize="none" h="50" fontSize="lg" onChangeText={(val) => setEmail(val)} />
+              <Text color="#001F58"fontSize="2xl" bold>Address</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="12345 NE Wildcat Avenue, Villanova, PA 19010" 
+                w="100%" autoCapitalize="none" h="50" fontSize="sm" 
+                  onChangeText={(val) => setAddress(val)} />
             </Box>
 
             <Box flexDirection="column" >
-              <Text style={styles.titles}>Type of house</Text>
-              <Text color="#001F58" fontSize="2xl" bold >Type of House</Text>
-              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="JWright@villanova.edu" 
-                      w="100%" autoCapitalize="none" h="50" fontSize="lg" 
-                        onChangeText={(val) => setHouseType(val)} />
+              <Text color="#001F58"fontSize="2xl" bold>House Type</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="ex: apartment, house, town-home"
+                w="100%" autoCapitalize="none" h="50" fontSize="lg"
+                onChangeText={(val) => setHouseType(val)} />
             </Box>
 
-            <Text style={styles.titles}>Landlord Contact Information</Text>
             <Box flexDirection="column" >
-              <Text color="#001F58" fontSize="2xl" bold >email or cell number</Text>
-              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="JWright@villanova.edu" 
-                      w="100%" autoCapitalize="none" h="50" fontSize="lg" 
-                        onChangeText={(val) => setLandlordContact(val)} />
+              <Text color="#001F58"fontSize="2xl" bold>Landlord Contact Information</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="email or cell"
+                w="100%" autoCapitalize="none" h="50" fontSize="lg"
+                onChangeText={(val) => setLandlordContact(val)} />
             </Box>
 
-            
-           
-            <TextInput
-              style={styles.input}
-              placeholder="ex: apartment, house, town-home"
-              keyboardType="email-address"
-              onChangeText={(val) => setHouseType(val)} />
-
-            
-            <TextInput
-              style={styles.input}
-              placeholder="email or cell number"
-              keyboardType="email-address"
-              onChangeText={(val) => setLandlordContact(val)} />
-
-            <Text style={styles.titles}>Monthly Price</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="$1,700"
-              keyboardType="numeric"
-              onChangeText={(val) => setPrice(val)} />
-
-            
+            <Box flexDirection="column" >
+              <Text color="#001F58"fontSize="2xl" bold>Monthly Price</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="$1,750"
+                w="100%" autoCapitalize="none" h="50"
+                onChangeText={(val) => setPrice(val)} />
+            </Box>
 
             <Box marginTop="9" >
-              <Button bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
-                onPress={() => onHouseEnterPress()} >{enterHouseText}
+              <Button alignSelf="center"
+                bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={enterButtonStyle} _text={{ color: '#001F58' }}
+                onPress={() => { onHouseEnterPress(); setEnterButtonStyle("none"); setSubmitButtonStyle("flex"); } }>
+                  Enter House Info
               </Button>
             </Box>
 
             <Box marginTop="9" >
-              <Button bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
-                onPress={() => onSubmitPress()} >{submitText}
+              <Button alignSelf="center"
+                bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
+                onPress={() => { onSubmitPress(); setEnterButtonStyle("flex"); setSubmitButtonStyle("none"); } }>
+                  Verify House Info
               </Button>
             </Box>
 
@@ -244,6 +234,7 @@ function isNumeric(str: string) {
     return false
   }
 }
+
 function phoneCheck(str: string) {
   for (var counter: number = 0; counter < str.length; counter++) {
     if (isNumeric(str.substring(counter, counter + 1)) == false) {
@@ -251,6 +242,11 @@ function phoneCheck(str: string) {
     }
   }
   return true
+}
+
+function priceToNum(str: string) {
+  var numPrice = parseInt(str)
+  return numPrice
 }
 
 function emailCheck(str: string) {
@@ -267,18 +263,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 0,
+    marginTop: 5,
   },
   header: {
     fontSize: 40,
-    margin: 3,
+    marginTop: 15,
     alignSelf: "center",
     fontFamily: 'AlNile-Bold',
     color: "#292828",
   },
   titles: {
     fontSize: 25,
-    margin: 3,
+    margin: 10,
     alignSelf: "center",
     fontFamily: 'AlNile-Bold',
   },
@@ -288,7 +284,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     backgroundColor: "#D9D9D9",
-    padding: 8,
+    padding: 4,
     margin: 10,
     width: 300,
   },
