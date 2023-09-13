@@ -4,7 +4,6 @@ import type { PropsWithChildren } from 'react';
 import {
   Alert,
   Button,
-  main
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -26,6 +25,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { NativeBaseProvider, Box, Input } from 'native-base';
 
 
 
@@ -33,8 +33,6 @@ import {
 export default function AddListing({ navigation }) {
 
   const [address, setAddress] = useState('');
-  const [bedrooms, setBedrooms] = useState('0');
-  const [bathrooms, setBathrooms] = useState('0');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   const [price, setPrice] = useState(0);
@@ -46,7 +44,7 @@ export default function AddListing({ navigation }) {
   const [submitText, setSubmitText] = useState('')
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
 
-  var houseItems = [address, bedrooms, bathrooms, houseType, landlordContact, price]
+  var houseItems = [address, houseType, landlordContact, price]
   var fieldsFilled: boolean
   for (var counter: number = 0; counter < 6; counter++) {
     if (ifFieldsEmpty(String(houseItems[counter]))) {
@@ -55,6 +53,7 @@ export default function AddListing({ navigation }) {
     }
     fieldsFilled = true
   }
+
   const onHouseEnterPress = () => {
     if (fieldsFilled) {
       var houseInfo = {
@@ -104,108 +103,120 @@ export default function AddListing({ navigation }) {
 
   var apiItems = [houseAddress, houseBedrooms, houseBathrooms]
   const onSubmitPress = () => {
-    if (apiCheck(apiItems)) {
-      //New Writing to data base Section
-      firestore()
-        .collection('Houses')
-        .add({
-          Address: houseAddress,
-          Beds: houseBedrooms,
-          Baths: houseBathrooms,
-          Price: price,
-          Type: houseType,
-          Landlord: landlordContact
-        })
-        .then(() => {
-          console.log('House added!');
-        });
+    if (phoneCheck(landlordContact) || emailCheck(landlordContact)) {
+
+      if (apiCheck(apiItems)) {
+        //New Writing to data base Section
+        firestore()
+          .collection('Houses')
+          .add({
+            Address: houseAddress,
+            Beds: houseBedrooms,
+            Baths: houseBathrooms,
+            Price: price,
+            Type: houseType,
+            Landlord: landlordContact
+          })
+          .then(() => {
+            console.log('House added!');
+          });
         navigation.navigate("ListingCreated")
+      }
+      else {
+        setSubmitText("")
+        setEnterHouseText("Enter House Info")
+        Alert.alert("Invalid address", "Please input a valid address and click \"Enter House Info\" again, then the submit button")
+      }
+
     }
     else {
-      setSubmitText("")
-      setEnterHouseText("Enter House Info")
-      Alert.alert("Invalid address","Please input a valid address and click \"Enter House Info\" again, then resubmit")
+      Alert.alert("Please input a cell as ###-####-#### or an valid email then click \"Enter House Info\" again, then the submit button")
+      Alert.alert("Landlord contact information is formatted incorrectly.")
     }
   }
 
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <Text style={styles.header}>Create a listing</Text>
+    <NativeBaseProvider>
+      <Box flex={1} bg="#ffffff" alignItems="center"  >
+        <View style={styles.container}>
+          <ScrollView>
+            <Text style={styles.header}>Create a listing</Text>
 
-        <Text style={styles.titles}>Address</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="800 E Lancaster Ave, Villanova, PA 19085"
-          keyboardType="email-address"
-          onChangeText={(val) => setAddress(val)} />
+            <Box flexDirection="column" >
+              <Text style={styles.titles}>Address</Text>
+              <Text color="#001F58" fontSize="2xl" bold >Enter Address</Text>
+              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="JWright@villanova.edu" w="100%" autoCapitalize="none" h="50" fontSize="lg" onChangeText={(val) => setEmail(val)} />
+            </Box>
 
-        <View style={styles.row}>
-          <Text style={styles.rowTitles}>Bedrooms</Text>
-          <Text style={styles.rowTitles}>Bathrooms</Text>
+            <Box flexDirection="column" >
+              <Text style={styles.titles}>Type of house</Text>
+              <Text color="#001F58" fontSize="2xl" bold >Type of House</Text>
+              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="JWright@villanova.edu" 
+                      w="100%" autoCapitalize="none" h="50" fontSize="lg" 
+                        onChangeText={(val) => setHouseType(val)} />
+            </Box>
+
+            <Text style={styles.titles}>Landlord Contact Information</Text>
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold >email or cell number</Text>
+              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" mx="2" placeholder="JWright@villanova.edu" 
+                      w="100%" autoCapitalize="none" h="50" fontSize="lg" 
+                        onChangeText={(val) => setLandlordContact(val)} />
+            </Box>
+
+            
+           
+            <TextInput
+              style={styles.input}
+              placeholder="ex: apartment, house, town-home"
+              keyboardType="email-address"
+              onChangeText={(val) => setHouseType(val)} />
+
+            
+            <TextInput
+              style={styles.input}
+              placeholder="email or cell number"
+              keyboardType="email-address"
+              onChangeText={(val) => setLandlordContact(val)} />
+
+            <Text style={styles.titles}>Monthly Price</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="$1,700"
+              keyboardType="numeric"
+              onChangeText={(val) => setPrice(val)} />
+
+            
+
+            <Box marginTop="9" >
+              <Button bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+                onPress={() => onHouseEnterPress()} >{enterHouseText}
+              </Button>
+            </Box>
+
+            <Box marginTop="9" >
+              <Button bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+                onPress={() => onSubmitPress()} >{submitText}
+              </Button>
+            </Box>
+
+            <Text alignSelf="center">©VUHousing 2023</Text>
+
+          </ScrollView>
         </View>
+      </Box>
 
-        <View style={styles.row}>
-          <TextInput
-            style={styles.BBRInput}
-            placeholder="3"
-            keyboardType="numeric"
-            onChangeText={(val) => setBedrooms(val)} />
-          <TextInput
-            style={styles.BBRInput}
-            placeholder="2.5"
-            keyboardType="numeric"
-            onChangeText={(val) => setBathrooms(val)} />
-        </View>
-
-        <Text style={styles.titles}>Type of house</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="ex: apartment, house, town-home"
-          keyboardType="email-address"
-          onChangeText={(val) => setHouseType(val)} />
-
-        <Text style={styles.titles}>Landlord Contact Information</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="email or cell number"
-          keyboardType="email-address"
-          onChangeText={(val) => setLandlordContact(val)} />
-
-        <Text style={styles.titles}>Monthly Price</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="$1,700"
-          keyboardType="numeric"
-          onChangeText={(val) => setPrice(val)} />
-
-        <TouchableOpacity onPress={() => onHouseEnterPress()} style={{
-          alignItems: 'center', padding: 20, marginVertical: 10,
-          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
-        }}>
-          <View >
-            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{enterHouseText}</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => onSubmitPress()} style={{
-          alignItems: 'center', padding: 20, marginVertical: 10,
-          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
-        }}>
-          <View >
-            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>{submitText}</Text>
-          </View>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+    </NativeBaseProvider>
   );
+
+
 }
 
 function apiCheck(arr: string[]) {
   for (var counter: number = 0; counter < arr.length; counter++) {
-   // console.log("GUHHHH")
-   // console.log(arr[counter])
+    // console.log("GUHHHH")
+    // console.log(arr[counter])
     if (arr[counter].includes("undefined") || arr[counter].length == 0) {
       return false
     }
@@ -222,193 +233,63 @@ function ifFieldsEmpty(str: string) {
   else {
     return false
   }
-
-  const [address, setAddress] = useState('');
-  const [bedrooms, setBedrooms] = useState('');
-  const [bathrooms, setBathrooms] = useState('');
-  const [houseType, setHouseType] = useState('');
-  const [landlordContact, setLandlordContact] = useState('');
-  const [price, setPrice] = useState('');
-
-  const [houseAddress, setHouseAddress] = useState('');
-  const [houseBedrooms, setHouseBedrooms] = useState('');
-  const [houseBathrooms, setHouseBathrooms] = useState('');
-    const houseInfo = {
-      method: 'GET',
-      url: 'https://zillow56.p.rapidapi.com/search',
-      params: {
-        location: address
-      },
-      headers: {
-        'X-RapidAPI-Key': 'd5fb5a5337msh26bd1b9bc6d6ce2p195aaejsn54c2c9427c9d',
-        'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
-      }
-    };
-    const onSubmitPress = () => {   
-        var streetAddress = ""
-        var city = ""
-        var state = ""
-        var zipcode = ""
-        axios
-        .request(houseInfo)
-        .then(function (response) {
-          streetAddress = response.data.abbreviatedAddress
-          city = response.data.city
-          state = response.data.state
-          zipcode = response.data.zipcode
-          setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
-          setHouseBathrooms(response.data.bathrooms)
-          setHouseBedrooms(response.data.bedrooms)
-          console.log(streetAddress)
-          console.log(houseBathrooms)
-      })
-        .catch(function (error) {
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-          } else if (error.request) {
-            console.log(error.request);
-          } else {
-            console.log('Error', error.message);
-          }
-        
-      }); 
-
-      var correctAddy = true
-      var correctBath = true;
-      var correctBed = true;
-      if (houseAddress == undefined) {
-        correctAddy = false
-        Alert.alert("Address Error", "This is not a valid address. Please try again")
-      }
-      if (parseInt(bathrooms) !== parseInt(houseBathrooms)) {
-        correctBath = false
-        Alert.alert("Bathroom Error", "This is not the number zillow lists. (" + houseBathrooms + ") Please adjust value and re-submit")
-      }
-      if (parseInt(bedrooms) !== parseInt(houseBedrooms)) {
-        correctBed = false
-        Alert.alert("Bedroom Error", "This is not the number zillow lists. (" + houseBedrooms + ") Please adjust value and re-submit")
-      }
-
-      if (correctAddy && correctBath && correctBed) {
-        Alert.alert("All good", "Insert database method call here")
-      }
-    }
-    
-    
-    
-
-  return (
-    <View style={styles.container}>
-      <ScrollView>
-        <Text style={styles.header}>Create a listing</Text>
-
-        <Text style={styles.titles}>Address</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="800 E Lancaster Ave, Villanova, PA 19085"
-          keyboardType="email-address"
-          onChangeText={(val) => setAddress(val)} />
-          
-          <View style={styles.row}>
-            <Text style={styles.rowTitles}>Bedrooms</Text>
-            <Text style={styles.rowTitles}>Bathrooms</Text>  
-          </View>
-
-          <View style={styles.row}>
-            <TextInput
-            style={styles.BBRInput}
-            placeholder="3"
-            keyboardType="numeric"
-            onChangeText={(val) => setBedrooms(val)}/>
-            <TextInput
-            style={styles.BBRInput}
-            placeholder="2.5"
-            keyboardType="numeric"
-            onChangeText={(val) => setBathrooms(val)}/>
-          </View>  
-        
-        <Text style={styles.titles}>Type of house</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="ex: apartment, house, town-home"
-          keyboardType="email-address"
-          onChangeText={(val) => setHouseType(val)} />
-
-        <Text style={styles.titles}>Landlord Contact Information</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="email or cell number"
-          keyboardType="email-address"
-          onChangeText={(val) => setLandlordContact(val)} />
-
-        <Text style={styles.titles}>Monthly Price</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="$1,700"
-          keyboardType="numeric"
-          onChangeText={(val) => setPrice(val)}/>
-          <TouchableOpacity onPress={() => onSubmitPress()} style={{
-            alignItems:'center',padding:20, marginVertical:10, 
-            borderWidth: 2, borderRadius: 20, borderColor:'black', backgroundColor:'#001E58'
-            }}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25, color: "#fff"}}>Submit</Text>
-            </View>
-          </TouchableOpacity>
-      </ScrollView>
-    </View>
-  );
 }
-      const styles = StyleSheet.create({
-        container: {
-          flex: 1, 
-          alignItems: 'center',
-          marginTop:10,
-        },
-          row: {
-            flexDirection: 'row', 
-            alignSelf: 'center',
-          },
-          header: {
-            fontSize: 40,
-            margin: 10,
-            alignSelf: "center",
-            fontFamily: 'Roboto',
-            color: "#292828",
-          },
-          titles: {
-            fontSize: 25,
-            margin: 10,
-            alignSelf: "center",
-            fontFamily:'AlNile-Bold',
-          },
-          rowTitles: {
-            fontSize: 25,
-            margin: 10,
-            marginRight:20,
-            marginLeft:20,
-            alignSelf: "center",
-            fontFamily:'AlNile-Bold',
-          },
-          BBRInput: {
-            borderWidth: 1,
-            borderRadius: 15,
-            borderColor: 'black',
-            padding: 8,
-            marginLeft: 30,
-            marginRight: 30,
-            width: 100,
-            backgroundColor: "#D9D9D9",
-          },
-          input: {
-            alignSelf: "center",
-            borderRadius: 15,
-            borderWidth: 1,
-            borderColor: 'black',
-            backgroundColor: "#D9D9D9",
-            padding: 8,
-            margin: 10,
-            width: 300,
-          },
-  });
+
+function isNumeric(str: string) {
+  if (str == "1" || str == "2" || str == "3" || str == "4"
+    || str == "5" || str == "6" || str == "7" || str == "8" || str == "9" || str == "0") {
+    return true
+  }
+  else {
+    return false
+  }
+}
+function phoneCheck(str: string) {
+  for (var counter: number = 0; counter < str.length; counter++) {
+    if (isNumeric(str.substring(counter, counter + 1)) == false) {
+      return false
+    }
+  }
+  return true
+}
+
+function emailCheck(str: string) {
+  var hasAt = false
+  for (var counter: number = 0; counter < str.length; counter++) {
+    if (str.substring(counter, counter + 1) == "@") {
+      hasAt = true
+    }
+  }
+  return hasAt
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    marginTop: 0,
+  },
+  header: {
+    fontSize: 40,
+    margin: 3,
+    alignSelf: "center",
+    fontFamily: 'AlNile-Bold',
+    color: "#292828",
+  },
+  titles: {
+    fontSize: 25,
+    margin: 3,
+    alignSelf: "center",
+    fontFamily: 'AlNile-Bold',
+  },
+  input: {
+    alignSelf: "center",
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'black',
+    backgroundColor: "#D9D9D9",
+    padding: 8,
+    margin: 10,
+    width: 300,
+  },
+});

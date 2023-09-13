@@ -57,10 +57,10 @@ export default function Signup({ navigation }) {
       validEmail = false
       Alert.alert('Invalid Email', invalidEmail);
     }
-    
-    var phoneFormat = phoneCheck(phone.substring(0,3)) && phone.substring(3,4).includes('-')
-      && phoneCheck(phone.substring(4,7)) && phone.substring(7,8).includes('-') 
-      && phoneCheck(phone.substring(8,12)) && phone.length == 12
+
+    var phoneFormat = phoneCheck(phone.substring(0, 3)) && phone.substring(3, 4).includes('-')
+      && phoneCheck(phone.substring(4, 7)) && phone.substring(7, 8).includes('-')
+      && phoneCheck(phone.substring(8, 12)) && phone.length == 12
 
     if (phoneFormat == false) {
       Alert.alert("Phone Number Error", "Invalid Phone Number Please input it using this format '###-###-####'")
@@ -71,10 +71,10 @@ export default function Signup({ navigation }) {
     }
 
   }
-  
+
 
   return (
-    
+
     <View>
       <ScrollView>
         <Text style={styles.header}>Create An Account</Text>
@@ -116,7 +116,7 @@ export default function Signup({ navigation }) {
           keyboardType="default"
           onChangeText={(val) => setPasswordRE(val)} />
         <TouchableOpacity onPress={() => onSubmitPress()} style={{
-          alignSelf: 'center', alignItems:"center", padding: 20, marginVertical: 10, width: 150,
+          alignSelf: 'center', alignItems: "center", padding: 10, marginVertical: 5, width: 150,
           borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
         }}>
           <View >
@@ -124,28 +124,28 @@ export default function Signup({ navigation }) {
           </View>
         </TouchableOpacity>
 
-      </ScrollView> 
+      </ScrollView>
     </View>
-    
+
   );
-  
+
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 60,
+    marginTop: 40,
   },
   header: {
     fontSize: 40,
-    margin: 10,
+    margin: 5,
     alignSelf: "center",
     fontFamily: 'Georgia',
     color: "#292828",
   },
   titles: {
     fontSize: 25,
-    margin: 10,
+    margin: 5,
     alignSelf: "center",
     fontFamily: 'AlNile-Bold',
   },
@@ -162,19 +162,19 @@ const styles = StyleSheet.create({
 });
 
 function isNumeric(str: string) {
-  if (str == "1" || str == "2" || str == "3" || str ==  "4" 
-  || str ==  "5" || str ==  "6" || str ==  "7" || str ==  "8" || str ==  "9" || str ==  "0") {
+  if (str == "1" || str == "2" || str == "3" || str == "4"
+    || str == "5" || str == "6" || str == "7" || str == "8" || str == "9" || str == "0") {
     return true
   }
   else {
     return false
   }
 }
-  function phoneCheck(str: string) {
-    for(var counter:number = 0; counter<str.length; counter++) {
-      if (isNumeric(str.substring(counter, counter+1)) == false) {
-        return false
-      }
+function phoneCheck(str: string) {
+  for (var counter: number = 0; counter < str.length; counter++) {
+    if (isNumeric(str.substring(counter, counter + 1)) == false) {
+      return false
     }
-    return true
   }
+  return true
+}
