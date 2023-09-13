@@ -32,19 +32,16 @@ export default function Signup({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRE, setPasswordRE] = useState('');
+  var passwordValid = false
 
   const onSubmitPress = () => {
     if (password !== passwordRE) {
       Alert.alert("Password Error", "Passwords don't match. Please try again")
     }
-<<<<<<< Updated upstream
-=======
     else if (password.length === 0) {
       passwordValid = false
       Alert.alert("Password Error", "Passwords field cannot be blank. Please fill this out")
-
     }
->>>>>>> Stashed changes
 
     var slicedEmail = email.slice(email.indexOf('@'))
     var invalidEmail = "This is not a valid email address. Please use a villanova.edu email to register."
