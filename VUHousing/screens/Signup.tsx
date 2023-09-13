@@ -32,20 +32,29 @@ export default function Signup({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRE, setPasswordRE] = useState('');
-  var passwordValid = false
 
+  var passwordValid = true
+  var validEmail = true
+  var validName = true
   const onSubmitPress = () => {
+    if (name.length === 0) {
+      validName = false
+      Alert.alert("Name Error", "User's name field cannot be empty. Please fill this out")
+    }
     if (password !== passwordRE) {
+      passwordValid = false
       Alert.alert("Password Error", "Passwords don't match. Please try again")
     }
     else if (password.length === 0) {
       passwordValid = false
       Alert.alert("Password Error", "Passwords field cannot be blank. Please fill this out")
+
     }
 
     var slicedEmail = email.slice(email.indexOf('@'))
     var invalidEmail = "This is not a valid email address. Please use a villanova.edu email to register."
     if (slicedEmail !== '@villanova.edu') {
+      validEmail = false
       Alert.alert('Invalid Email', invalidEmail);
     }
     
@@ -56,6 +65,11 @@ export default function Signup({ navigation }) {
     if (phoneFormat == false) {
       Alert.alert("Phone Number Error", "Invalid Phone Number Please input it using this format '###-###-####'")
     }
+
+    if (phoneFormat && passwordValid && validEmail && validName) {
+      navigation.navigate("HomeScreen")
+    }
+
   }
   
 

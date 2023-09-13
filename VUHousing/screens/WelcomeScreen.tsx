@@ -16,6 +16,9 @@ import {
   Text,
   useColorScheme,
   View,
+  Dimensions,
+  Image,
+  TouchableOpacity
 } from 'react-native';
 
 import {
@@ -57,23 +60,44 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 export default function Welcome({navigation}) {
-  return (
-    <View>
-        <Text>Home Screen</Text>
-        <Button title='Navigate to Signup Screen' 
-        onPress={()=>navigation.navigate("Signup")}></Button>
+  return ( 
+    //TODO: CHange Navigation
+    <View id="main">
+      <ScrollView>
+        <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
+         <Image
+         style={{height:125,width:125}}
+         source = {require('VUHousing/images/Logo.png')}
+         />
+        </View>
 
-        <Text>Add Listing Screen</Text>
-        <Button title='Navigate to Add Listing Screen' 
-        onPress={()=>navigation.navigate("AddListing")}></Button>
+        <View id="NovaHouse Title" style={{alignItems:'center'}}>
+          <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
+        </View>
+
+        <View id="Login/SignUp Buttons"style={{paddingVertical:50,paddingHorizontal:50}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('Signup')} style={{alignItems:'center',padding:20}}>
+            <View>
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>navigation.navigate('HomeScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
+            <View >
+              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
+
+       
+       
   );
 }
 
 const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
-    paddingHorizontal: 24,
   },
   sectionTitle: {
     fontSize: 24,
