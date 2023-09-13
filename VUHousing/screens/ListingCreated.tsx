@@ -1,15 +1,14 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
-    Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   TouchableOpacity,
   useColorScheme,
   View,
+  Dimensions
 } from 'react-native';
 
 import {
@@ -20,29 +19,24 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import { NativeBaseProvider, Text, Box, Input,Button,useToast } from "native-base";
+
 export default function ListingCreated({navigation}) {
 
     return (
-      <View id="main" style={{alignItems:'center'}}>
-
-          <View id="confirm_text" style={{paddingVertical:150}}>
-          <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:'black'}}>Thank you!</Text>
-          </View>
-
-          <View id="listing_buttons" style={{paddingVertical:30,paddingHorizontal:50}}>
-          <TouchableOpacity onPress={()=>navigation.navigate('HouseSearch')} style={{alignItems:'center',padding:10}}>
-            <View>
-              <Text style={{fontFamily:'AlNile-Bold', fontSize:25, borderWidth: 1, borderRadius: 20, borderColor:'blue', backgroundColor: "#001558", color:'white'}}>Search Other Listings</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('AddListing')} style={{alignItems:'center',padding:20, marginVertical:50}}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25, borderWidth: 1, borderRadius: 20, borderColor:'blue', backgroundColor: "#001558", color:'white'}}>Create Another Listing</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-      </View>
+      <NativeBaseProvider>
+        
+         <Box flex={1} bg="#ffffff" alignItems="center">
+          <Box marginTop="20"  width="75%" alignItems="center">
+          <Text fontSize="4xl" bold>Thank You!</Text>
+        </Box>
+        <Box marginTop="150" width="75%" alignItems="center">
+        
+        <Button onPress={()=>navigation.navigate("AddListing")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Add another listing</Button> 
+        <Button onPress={()=>navigation.navigate("HouseSearch")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Browse other listings</Button>
+        </Box>
+      </Box>
+      </NativeBaseProvider>
 
     );
   }
