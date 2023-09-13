@@ -1,24 +1,15 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
-    Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
+  TouchableOpacity,
   View,
   Dimensions,
-  Image,
-  TouchableOpacity
+  Image
 } from 'react-native';
 
 import {
@@ -27,90 +18,32 @@ import {
   Header,
   LearnMoreLinks,
   ReloadInstructions,
+  Center
 } from 'react-native/Libraries/NewAppScreen';
+import { NativeBaseProvider, Text, Box, Input,Button,useToast } from "native-base";
+import LoginScreen from './LoginScreen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
-export default function Welcome({navigation}) {
-  return ( 
-    //TODO: CHange Navigation
-    <View id="main">
-      <ScrollView>
-        <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
+
+export default function WelcomeScreen({navigation}) {
+
+
+    return (
+      <NativeBaseProvider>
+          
+         <Box flex={1} bg="#ffffff" alignItems="center">
+          <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:150}}>
          <Image
          style={{height:125,width:125}}
          source = {require('VUHousing/images/Logo.png')}
          />
         </View>
-
-        <View id="NovaHouse Title" style={{alignItems:'center'}}>
-          <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
-        </View>
-
-        <View id="Login/SignUp Buttons"style={{paddingVertical:50,paddingHorizontal:50}}>
-          <TouchableOpacity onPress={()=>navigation.navigate('Signup')} style={{alignItems:'center',padding:20}}>
-            <View>
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Sign Up</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('LoginScreen')} style={{alignItems:'center',padding:20, marginVertical:5}}>
-            <View >
-              <Text style={{fontFamily:'AlNile-Bold',fontSize:25}}>Login</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
-
-       
-       
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-
+        <Text style={{fontFamily:"AlNile-Bold",fontSize:50,color:"#001F58"}}>Nova House</Text>
+        <Button onPress={()=>navigation.navigate("LoginScreen")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Login</Button>
+        <Button onPress={()=>navigation.navigate("Signup")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Sign Up</Button>
+      </Box>
+      </NativeBaseProvider>
+     
+    );
+  }
