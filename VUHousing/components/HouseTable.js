@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { DataTable } from 'react-native-paper';
   
-const TableExample = () => {
+const HouseTable = () => {
   return (
     <DataTable style={styles.container}>
       <DataTable.Header style={styles.tableHeader}>
@@ -15,8 +15,11 @@ const TableExample = () => {
     </DataTable>
   );
 };
+
+
   
-export default TableExample;
+export default HouseTable;
+
   
 const styles = StyleSheet.create({
   container: {

@@ -2,17 +2,16 @@ import React, { useRef, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
   Alert,
-  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
+
+import firestore from '@react-native-firebase/firestore';
+import { DataTable } from 'react-native-paper';
 
 import {
   Colors,
@@ -21,9 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
-
-
+import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
 export default function Signup({ navigation }) {
 
@@ -36,6 +33,7 @@ export default function Signup({ navigation }) {
   var passwordValid = true
   var validEmail = true
   var validName = true
+
   const onSubmitPress = () => {
     if (name.length === 0) {
       validName = false
@@ -45,7 +43,7 @@ export default function Signup({ navigation }) {
       passwordValid = false
       Alert.alert("Password Error", "Passwords don't match. Please try again")
     }
-    else if (password.length == 0) {
+    else if (password.length === 0) {
       passwordValid = false
       Alert.alert("Password Error", "Passwords field cannot be blank. Please fill this out")
 
@@ -57,96 +55,99 @@ export default function Signup({ navigation }) {
       validEmail = false
       Alert.alert('Invalid Email', invalidEmail);
     }
-    
-    var phoneFormat = phoneCheck(phone.substring(0,3)) && phone.substring(3,4).includes('-')
-      && phoneCheck(phone.substring(4,7)) && phone.substring(7,8).includes('-') 
-      && phoneCheck(phone.substring(8,12)) && phone.length == 12
+
+    var phoneFormat = phoneCheck(phone.substring(0, 3)) && phone.substring(3, 4).includes('-')
+      && phoneCheck(phone.substring(4, 7)) && phone.substring(7, 8).includes('-')
+      && phoneCheck(phone.substring(8, 12)) && phone.length == 12
 
     if (phoneFormat == false) {
       Alert.alert("Phone Number Error", "Invalid Phone Number Please input it using this format '###-###-####'")
     }
 
     if (phoneFormat && passwordValid && validEmail && validName) {
-      navigation.navigate("HomeScreen")
+      //New Writing to data base Section
+      firestore()
+        .collection('Users')
+        .add({
+          Name: name,
+          Email: email,
+          PhoneNumber: phone,
+          Password: password
+        })
+        .then(() => {
+          console.log('House added!');
+          navigation.navigate("HomeScreen")
+        });
     }
-  }
-  
+    else {
+      Alert.alert("Invalid input", "Please try to fill out this form again")
+    }
+}
 
-  return (
-    
-    <View>
-      <ScrollView>
-        <Text style={styles.header}>Create An Account</Text>
 
-        <Text style={styles.titles}>Full Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Jay Wright"
-          keyboardType="default"
-          onChangeText={(val) => setName(val)} />
+return (
+  <NativeBaseProvider>
+    <Box flex={1} bg="#ffffff" alignItems="center"  >
+      <View>
+        <ScrollView>
+          <Text color="#001F58" fontSize="2xl" bold>Create an Account</Text>
 
-        <Text style={styles.titles}>Enter Phone Number</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="425-391-1665"
-          keyboardType="numeric"
-          onChangeText={(val) => setPhoneNumber(val)} />
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Full Name</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Jay Wright"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setName(val)} />
+          </Box>
 
-        <Text style={styles.titles}>Enter Villanova Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="jwright@villanova.edu"
-          keyboardType="default"
-          onChangeText={(val) => setEmail(val)} />
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Phone Number</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="###-###-####"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setPhoneNumber(val)} />
+          </Box>
 
-        <Text style={styles.titles}>Enter Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Go Cats!"
-          secureTextEntry={true}
-          keyboardType="default"
-          onChangeText={(val) => setPassword(val)} />
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Enter Villanova Email</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="jwright@villanova.edu"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setEmail(val)} />
+          </Box>
 
-        <Text style={styles.titles}>Re-enter Password</Text>
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          placeholder='Go Cats!'
-          keyboardType="default"
-          onChangeText={(val) => setPasswordRE(val)} />
-        <TouchableOpacity onPress={() => onSubmitPress()} style={{
-          alignSelf: 'center', alignItems:"center", padding: 20, marginVertical: 10, width: 150,
-          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
-        }}>
-          <View >
-            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>Submit</Text>
-          </View>
-        </TouchableOpacity>
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Enter Password</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setPassword(val)} />
+          </Box>
 
-      </ScrollView> 
-    </View>
-    
-  );
-  
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Re-Enter Password</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setPasswordRE(val)} />
+          </Box>
+
+          <Box marginTop="9" >
+            <Button alignSelf="center"
+              bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+              onPress={() => { onSubmitPress() }}>
+              Submit
+            </Button>
+          </Box>
+
+        </ScrollView>
+      </View>
+    </Box>
+  </NativeBaseProvider>
+
+);
+
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 60,
-  },
-  header: {
-    fontSize: 40,
-    margin: 10,
-    alignSelf: "center",
-    fontFamily: 'Georgia',
-    color: "#292828",
-  },
-  titles: {
-    fontSize: 25,
-    margin: 10,
-    alignSelf: "center",
-    fontFamily: 'AlNile-Bold',
+    marginTop: 40,
   },
   input: {
     alignSelf: "center",
@@ -161,19 +162,19 @@ const styles = StyleSheet.create({
 });
 
 function isNumeric(str: string) {
-  if (str == "1" || str == "2" || str == "3" || str ==  "4" 
-  || str ==  "5" || str ==  "6" || str ==  "7" || str ==  "8" || str ==  "9" || str ==  "0") {
+  if (str == "1" || str == "2" || str == "3" || str == "4"
+    || str == "5" || str == "6" || str == "7" || str == "8" || str == "9" || str == "0") {
     return true
   }
   else {
     return false
   }
 }
-  function phoneCheck(str: string) {
-    for(var counter:number = 0; counter<str.length; counter++) {
-      if (isNumeric(str.substring(counter, counter+1)) == false) {
-        return false
-      }
+function phoneCheck(str: string) {
+  for (var counter: number = 0; counter < str.length; counter++) {
+    if (isNumeric(str.substring(counter, counter + 1)) == false) {
+      return false
     }
-    return true
   }
+  return true
+}
