@@ -51,6 +51,7 @@ function HouseSearch({navigation}) {
 
     return (
     <View>
+      <ScrollView>
           <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>House Search</Text>
           
         <Button title='Filter' 
@@ -69,8 +70,8 @@ function HouseSearch({navigation}) {
       )}
     />
         
-        
-      </View>   
+      </ScrollView>
+    </View>   
 
       
     );

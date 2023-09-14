@@ -37,7 +37,8 @@ export default function AddListing({ navigation }) {
 
   const [houseAddress, setHouseAddress] = useState('');
   const [houseBedrooms, setHouseBedrooms] = useState('');
-  const [houseBathrooms, setHouseBathrooms] = useState('');
+  const [houseBathrooms, setHouseBathrooms] = useState('')
+  const [apiPrice, setAPIPrice] = useState('')
 
   const [submitText, setSubmitText] = useState('')
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
@@ -45,7 +46,6 @@ export default function AddListing({ navigation }) {
   
 
   var houseItems = [address, houseType, landlordContact, price]
-  var fieldsFilled: boolean
   for (var counter: number = 0; counter < 6; counter++) {
     if (ifFieldsEmpty(String(houseItems[counter]))) {
       fieldsFilled = false
@@ -56,44 +56,44 @@ export default function AddListing({ navigation }) {
 
   var onHouseEnterPress = () => {
     if (fieldsFilled) {
-      // var houseInfo = {
-      //   method: 'GET',
-      //   url: 'https://zillow56.p.rapidapi.com/search',
-      //   params: {
-      //     location: address
-      //   },
-      //   headers: {
-      //     'X-RapidAPI-Key': '7f09fbb57amsha4e11a8558271ccp17ff92jsn86612c501041',
-      //     'X-RapidAPI-Host': 'zillow56.p.rapidapi.com'
-      //   }
-      // };
+      var houseInfo = {
+          method: 'GET',
+          url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
+          params: {
+            propertyaddress: address
+          },
+          headers: {
+            'X-RapidAPI-Key': '03118fad58msh6696f81564e5c1dp135a90jsn0cee7fcf5d12',
+            'X-RapidAPI-Host': 'zillow-working-api.p.rapidapi.com'
+          }
+      };
 
-      // axios
-      //   .request(houseInfo)
-      //   .then(function (response) {
-      //     var streetAddress = response.data.abbreviatedAddress
-      //     var city = response.data.city
-      //     var state = response.data.state
-      //     var zipcode = response.data.zipcode
-      //     var resBath = response.data.bathrooms
-      //     var resBed = response.data.bedrooms
+      axios
+        .request(houseInfo)
+        .then(function (response) {
+          var streetAddress = response.data.propertyDetails.abbreviatedAddress
+          var city = response.data.propertyDetails.city
+          var state = response.data.propertyDetails.state
+          var zipcode = response.data.propertyDetails.address.zipcode
+          var resBath = response.data.propertyDetails.bathrooms
+          var resBed = response.data.propertyDetails.bedrooms
+          var apiPrice = response.data.propertyDetails.price
 
-      //     setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
-      //     setHouseBathrooms(resBath)
-      //     setHouseBedrooms(resBed)
-      //   })
-      //   .catch(function (error) {
-      //     if (error.response) {
-      //       console.log("Error Code: " + error.response.status);
-      //       console.log(error.response.data);
-      //     } else if (error.request) {
-      //       console.log(error.request);
-      //     } else {
-      //       console.log('Error', error.message);
-      //     }
-      //   });
-      setSubmitText("Submit House")
-      setEnterHouseText("")
+          setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
+          setHouseBathrooms(resBath)
+          setHouseBedrooms(resBed)
+          setAPIPrice(apiPrice)
+        })
+        .catch(function (error) {
+          if (error.response) {
+            console.log("Error Code: " + error.response.status);
+            console.log(error.response.data);
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+        });
     }
     else {
       Alert.alert("Field Error", "One or more fields is blank. Please fill all fields out, then resubmit")
@@ -101,36 +101,35 @@ export default function AddListing({ navigation }) {
 
   }
 
-  var apiItems = [houseAddress, houseBedrooms, houseBathrooms]
+  var apiItems = [houseAddress, houseBedrooms, houseBathrooms, apiPrice]
   var onSubmitPress = () => {
     var phoneFormat = phoneCheck(landlordContact.substring(0, 3)) && landlordContact.substring(3, 4).includes('-')
       && phoneCheck(landlordContact.substring(4, 7)) && landlordContact.substring(7, 8).includes('-')
       && phoneCheck(landlordContact.substring(8, 12)) && landlordContact.length == 12
     if (phoneFormat || emailCheck(landlordContact)) {
 
-      // if (apiCheck(apiItems)) {
-      //   //New Writing to data base Section
-      //   firestore()
-      //     .collection('Houses')
-      //     .add({
-      //       Address: houseAddress,
-      //       Beds: houseBedrooms,
-      //       Baths: houseBathrooms,
-      //       Price: price,
-      //       Type: houseType,
-      //       Landlord: landlordContact
-      //     })
-      //     .then(() => {
-      //       console.log('House added!');
-      //     });
-      //   navigation.navigate("ListingCreated")
-      // }
-      // else {
-      //   setSubmitText("")
-      //   setEnterHouseText("Enter House Info")
-      //   Alert.alert("Invalid address", "Please input a valid address and click \"Enter House Info\" again, then the verify button")
-      // }
-      navigation.navigate("ListingCreated")
+      if (apiCheck(apiItems)) {
+        //New Writing to data base Section
+        firestore()
+          .collection('Houses')
+          .add({
+            Address: houseAddress,
+            Beds: houseBedrooms,
+            Baths: houseBathrooms,
+            Price: price,
+            Type: houseType,
+            Landlord: landlordContact
+          })
+          .then(() => {
+            console.log('House added!');
+          });
+        navigation.navigate("ListingCreated")
+      }
+      else {
+        setSubmitText("")
+        setEnterHouseText("Enter House Info")
+        Alert.alert("Invalid address", "Please input a valid address and click \"Enter House Info\" again, then the verify button")
+      }
     }
     else {
       Alert.alert("Please input a cell as ###-###-#### or a valid email then click \"Enter House Info\" again, then the verify button")
