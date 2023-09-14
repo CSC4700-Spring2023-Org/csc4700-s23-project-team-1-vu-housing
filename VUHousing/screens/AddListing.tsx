@@ -55,7 +55,6 @@ export default function AddListing({ navigation }) {
   }
 
   var onHouseEnterPress = () => {
-    console.log("GUHHH")
     if (fieldsFilled) {
       // var houseInfo = {
       //   method: 'GET',
@@ -109,29 +108,29 @@ export default function AddListing({ navigation }) {
       && phoneCheck(landlordContact.substring(8, 12)) && landlordContact.length == 12
     if (phoneFormat || emailCheck(landlordContact)) {
 
-      if (apiCheck(apiItems)) {
-        //New Writing to data base Section
-        firestore()
-          .collection('Houses')
-          .add({
-            Address: houseAddress,
-            Beds: houseBedrooms,
-            Baths: houseBathrooms,
-            Price: price,
-            Type: houseType,
-            Landlord: landlordContact
-          })
-          .then(() => {
-            console.log('House added!');
-          });
-        navigation.navigate("ListingCreated")
-      }
-      else {
-        setSubmitText("")
-        setEnterHouseText("Enter House Info")
-        Alert.alert("Invalid address", "Please input a valid address and click \"Enter House Info\" again, then the verify button")
-      }
-
+      // if (apiCheck(apiItems)) {
+      //   //New Writing to data base Section
+      //   firestore()
+      //     .collection('Houses')
+      //     .add({
+      //       Address: houseAddress,
+      //       Beds: houseBedrooms,
+      //       Baths: houseBathrooms,
+      //       Price: price,
+      //       Type: houseType,
+      //       Landlord: landlordContact
+      //     })
+      //     .then(() => {
+      //       console.log('House added!');
+      //     });
+      //   navigation.navigate("ListingCreated")
+      // }
+      // else {
+      //   setSubmitText("")
+      //   setEnterHouseText("Enter House Info")
+      //   Alert.alert("Invalid address", "Please input a valid address and click \"Enter House Info\" again, then the verify button")
+      // }
+      navigation.navigate("ListingCreated")
     }
     else {
       Alert.alert("Please input a cell as ###-###-#### or a valid email then click \"Enter House Info\" again, then the verify button")

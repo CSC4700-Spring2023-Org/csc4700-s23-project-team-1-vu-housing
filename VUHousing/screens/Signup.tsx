@@ -2,17 +2,16 @@ import React, { useRef, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
   Alert,
-  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
+
+import firestore from '@react-native-firebase/firestore';
+import { DataTable } from 'react-native-paper';
 
 import {
   Colors,
@@ -21,9 +20,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
-
-
+import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
 export default function Signup({ navigation }) {
 
@@ -36,6 +33,7 @@ export default function Signup({ navigation }) {
   var passwordValid = true
   var validEmail = true
   var validName = true
+
   const onSubmitPress = () => {
     if (name.length === 0) {
       validName = false
@@ -67,67 +65,82 @@ export default function Signup({ navigation }) {
     }
 
     if (phoneFormat && passwordValid && validEmail && validName) {
-      navigation.navigate("HomeScreen")
+      //New Writing to data base Section
+      firestore()
+        .collection('Users')
+        .add({
+          Name: name,
+          Email: email,
+          PhoneNumber: phone,
+          Password: password
+        })
+        .then(() => {
+          console.log('House added!');
+          navigation.navigate("HomeScreen")
+        });
     }
+    else {
+      Alert.alert("Invalid input", "Please try to fill out this form again")
+    }
+}
 
-  }
 
+return (
+  <NativeBaseProvider>
+    <Box flex={1} bg="#ffffff" alignItems="center"  >
+      <View>
+        <ScrollView>
+          <Text color="#001F58" fontSize="2xl" bold>Create an Account</Text>
 
-  return (
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Full Name</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Jay Wright"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setName(val)} />
+          </Box>
 
-    <View>
-      <ScrollView>
-        <Text style={styles.header}>Create An Account</Text>
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Phone Number</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="###-###-####"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setPhoneNumber(val)} />
+          </Box>
 
-        <Text style={styles.titles}>Full Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Jay Wright"
-          keyboardType="default"
-          onChangeText={(val) => setName(val)} />
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Enter Villanova Email</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="jwright@villanova.edu"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setEmail(val)} />
+          </Box>
 
-        <Text style={styles.titles}>Enter Phone Number</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="425-391-1665"
-          keyboardType="numeric"
-          onChangeText={(val) => setPhoneNumber(val)} />
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Enter Password</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setPassword(val)} />
+          </Box>
 
-        <Text style={styles.titles}>Enter Villanova Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="jwright@villanova.edu"
-          keyboardType="default"
-          onChangeText={(val) => setEmail(val)} />
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Re-Enter Password</Text>
+            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
+              w="100%" autoCapitalize="none" h="50" fontSize="sm"
+              onChangeText={(val) => setPasswordRE(val)} />
+          </Box>
 
-        <Text style={styles.titles}>Enter Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Go Cats!"
-          secureTextEntry={true}
-          keyboardType="default"
-          onChangeText={(val) => setPassword(val)} />
+          <Box marginTop="9" >
+            <Button alignSelf="center"
+              bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+              onPress={() => { onSubmitPress() }}>
+              Submit
+            </Button>
+          </Box>
 
-        <Text style={styles.titles}>Re-enter Password</Text>
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          placeholder='Go Cats!'
-          keyboardType="default"
-          onChangeText={(val) => setPasswordRE(val)} />
-        <TouchableOpacity onPress={() => onSubmitPress()} style={{
-          alignSelf: 'center', alignItems: "center", padding: 10, marginVertical: 5, width: 150,
-          borderWidth: 2, borderRadius: 20, borderColor: 'black', backgroundColor: '#001E58'
-        }}>
-          <View >
-            <Text style={{ fontFamily: 'AlNile-Bold', fontSize: 25, color: "#fff" }}>Submit</Text>
-          </View>
-        </TouchableOpacity>
+        </ScrollView>
+      </View>
+    </Box>
+  </NativeBaseProvider>
 
-      </ScrollView>
-    </View>
-
-  );
+);
 
 }
 const styles = StyleSheet.create({
@@ -135,19 +148,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginTop: 40,
-  },
-  header: {
-    fontSize: 40,
-    margin: 5,
-    alignSelf: "center",
-    fontFamily: 'Georgia',
-    color: "#292828",
-  },
-  titles: {
-    fontSize: 25,
-    margin: 5,
-    alignSelf: "center",
-    fontFamily: 'AlNile-Bold',
   },
   input: {
     alignSelf: "center",
