@@ -2,7 +2,6 @@ import React from 'react';
 import type {PropsWithChildren} from 'react';
 import { useState } from "react";
 import { 
-  Button,
   SafeAreaView,
   ScrollView,
   VirtualizedList,
@@ -13,7 +12,7 @@ import {
   FlatList,
 } from 'react-native';
 
-import {NativeBaseProvider, Text, Box, Input, useToast} from "native-base";
+import {NativeBaseProvider, Text, Box, Input, useToast, Button} from "native-base";
 
 
 import {
@@ -53,7 +52,7 @@ function HouseSearch({navigation}) {
         <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>House Search</Text>
             
         <Button title='Filter' 
-          style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}>Filter Button</Button>
+          style={{alignItems: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}>Filter Button</Button>
           <TableExample></TableExample>
 
           <FlatList
