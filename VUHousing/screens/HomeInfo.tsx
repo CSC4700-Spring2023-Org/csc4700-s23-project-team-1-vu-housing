@@ -7,13 +7,13 @@
 
 import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
-import {
-    Button,
+import 
+{
+  Text,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
   Dimensions,
@@ -22,6 +22,8 @@ import {
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
+
+import {NativeBaseProvider, Box, Input, Button, useToast} from "native-base"; 
 
 import {
   Colors,
@@ -61,7 +63,7 @@ export default function HomeInfo({route,navigation}) {
   
 
   return (
-    //TODO: CHange Navigation
+  <NativeBaseProvider>  
     <View id="main">
          <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:100}}>
          <Image
@@ -95,10 +97,8 @@ export default function HomeInfo({route,navigation}) {
             </View>      
         </View>
 
-    </View>
-
-       
-       
+    </View>     
+  </NativeBaseProvider>     
   );
 }
 

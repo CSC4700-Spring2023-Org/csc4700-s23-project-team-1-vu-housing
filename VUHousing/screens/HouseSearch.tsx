@@ -1,19 +1,19 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import { useState } from "react";
-import {
-    Button,
+import { 
+  Button,
   SafeAreaView,
   ScrollView,
   VirtualizedList,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
   FlatList,
 } from 'react-native';
 
+import {NativeBaseProvider, Text, Box, Input, useToast} from "native-base";
 
 
 import {
@@ -48,27 +48,27 @@ function HouseSearch({navigation}) {
 
 
     return (
-    <View>
-          <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>House Search</Text>
-          
+    <NativeBaseProvider>
+      <View>
+        <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>House Search</Text>
+            
         <Button title='Filter' 
-         style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}></Button>
-         <TableExample></TableExample>
+          style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}>Filter Button</Button>
+          <TableExample></TableExample>
 
-         <FlatList
+          <FlatList
           data={users}
           renderItem={({ item }) => (
-         <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
+          <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
           <DataTable.Cell>{item.Address}</DataTable.Cell>
           <DataTable.Cell>{item.Beds}</DataTable.Cell>
           <DataTable.Cell>{item.Baths}</DataTable.Cell>
           <DataTable.Cell>{item.Price}</DataTable.Cell>
-         </DataTable.Row>
-      )}
-    />
-      </View>   
-
-      
+          </DataTable.Row>
+        )}
+      />
+      </View>
+    </NativeBaseProvider>         
     );
   }
 
