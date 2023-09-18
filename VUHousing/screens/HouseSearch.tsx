@@ -49,7 +49,7 @@ function HouseSearch({navigation}) {
     return (
     <NativeBaseProvider>
       <View>
-        <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>House Search</Text>
+        <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 35, lineHeight: 35}}>House Search</Text>
             
         <Button title='Filter' 
           style={{alignItems: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}>Filter Button</Button>
