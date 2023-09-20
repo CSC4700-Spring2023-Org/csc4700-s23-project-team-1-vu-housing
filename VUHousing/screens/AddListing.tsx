@@ -39,11 +39,12 @@ export default function AddListing({ navigation }) {
   const [houseBedrooms, setHouseBedrooms] = useState('');
   const [houseBathrooms, setHouseBathrooms] = useState('')
   const [apiPrice, setAPIPrice] = useState('')
+  const [houseStreetView, setHouseStreetView] = useState('')
 
   const [submitText, setSubmitText] = useState('')
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
 
-  
+  var fieldsFilled = false
 
   var houseItems = [address, houseType, landlordContact, price]
   for (var counter: number = 0; counter < 6; counter++) {
@@ -78,11 +79,15 @@ export default function AddListing({ navigation }) {
           var resBath = response.data.propertyDetails.bathrooms
           var resBed = response.data.propertyDetails.bedrooms
           var apiPrice = response.data.propertyDetails.price
+          var houseStreetView = response.data.propertyDetails.originalPhotos[0].mixedSources.jpeg[0].url
+
+          console.log(houseStreetView)
 
           setHouseAddress(streetAddress + " " + city + " " + state + " " + zipcode)
           setHouseBathrooms(resBath)
           setHouseBedrooms(resBed)
           setAPIPrice(apiPrice)
+          setHouseStreetView(houseStreetView)
         })
         .catch(function (error) {
           if (error.response) {
@@ -101,7 +106,7 @@ export default function AddListing({ navigation }) {
 
   }
 
-  var apiItems = [houseAddress, houseBedrooms, houseBathrooms, apiPrice]
+  var apiItems = [houseAddress, houseBedrooms, houseBathrooms, apiPrice, houseStreetView]
   var onSubmitPress = () => {
     var phoneFormat = phoneCheck(landlordContact.substring(0, 3)) && landlordContact.substring(3, 4).includes('-')
       && phoneCheck(landlordContact.substring(4, 7)) && landlordContact.substring(7, 8).includes('-')
@@ -118,10 +123,12 @@ export default function AddListing({ navigation }) {
             Baths: houseBathrooms,
             Price: price,
             Type: houseType,
-            Landlord: landlordContact
+            Landlord: landlordContact,
+            StreetView: houseStreetView
           })
           .then(() => {
             console.log('House added!');
+            console.log(houseStreetView)
           });
         navigation.navigate("ListingCreated")
       }
