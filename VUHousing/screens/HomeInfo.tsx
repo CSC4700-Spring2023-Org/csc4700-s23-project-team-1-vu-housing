@@ -7,13 +7,12 @@
 
 import React, { useState } from 'react';
 import type {PropsWithChildren} from 'react';
-import {
-    Button,
+import 
+{
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
   Dimensions,
@@ -22,6 +21,8 @@ import {
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
+
+import {NativeBaseProvider, Box,  Text,Input, Button, useToast} from "native-base"; 
 
 import {
   Colors,
@@ -61,7 +62,7 @@ export default function HomeInfo({route,navigation}) {
   
 
   return (
-    //TODO: CHange Navigation
+  <NativeBaseProvider>  
     <View id="main">
          <View id="LogoBand" style={{backgroundColor:'#0085FF',width:Dimensions.get('screen').width,alignItems:'center',marginTop:100}}>
          <Image
@@ -71,12 +72,12 @@ export default function HomeInfo({route,navigation}) {
         </View>
 
         <View id="TextInformation">
-            <View id="Address information" style={{margin:20}}>
+            <View id="Address information" style={{margin:10}}>
                 <Text style={styles.headers}>Address:</Text>
                 <Text style={styles.information}>{address}</Text>
             </View>   
             <View id ="BedAndBath" style={{flexDirection:'row', margin:10}}>
-                <View id="bed"style={{marginLeft:10,marginRight:45}}>
+                <View id="bed"style={{marginRight:45}}>
                     <Text style={styles.headers}>Beds</Text>
                     <Text style={styles.information}>{beds}</Text>
                 </View>
@@ -95,10 +96,8 @@ export default function HomeInfo({route,navigation}) {
             </View>      
         </View>
 
-    </View>
-
-       
-       
+    </View>     
+  </NativeBaseProvider>     
   );
 }
 
@@ -108,11 +107,13 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
+    lineHeight: 24,
     fontWeight: '600',
   },
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
+    lineHeight: 18,
     fontWeight: '400',
   },
   highlight: {
@@ -120,10 +121,12 @@ const styles = StyleSheet.create({
   },
   headers:{
     fontFamily:"AlNile-Bold",
-    fontSize:35
+    fontSize:35,
+    lineHeight:35,
   },
   information:{
     fontFamily:"AlNile",
+    lineHeight:20, 
     fontSize:20
   }
 });
