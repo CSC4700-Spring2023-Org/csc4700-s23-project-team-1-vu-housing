@@ -6,14 +6,14 @@
  */
 
 import React, { useState } from 'react';
-import type { PropsWithChildren } from 'react';
-import {
-  Button,
+
+import type {PropsWithChildren} from 'react';
+import 
+{
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
   Dimensions,
@@ -22,6 +22,8 @@ import {
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
+
+import {NativeBaseProvider, Box,  Text,Input, Button, useToast} from "native-base"; 
 
 import {
   Colors,
@@ -64,7 +66,7 @@ export default function HomeInfo({ route, navigation }) {
 
 
   return (
-    //TODO: CHange Navigation
+  <NativeBaseProvider>  
     <View id="main">
       <View id="LogoBand" style={{ backgroundColor: '#0085FF', width: Dimensions.get('screen').width, 
           alignItems: 'center', marginTop: 100 }}>
@@ -72,10 +74,30 @@ export default function HomeInfo({ route, navigation }) {
       </View>
 
 
-      <View id="TextInformation">
-        <View id="Address information" style={{ margin: 20 }}>
-          <Text style={styles.headers}>Address:</Text>
-          <Text style={styles.information}>{address}</Text>
+        <View id="TextInformation">
+            <View id="Address information" style={{margin:10}}>
+                <Text style={styles.headers}>Address:</Text>
+                <Text style={styles.information}>{address}</Text>
+            </View>   
+            <View id ="BedAndBath" style={{flexDirection:'row', margin:10}}>
+                <View id="bed"style={{marginRight:45}}>
+                    <Text style={styles.headers}>Beds</Text>
+                    <Text style={styles.information}>{beds}</Text>
+                </View>
+                <View id="Bath" style={{marginLeft:45}}>
+                    <Text style={styles.headers}>Bath</Text>
+                    <Text style={styles.information}>{baths}</Text>
+                </View>
+            </View>
+            <View id="price" style={{margin:10}}>
+                <Text style={styles.headers}>Price</Text>
+                <Text style={styles.information}>{price}</Text>
+            </View>  
+            <View id="landlord" style={{margin:10}}>
+                <Text style={styles.headers}>Landlord Contact</Text>
+                <Text style={styles.information}>{landlord}</Text>
+            </View>      
+          
         </View>
         <View id="BedAndBath" style={{ flexDirection: 'row', margin: 10 }}>
           <View id="bed" style={{ marginLeft: 10, marginRight: 45 }}>
@@ -96,11 +118,8 @@ export default function HomeInfo({ route, navigation }) {
           <Text style={styles.information}>{landlord}</Text>
         </View>
       </View>
-
-    </View>
-
-
-
+    </View>     
+  </NativeBaseProvider>     
   );
 }
 
@@ -114,11 +133,13 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
+    lineHeight: 24,
     fontWeight: '600',
   },
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
+    lineHeight: 18,
     fontWeight: '400',
   },
   highlight: {
@@ -131,6 +152,7 @@ const styles = StyleSheet.create({
   information: {
     fontFamily: "AlNile",
     fontSize: 20
+
   }
 });
 

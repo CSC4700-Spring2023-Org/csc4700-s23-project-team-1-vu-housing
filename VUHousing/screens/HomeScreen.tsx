@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -6,6 +6,7 @@ import {
   StatusBar,
   StyleSheet,
   useColorScheme,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -22,6 +23,8 @@ import { NativeBaseProvider, Text, Box, Input,Button,useToast } from "native-bas
 
 
 export default function HomeScreen({navigation}) {
+
+  const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
 
     return (
       <NativeBaseProvider>

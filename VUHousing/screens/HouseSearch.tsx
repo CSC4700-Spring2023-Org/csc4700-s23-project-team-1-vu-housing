@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
+import type {PropsWithChildren} from 'react';
+import { useState } from "react";
+import { 
+  SafeAreaView,
   Text,
+  useColorScheme,
   View,
   Image,
   FlatList,
 } from 'react-native';
+
+
+import {NativeBaseProvider, Text, Box, Input, useToast, Button} from "native-base";
+
+
+import {
+  Colors,
+  DebugInstructions,
+  Header,
+  LearnMoreLinks,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
+
+import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
 
@@ -46,7 +61,7 @@ function HouseSearch({ navigation }) {
           // Implement filter logic here
         }}
       />
-
+      
       <View style={styles.banner}>
         <Text style={styles.label}>Address</Text>
         <Text style={styles.label}>Beds</Text>
