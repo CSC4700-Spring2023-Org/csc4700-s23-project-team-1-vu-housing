@@ -10,6 +10,7 @@ import {
   useColorScheme,
   View,
   FlatList,
+  
 } from 'react-native';
 
 import {NativeBaseProvider, Text, Box, Input, useToast, Button} from "native-base";
@@ -23,9 +24,10 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import TableExample from '../components/DataTable';
+import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
+import { SectionList } from 'native-base';
 
 
 function HouseSearch({navigation}) {
@@ -68,6 +70,7 @@ function HouseSearch({navigation}) {
       />
       </View>
     </NativeBaseProvider>         
+
     );
   }
 
