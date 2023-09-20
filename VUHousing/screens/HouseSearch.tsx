@@ -35,30 +35,41 @@ function HouseSearch({navigation}) {
 
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
+  const [address, setAddress] = useState([]);
+  const [beds, setBeds] = useState([]);
+  const [baths, setBaths] = useState([]);
 
   
 
   const events = firestore().collection('Houses')
   events.get().then((querySnapshot) => {
       const user = []
+      const addresses=[]
       querySnapshot.forEach((doc) => {
          user.push({ id: doc.id, ...doc.data() })
+         
       })
+     
       setUsers(user)
+
    })
     
 
 
     return (
     <View>
-      <ScrollView>
+      
           <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 40}}>House Search</Text>
           
         <Button title='Filter' 
          style={{alignItems: 'left', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}></Button>
+
+         
          <HouseTable></HouseTable>
+
        
         <FlatList
+          style={{height:'65%'}}
           data={users}
           renderItem={({ item }) => (
          <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
@@ -70,7 +81,7 @@ function HouseSearch({navigation}) {
       )}
     />
         
-      </ScrollView>
+      
     </View>   
 
       

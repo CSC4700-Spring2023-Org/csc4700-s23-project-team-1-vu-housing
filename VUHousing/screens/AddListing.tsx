@@ -30,6 +30,7 @@ export default function AddListing({ navigation }) {
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
+  var fieldsFilled=false
   // price = priceToNum(price)
 
   const [enterButtonStyle, setEnterButtonStyle] = useState("flex");
