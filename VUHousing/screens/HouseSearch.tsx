@@ -35,8 +35,11 @@ function HouseSearch({navigation}) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
   const [address, setAddress] = useState([]);
-  const [beds, setBeds] = useState([]);
-  const [baths, setBaths] = useState([]);
+  const [beds, setBeds] = useState("");
+  const [baths, setBaths] = useState("");
+  const [price, setPrice]=useState("")
+
+
 
   
 
@@ -52,19 +55,45 @@ function HouseSearch({navigation}) {
       setUsers(user)
 
    })
+
+   function clearFilters(){
+    setBeds("");
+    setBaths("");
+    setPrice("");
+   }
+ //TODO: DP Just check if the text values are nonzero and if they are then query based on non-ZeroInputs
+ //TODO: Rewrite this function by using the above code to query the Houses Collection. Reference
+ // The code in checkLogin() on LoginScreen.tsx. Might need to make this an async function
+   function FilterQuery(){
+    console.log("BEDS"+beds)
+    console.log("BATHS"+baths)
+    console.log("{Price}"+price)
+
+   }
     
 
 
     return (
     <NativeBaseProvider>
       <View>
-        <Text style={{textAlign: 'center', marginVertical: 20, fontFamily: 'AlNile-Bold', fontSize: 35, lineHeight: 35}}>House Search</Text>
+      <Box alignItems="center" marginTop="5" marginBottom="5" >
+        <Text fontSize="4xl" bold>House Search</Text>
+      </Box>
             
-        <Button title='Filter' 
-          style={{alignItems: 'center', paddingVertical: 12, paddingHorizontal: 3, borderRadius: 4, elevation: 3, backgroundColor: 'black',}}>Filter Button</Button>
-          <TableExample></TableExample>
+     
+          <Box flexDirection={'row'} w='99%'>
+            <Input placeholder='Beds' w='33%' onChangeText={(val) => setBeds((val))} value={String(beds)}></Input>
+            <Input placeholder='Baths' w='33%' onChangeText={(val) => setBaths((val))} value={String(baths)}></Input>
+            <Input placeholder='Price' w='33%' onChangeText={(val) => setPrice((val))} value={String(price)}></Input>
+          </Box>
+          <Box flexDirection='row' alignItems="center" alignSelf='center'>
+            <Button title='filter' bgColor="#001F58" size="sm" w="100" alignSelf={'center'} borderRadius="50" _text={{ color: '#FFFFFF' }} onPress={() => FilterQuery()} >Filter</Button>
+            <Button title='clear' bgColor="#001F58" size="sm" w="100" alignSelf={'center'} borderRadius="50" _text={{ color: '#FFFFFF' }} onPress={() => clearFilters()} >Clear</Button>
+          </Box>
+          <HouseTable></HouseTable>
 
           <FlatList
+          style={{height:'65%'}}
           data={users}
           renderItem={({ item }) => (
           <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
