@@ -7,12 +7,12 @@ import {
   View,
   ScrollView,
   Image,
+  ActivityIndicator,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 
-
-import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from "native-base";
-
+import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
 
 import {
   Colors,
@@ -25,6 +25,8 @@ import {
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
+import { Button } from 'react-native-paper';
+import * as Animatable from 'react-native-animatable';
 
 function HouseSearch({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -52,55 +54,88 @@ function HouseSearch({ navigation }) {
 
   return (
     <NativeBaseProvider>
-        <Text color="#001F58" marginLeft="3.5rem" fontSize="3xl" bold>House Search</Text>
+      <View style={styles.header}>
+        <Text color="#001F58" fontSize="3xl" bold>House Search</Text>
+        <CoolButton onPress={() => console.log('Filter Button Pressed!')} />
+      </View>
 
-        <Button
-          title="Filter"
-          style={styles.filterButton}
-          onPress={() => {
-            // Implement filter logic here
-          }}
-        />
+      <Box flexDirection="row" >
+        <Text color="grey" marginLeft="0.7rem" paddingRight="1rem" fontSize="md" bold>Address</Text>
+        <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>Beds</Text>
+        <Text color="grey" paddingRight="2.5rem" fontSize="md" bold>Baths</Text>
+        <Text color="grey" paddingRight="2.3rem" fontSize="md" bold>Price</Text>
+        <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>StreetView</Text>
+      </Box>
 
-        <Box flexDirection="row" >
-            <Text color="grey" marginLeft="0.7rem" paddingRight="1rem" fontSize="md" bold>Address</Text>
-            <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>Beds</Text>
-            <Text color="grey" paddingRight="2.5rem" fontSize="md" bold>Baths</Text>
-            <Text color="grey" paddingRight="2.3rem" fontSize="md" bold>Price</Text>
-            <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>StreetView</Text>
-        </Box>
+      <FlatList
+        data={users}
+        renderItem={({ item }) => (
+          <DataTable.Row
+            onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}
+          >
+            <DataTable.Cell>{item.Address}</DataTable.Cell>
+            <DataTable.Cell>{item.Beds}</DataTable.Cell>
+            <DataTable.Cell>{item.Baths}</DataTable.Cell>
+            <DataTable.Cell>{item.Price}</DataTable.Cell>
+            <DataTable.Cell>
+              <View style={styles.container}>
+                <Image source={{ uri: item.StreetView }} style={styles.image} />
+              </View>
+            </DataTable.Cell>
+          </DataTable.Row>
+        )}
+        keyExtractor={(item) => item.id}
+      />
+    </NativeBaseProvider >
+  );
+}
 
-        <FlatList
-          data={users}
-          renderItem={({ item }) => (
-            <DataTable.Row
-              onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}
-            >
-              <DataTable.Cell>{item.Address}</DataTable.Cell>
-              <DataTable.Cell>{item.Beds}</DataTable.Cell>
-              <DataTable.Cell>{item.Baths}</DataTable.Cell>
-              <DataTable.Cell>{item.Price}</DataTable.Cell>
-              <DataTable.Cell>
-                <View style={styles.container}>
-                  <Image source={{ uri: item.StreetView }} style={styles.image} />
-                </View>
-              </DataTable.Cell>
-            </DataTable.Row>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-    </NativeBaseProvider>
+const CoolButton: React.FC<CoolButtonProps> = ({ onPress }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  interface CoolButtonProps {
+    onPress?: () => void;
+  }
+
+  const handlePress = () => {
+    if (isLoading) {
+      return; // Prevent pressing the button again while it's loading
+    }
+
+    setIsLoading(true);
+
+    // Simulating an API call or any other async operation
+    setTimeout(() => {
+      setIsLoading(false);
+      if (onPress) {
+        onPress();
+      } else {
+        console.log('Clicked!');
+      }
+    }, 1000); // Replace with your actual async call
+  };
+  return (
+    <Animatable.View animation={isLoading ? 'swing' : undefined}>
+      <Button
+        mode="contained"
+        onPress={handlePress}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator size="small" color="white" />
+        ) : (
+          <Text style={{ color: 'white' }}>Filter</Text>
+        )}
+      </Button>
+    </Animatable.View>
   );
 }
 
 const styles = StyleSheet.create({
   filterButton: {
     justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 3,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: 'blue',
   },
   container: {
     flex: 1,
@@ -111,6 +146,14 @@ const styles = StyleSheet.create({
     width: 50, // Adjust the width and height as needed
     height: 50,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    paddingHorizontal: 16,
+  },
 });
 
 export default HouseSearch;
+
