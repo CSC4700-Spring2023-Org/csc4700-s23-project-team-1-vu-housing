@@ -7,9 +7,8 @@
 
 import React, { useState } from 'react';
 
-import type {PropsWithChildren} from 'react';
-import 
-{
+import type { PropsWithChildren } from 'react';
+import {
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -23,7 +22,7 @@ import
 
 import firestore from '@react-native-firebase/firestore';
 
-import {NativeBaseProvider, Box,  Text,Input, Button, useToast} from "native-base"; 
+import { NativeBaseProvider, Box, Text, Input, Button, useToast } from "native-base";
 
 import {
   Colors,
@@ -66,60 +65,36 @@ export default function HomeInfo({ route, navigation }) {
 
 
   return (
-  <NativeBaseProvider>  
-    <View id="main">
-      <View id="LogoBand" style={{ backgroundColor: '#0085FF', width: Dimensions.get('screen').width, 
-          alignItems: 'center', marginTop: 100 }}>
+    <NativeBaseProvider>
+      <View id="LogoBand" style={{
+        backgroundColor: '#0085FF', width: Dimensions.get('screen').width,
+        alignItems: 'center', marginTop: 30
+      }}>
         <Image source={{ uri: streetView }} style={styles.image} />
       </View>
 
+      <Box flex={1} bg="#ffffff" alignItems="center"  >
+        <View style={styles.container}>
+          <Text color="#001F58" fontSize="4xl" bold>Address:</Text>
+          <Text style="#001F58" fontSize="md">{address}</Text>
 
-        <View id="TextInformation">
-            <View id="Address information" style={{margin:10}}>
-                <Text style={styles.headers}>Address:</Text>
-                <Text style={styles.information}>{address}</Text>
-            </View>   
-            <View id ="BedAndBath" style={{flexDirection:'row', margin:10}}>
-                <View id="bed"style={{marginRight:45}}>
-                    <Text style={styles.headers}>Beds</Text>
-                    <Text style={styles.information}>{beds}</Text>
-                </View>
-                <View id="Bath" style={{marginLeft:45}}>
-                    <Text style={styles.headers}>Bath</Text>
-                    <Text style={styles.information}>{baths}</Text>
-                </View>
-            </View>
-            <View id="price" style={{margin:10}}>
-                <Text style={styles.headers}>Price</Text>
-                <Text style={styles.information}>{price}</Text>
-            </View>  
-            <View id="landlord" style={{margin:10}}>
-                <Text style={styles.headers}>Landlord Contact</Text>
-                <Text style={styles.information}>{landlord}</Text>
-            </View>      
-          
+          <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
+          <Text style="#001F58" fontSize="md">{beds}</Text>
+
+          <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
+          <Text style="#001F58" fontSize="md">{baths}</Text>
+
+          <Text color="#001F58" fontSize="4xl" bold>Price:</Text>
+          <Text style="#001F58" fontSize="md">{price}</Text>
+
+          <Text color="#001F58" fontSize="4xl" bold>Landlord Contact:</Text>
+          <Text style="#001F58" fontSize="md">{landlord}</Text>
+
+
+          <Text alignSelf="center">©VUHousing 2023</Text>
         </View>
-        <View id="BedAndBath" style={{ flexDirection: 'row', margin: 10 }}>
-          <View id="bed" style={{ marginLeft: 10, marginRight: 45 }}>
-            <Text style={styles.headers}>Beds</Text>
-            <Text style={styles.information}>{beds}</Text>
-          </View>
-          <View id="Bath" style={{ marginLeft: 45 }}>
-            <Text style={styles.headers}>Bath</Text>
-            <Text style={styles.information}>{baths}</Text>
-          </View>
-        </View>
-        <View id="price" style={{ margin: 10 }}>
-          <Text style={styles.headers}>Price</Text>
-          <Text style={styles.information}>{price}</Text>
-        </View>
-        <View id="landlord" style={{ margin: 10 }}>
-          <Text style={styles.headers}>Landlord Contact</Text>
-          <Text style={styles.information}>{landlord}</Text>
-        </View>
-      </View>
-    </View>     
-  </NativeBaseProvider>     
+      </Box>
+    </NativeBaseProvider>
   );
 }
 
@@ -137,7 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sectionDescription: {
-    marginTop: 8,
+    marginTop: 4,
     fontSize: 18,
     lineHeight: 18,
     fontWeight: '400',

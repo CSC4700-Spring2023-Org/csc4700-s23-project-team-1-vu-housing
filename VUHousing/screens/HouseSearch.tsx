@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import type {PropsWithChildren} from 'react';
-import { useState } from "react";
-import { 
+import type { PropsWithChildren } from 'react';
+import {
   SafeAreaView,
-  Text,
   useColorScheme,
+  StyleSheet,
   View,
+  ScrollView,
   Image,
   FlatList,
 } from 'react-native';
 
 
-import {NativeBaseProvider, Text, Box, Input, useToast, Button} from "native-base";
+import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from "native-base";
 
 
 import {
@@ -51,73 +51,56 @@ function HouseSearch({ navigation }) {
   }, []);
 
   return (
-    <ScrollView>
-      <Text style={styles.title}>House Search</Text>
+    <NativeBaseProvider>
+        <Text color="#001F58" marginLeft="3.5rem" fontSize="3xl" bold>House Search</Text>
 
-      <Button
-        title="Filter"
-        style={styles.filterButton}
-        onPress={() => {
-          // Implement filter logic here
-        }}
-      />
-      
-      <View style={styles.banner}>
-        <Text style={styles.label}>Address</Text>
-        <Text style={styles.label}>Beds</Text>
-        <Text style={styles.label}>Baths</Text>
-        <Text style={styles.label}>Price</Text>
-        <Text style={styles.label}>StreetView</Text>
-      </View>
+        <Button
+          title="Filter"
+          style={styles.filterButton}
+          onPress={() => {
+            // Implement filter logic here
+          }}
+        />
 
-      <FlatList
-        data={users}
-        renderItem={({ item }) => (
-          <DataTable.Row
-            onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}
-          >
-            <DataTable.Cell>{item.Address}</DataTable.Cell>
-            <DataTable.Cell>{item.Beds}</DataTable.Cell>
-            <DataTable.Cell>{item.Baths}</DataTable.Cell>
-            <DataTable.Cell>{item.Price}</DataTable.Cell>
-            <DataTable.Cell>
-              <View style={styles.container}>
-                <Image source={{ uri: item.StreetView }} style={styles.image} />
-              </View>
-            </DataTable.Cell>
-          </DataTable.Row>
-        )}
-        keyExtractor={(item) => item.id}
-      />
-    </ScrollView>
+        <Box flexDirection="row" >
+            <Text color="grey" marginLeft="0.7rem" paddingRight="1rem" fontSize="md" bold>Address</Text>
+            <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>Beds</Text>
+            <Text color="grey" paddingRight="2.5rem" fontSize="md" bold>Baths</Text>
+            <Text color="grey" paddingRight="2.3rem" fontSize="md" bold>Price</Text>
+            <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>StreetView</Text>
+        </Box>
+
+        <FlatList
+          data={users}
+          renderItem={({ item }) => (
+            <DataTable.Row
+              onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}
+            >
+              <DataTable.Cell>{item.Address}</DataTable.Cell>
+              <DataTable.Cell>{item.Beds}</DataTable.Cell>
+              <DataTable.Cell>{item.Baths}</DataTable.Cell>
+              <DataTable.Cell>{item.Price}</DataTable.Cell>
+              <DataTable.Cell>
+                <View style={styles.container}>
+                  <Image source={{ uri: item.StreetView }} style={styles.image} />
+                </View>
+              </DataTable.Cell>
+            </DataTable.Row>
+          )}
+          keyExtractor={(item) => item.id}
+        />
+    </NativeBaseProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    textAlign: 'center',
-    marginVertical: 20,
-    fontFamily: 'AlNile-Bold',
-    fontSize: 40,
-  },
   filterButton: {
-    alignItems: 'left',
     justifyContent: 'center',
     paddingVertical: 12,
     paddingHorizontal: 3,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: 'black',
-  },
-  banner: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-    paddingHorizontal: 16,
-  },
-  label: {
-    fontWeight: 'bold',
-    fontSize: 16,
+    backgroundColor: 'blue',
   },
   container: {
     flex: 1,
