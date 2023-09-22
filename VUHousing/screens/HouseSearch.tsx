@@ -1,20 +1,18 @@
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import { useState } from "react";
-import { 
+import React, { useState, useEffect } from 'react';
+import type { PropsWithChildren } from 'react';
+import {
   SafeAreaView,
-  ScrollView,
-  VirtualizedList,
-  StatusBar,
-  StyleSheet,
   useColorScheme,
+  StyleSheet,
   View,
+  ScrollView,
+  Image,
+  ActivityIndicator,
   FlatList,
-  
+  TouchableOpacity,
 } from 'react-native';
 
-import {NativeBaseProvider, Text, Box, Input, useToast, Button} from "native-base";
-
+import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
 
 import {
   Colors,
@@ -27,11 +25,11 @@ import {
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
-import { SectionList } from 'native-base';
+import { Button } from 'react-native-paper';
+import * as Animatable from 'react-native-animatable';
 
-
-function HouseSearch({navigation}) {
-
+function HouseSearch({ navigation }) {
+  const [loading, setLoading] = useState(true);
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
   const [address, setAddress] = useState([]);
@@ -40,21 +38,25 @@ function HouseSearch({navigation}) {
   const [price, setPrice]=useState("")
 
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await firestore().collection('Houses').get();
+        const userData = [];
 
-  
+        querySnapshot.forEach((doc) => {
+          userData.push({ id: doc.id, ...doc.data() });
+        });
 
-  const events = firestore().collection('Houses')
-  events.get().then((querySnapshot) => {
-      const user = []
-      const addresses=[]
-      querySnapshot.forEach((doc) => {
-         user.push({ id: doc.id, ...doc.data() })
-         
-      })
-     
-      setUsers(user)
+        setUsers(userData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-   })
+    fetchData();
+  }, []);
 
    function clearFilters(){
     setBeds("");
@@ -72,9 +74,9 @@ function HouseSearch({navigation}) {
    }
     
 
-
-    return (
+  return (
     <NativeBaseProvider>
+
       <View>
       <Box alignItems="center" marginTop="5" marginBottom="5" >
         <Text fontSize="4xl" bold>House Search</Text>
@@ -101,15 +103,78 @@ function HouseSearch({navigation}) {
           <DataTable.Cell>{item.Beds}</DataTable.Cell>
           <DataTable.Cell>{item.Baths}</DataTable.Cell>
           <DataTable.Cell>{item.Price}</DataTable.Cell>
-
           </DataTable.Row>
         )}
+        keyExtractor={(item) => item.id}
       />
-      </View>
-    </NativeBaseProvider>         
+    </NativeBaseProvider >
+  );
+}
 
-    );
+const CoolButton: React.FC<CoolButtonProps> = ({ onPress }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  interface CoolButtonProps {
+    onPress?: () => void;
   }
 
+  const handlePress = () => {
+    if (isLoading) {
+      return; // Prevent pressing the button again while it's loading
+    }
+
+    setIsLoading(true);
+
+    // Simulating an API call or any other async operation
+    setTimeout(() => {
+      setIsLoading(false);
+      if (onPress) {
+        onPress();
+      } else {
+        console.log('Clicked!');
+      }
+    }, 1000); // Replace with your actual async call
+  };
+  return (
+    <Animatable.View animation={isLoading ? 'swing' : undefined}>
+      <Button
+        mode="contained"
+        onPress={handlePress}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator size="small" color="white" />
+        ) : (
+          <Text style={{ color: 'white' }}>Filter</Text>
+        )}
+      </Button>
+    </Animatable.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  filterButton: {
+    justifyContent: 'center',
+    borderRadius: 4,
+    elevation: 3,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: 50, // Adjust the width and height as needed
+    height: 50,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    paddingHorizontal: 16,
+  },
+});
 
 export default HouseSearch;
+
