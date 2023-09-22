@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
+import BackButton from './BackButton';
 import {
   SafeAreaView,
   useColorScheme,
@@ -27,6 +28,7 @@ import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
+import { useNavigation } from '@react-navigation/native';
 
 function HouseSearch({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -64,7 +66,7 @@ function HouseSearch({ navigation }) {
         <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>Beds</Text>
         <Text color="grey" paddingRight="2.5rem" fontSize="md" bold>Baths</Text>
         <Text color="grey" paddingRight="2.3rem" fontSize="md" bold>Price</Text>
-        <Text color="grey" paddingRight="1.3rem" fontSize="md" bold>StreetView</Text>
+        <Text color="grey" paddingRight="0.5rem" fontSize="md" bold>StreetView</Text>
       </Box>
 
       <FlatList
@@ -86,6 +88,10 @@ function HouseSearch({ navigation }) {
         )}
         keyExtractor={(item) => item.id}
       />
+
+      <View>
+        <BackButton text="Go Back" />
+      </View>
     </NativeBaseProvider >
   );
 }
@@ -96,6 +102,9 @@ const CoolButton: React.FC<CoolButtonProps> = ({ onPress }) => {
   interface CoolButtonProps {
     onPress?: () => void;
   }
+
+  const buttonColor = isLoading ? '#b2d7e6' : '#007aff'; // Light blue when loading, dark blue when not
+
 
   const handlePress = () => {
     if (isLoading) {
@@ -116,7 +125,7 @@ const CoolButton: React.FC<CoolButtonProps> = ({ onPress }) => {
   };
   return (
     <Animatable.View animation={isLoading ? 'swing' : undefined}>
-      <Button
+      <Button style={{ backgroundColor: buttonColor }}
         mode="contained"
         onPress={handlePress}
         disabled={isLoading}
@@ -128,6 +137,8 @@ const CoolButton: React.FC<CoolButtonProps> = ({ onPress }) => {
         )}
       </Button>
     </Animatable.View>
+
+
   );
 }
 
@@ -136,6 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 4,
     elevation: 3,
+    color: 'grey',
   },
   container: {
     flex: 1,
@@ -143,7 +155,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 50, // Adjust the width and height as needed
+    width: 70, // Adjust the width and height as needed
     height: 50,
   },
   header: {

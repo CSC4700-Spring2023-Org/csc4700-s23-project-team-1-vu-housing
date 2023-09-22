@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import type { PropsWithChildren } from 'react';
+import BackButton from './BackButton';
 import {
   Alert,
   SafeAreaView,
@@ -15,6 +16,7 @@ import {
 
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 import {
   Colors,
@@ -30,7 +32,6 @@ export default function AddListing({ navigation }) {
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
-  // price = priceToNum(price)
 
   const [enterButtonStyle, setEnterButtonStyle] = useState("flex");
   const [submitButtonStyle, setSubmitButtonStyle] = useState("none");
@@ -58,15 +59,15 @@ export default function AddListing({ navigation }) {
   var onHouseEnterPress = () => {
     if (fieldsFilled) {
       var houseInfo = {
-          method: 'GET',
-          url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
-          params: {
-            propertyaddress: address
-          },
-          headers: {
-            'X-RapidAPI-Key': '03118fad58msh6696f81564e5c1dp135a90jsn0cee7fcf5d12',
-            'X-RapidAPI-Host': 'zillow-working-api.p.rapidapi.com'
-          }
+        method: 'GET',
+        url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
+        params: {
+          propertyaddress: address
+        },
+        headers: {
+          'X-RapidAPI-Key': '03118fad58msh6696f81564e5c1dp135a90jsn0cee7fcf5d12',
+          'X-RapidAPI-Host': 'zillow-working-api.p.rapidapi.com'
+        }
       };
 
       axios
@@ -150,31 +151,31 @@ export default function AddListing({ navigation }) {
       <Box flex={1} bg="#ffffff" alignItems="center"  >
         <View style={styles.container}>
           <ScrollView>
-            <Text color="#001F58"fontSize="4xl" bold>Create a Listing</Text>
+            <Text color="#001F58" fontSize="4xl" bold>Create a Listing</Text>
 
             <Box flexDirection="column" >
-              <Text color="#001F58"fontSize="2xl" bold>Address</Text>
-              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="12345 NE Wildcat Avenue, Villanova, PA 19010" 
-                w="100%" autoCapitalize="none" h="50" fontSize="sm" 
-                  onChangeText={(val) => setAddress(val)} />
+              <Text color="#001F58" fontSize="2xl" bold>Address</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="12345 NE Wildcat Avenue, Villanova, PA 19010"
+                w="100%" autoCapitalize="none" h="50" fontSize="sm"
+                onChangeText={(val) => setAddress(val)} />
             </Box>
 
             <Box flexDirection="column" >
-              <Text color="#001F58"fontSize="2xl" bold>House Type</Text>
+              <Text color="#001F58" fontSize="2xl" bold>House Type</Text>
               <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="ex: apartment, house, town-home"
                 w="100%" autoCapitalize="none" h="50" fontSize="lg"
                 onChangeText={(val) => setHouseType(val)} />
             </Box>
 
             <Box flexDirection="column" >
-              <Text color="#001F58"fontSize="2xl" bold>Landlord Contact Information</Text>
+              <Text color="#001F58" fontSize="2xl" bold>Landlord Contact Information</Text>
               <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="email or cell"
                 w="100%" autoCapitalize="none" h="50" fontSize="lg"
                 onChangeText={(val) => setLandlordContact(val)} />
             </Box>
 
             <Box flexDirection="column" >
-              <Text color="#001F58"fontSize="2xl" bold>Monthly Price</Text>
+              <Text color="#001F58" fontSize="2xl" bold>Monthly Price</Text>
               <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="$1,750"
                 w="100%" autoCapitalize="none" h="50"
                 onChangeText={(val) => setPrice(val)} />
@@ -183,18 +184,22 @@ export default function AddListing({ navigation }) {
             <Box marginTop="9" >
               <Button alignSelf="center"
                 bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={enterButtonStyle} _text={{ color: '#001F58' }}
-                onPress={() => { onHouseEnterPress(); setEnterButtonStyle("none"); setSubmitButtonStyle("flex"); } }>
-                  Enter House Info
+                onPress={() => { onHouseEnterPress(); setEnterButtonStyle("none"); setSubmitButtonStyle("flex"); }}>
+                Enter House Info
               </Button>
             </Box>
 
             <Box marginTop="9" >
               <Button alignSelf="center"
                 bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
-                onPress={() => { onSubmitPress(); setEnterButtonStyle("flex"); setSubmitButtonStyle("none"); } }>
-                  Verify House Info
+                onPress={() => { onSubmitPress(); setEnterButtonStyle("flex"); setSubmitButtonStyle("none"); }}>
+                Verify House Info
               </Button>
             </Box>
+
+            <View>
+              <BackButton text="Go Back" />
+            </View>
 
             <Text alignSelf="center">©VUHousing 2023</Text>
 
