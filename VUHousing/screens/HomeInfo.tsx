@@ -43,6 +43,7 @@ type SectionProps = PropsWithChildren<{
 export default function HomeInfo({ route, navigation }) {
   const obj = route.params
   //console.log(obj.docID)
+  
   const [address, setAddress] = useState("")
   const [beds, setBeds] = useState(0)
   const [baths, setBaths] = useState(0)
@@ -63,6 +64,7 @@ export default function HomeInfo({ route, navigation }) {
       setLandlord(documentSnapshot.data().Landlord)
       setStreetView(documentSnapshot.data().StreetView)
     });
+
 
 
 
