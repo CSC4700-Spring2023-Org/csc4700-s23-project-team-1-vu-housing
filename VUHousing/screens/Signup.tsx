@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import type { PropsWithChildren } from 'react';
+import BackButton from './BackButton';
 import {
   Alert,
   SafeAreaView,
@@ -20,6 +21,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { useNavigation } from '@react-navigation/native';
 import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
 export default function Signup({ navigation }) {
@@ -82,65 +84,69 @@ export default function Signup({ navigation }) {
     else {
       Alert.alert("Invalid input", "Please try to fill out this form again")
     }
-}
+  }
 
 
-return (
-  <NativeBaseProvider>
-    <Box flex={1} bg="#ffffff" alignItems="center"  >
-      <View>
-        <ScrollView>
-          <Text color="#001F58" fontSize="2xl" bold>Create an Account</Text>
+  return (
+    <NativeBaseProvider>
+      <Box flex={1} bg="#ffffff" alignItems="center"  >
+        <View>
+          <ScrollView>
+            <Text color="#001F58" fontSize="2xl" bold>Create an Account</Text>
 
-          <Box flexDirection="column" >
-            <Text color="#001F58" fontSize="2xl" bold>Full Name</Text>
-            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Jay Wright"
-              w="100%" autoCapitalize="none" h="50" fontSize="sm"
-              onChangeText={(val) => setName(val)} />
-          </Box>
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold>Full Name</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Jay Wright"
+                w="100%" autoCapitalize="none" h="50" fontSize="sm"
+                onChangeText={(val) => setName(val)} />
+            </Box>
 
-          <Box flexDirection="column" >
-            <Text color="#001F58" fontSize="2xl" bold>Phone Number</Text>
-            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="###-###-####"
-              w="100%" autoCapitalize="none" h="50" fontSize="sm"
-              onChangeText={(val) => setPhoneNumber(val)} />
-          </Box>
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold>Phone Number</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="###-###-####"
+                w="100%" autoCapitalize="none" h="50" fontSize="sm"
+                onChangeText={(val) => setPhoneNumber(val)} />
+            </Box>
 
-          <Box flexDirection="column" >
-            <Text color="#001F58" fontSize="2xl" bold>Enter Villanova Email</Text>
-            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="jwright@villanova.edu"
-              w="100%" autoCapitalize="none" h="50" fontSize="sm"
-              onChangeText={(val) => setEmail(val)} />
-          </Box>
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold>Enter Villanova Email</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="jwright@villanova.edu"
+                w="100%" autoCapitalize="none" h="50" fontSize="sm"
+                onChangeText={(val) => setEmail(val)} />
+            </Box>
 
-          <Box flexDirection="column" >
-            <Text color="#001F58" fontSize="2xl" bold>Enter Password</Text>
-            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
-              w="100%" autoCapitalize="none" h="50" fontSize="sm"
-              onChangeText={(val) => setPassword(val)} />
-          </Box>
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold>Enter Password</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
+                w="100%" autoCapitalize="none" h="50" fontSize="sm"
+                onChangeText={(val) => setPassword(val)} />
+            </Box>
 
-          <Box flexDirection="column" >
-            <Text color="#001F58" fontSize="2xl" bold>Re-Enter Password</Text>
-            <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
-              w="100%" autoCapitalize="none" h="50" fontSize="sm"
-              onChangeText={(val) => setPasswordRE(val)} />
-          </Box>
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold>Re-Enter Password</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="Go Cats!"
+                w="100%" autoCapitalize="none" h="50" fontSize="sm"
+                onChangeText={(val) => setPasswordRE(val)} />
+            </Box>
 
-          <Box marginTop="9" >
-            <Button alignSelf="center"
-              bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
-              onPress={() => { onSubmitPress() }}>
-              Submit
-            </Button>
-          </Box>
+            <Box marginTop="9" >
+              <Button alignSelf="center"
+                bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+                onPress={() => { onSubmitPress() }}>
+                Submit
+              </Button>
+            </Box>
 
-        </ScrollView>
-      </View>
-    </Box>
-  </NativeBaseProvider>
+            <View>
+              <BackButton text="Go Back" />
+            </View>
 
-);
+          </ScrollView>
+        </View>
+      </Box>
+    </NativeBaseProvider>
+
+  );
 
 }
 const styles = StyleSheet.create({
