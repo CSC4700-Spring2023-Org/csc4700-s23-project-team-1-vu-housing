@@ -29,7 +29,6 @@ import { Button } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 
 function HouseSearch({ navigation }) {
-  const [loading, setLoading] = useState(true);
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
   const [address, setAddress] = useState([]);
@@ -37,26 +36,19 @@ function HouseSearch({ navigation }) {
   const [baths, setBaths] = useState("");
   const [price, setPrice]=useState("")
 
+  
+  
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const querySnapshot = await firestore().collection('Houses').get();
-        const userData = [];
+  const events = firestore().collection('Houses')
+  events.get().then((querySnapshot) => {
+      const user = []
+      querySnapshot.forEach((doc) => {
+         user.push({ id: doc.id, ...doc.data() })
+      })
+      setUsers(user)
+   })
 
-        querySnapshot.forEach((doc) => {
-          userData.push({ id: doc.id, ...doc.data() });
-        });
 
-        setUsers(userData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
    function clearFilters(){
     setBeds("");
@@ -107,50 +99,12 @@ function HouseSearch({ navigation }) {
         )}
         keyExtractor={(item) => item.id}
       />
+      </View>
     </NativeBaseProvider >
   );
 }
 
-const CoolButton: React.FC<CoolButtonProps> = ({ onPress }) => {
-  const [isLoading, setIsLoading] = useState(false);
 
-  interface CoolButtonProps {
-    onPress?: () => void;
-  }
-
-  const handlePress = () => {
-    if (isLoading) {
-      return; // Prevent pressing the button again while it's loading
-    }
-
-    setIsLoading(true);
-
-    // Simulating an API call or any other async operation
-    setTimeout(() => {
-      setIsLoading(false);
-      if (onPress) {
-        onPress();
-      } else {
-        console.log('Clicked!');
-      }
-    }, 1000); // Replace with your actual async call
-  };
-  return (
-    <Animatable.View animation={isLoading ? 'swing' : undefined}>
-      <Button
-        mode="contained"
-        onPress={handlePress}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator size="small" color="white" />
-        ) : (
-          <Text style={{ color: 'white' }}>Filter</Text>
-        )}
-      </Button>
-    </Animatable.View>
-  );
-}
 
 const styles = StyleSheet.create({
   filterButton: {
