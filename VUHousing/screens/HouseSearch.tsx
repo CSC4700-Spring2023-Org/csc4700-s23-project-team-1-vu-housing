@@ -14,13 +14,6 @@ import {
 
 import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
@@ -58,11 +51,11 @@ function HouseSearch({ navigation }) {
  //TODO: DP Just check if the text values are nonzero and if they are then query based on non-ZeroInputs
  //TODO: Rewrite this function by using the above code to query the Houses Collection. Reference
  // The code in checkLogin() on LoginScreen.tsx. Might need to make this an async function
-   function FilterQuery(){
-    console.log("BEDS"+beds)
-    console.log("BATHS"+baths)
-    console.log("{Price}"+price)
 
+   function FilterQuery(){
+    console.log("BEDS: "+beds)
+    console.log("BATHS: "+baths)
+    console.log("{Price} "+price)
    }
     
 
