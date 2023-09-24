@@ -71,7 +71,7 @@ export default function HomeInfo({ route, navigation }) {
   return (
     <NativeBaseProvider>
       <View id="LogoBand" style={{
-        backgroundColor: '#0085FF', width: Dimensions.get('screen').width,
+        backgroundColor: 'white smoke', width: Dimensions.get('screen').width,
         alignItems: 'center', marginTop: 30
       }}>
         <Image source={{ uri: streetView }} style={styles.image} />
@@ -108,8 +108,9 @@ export default function HomeInfo({ route, navigation }) {
 
 const styles = StyleSheet.create({
   image: {
-    width: 200,
+    width: 400,
     height: 200,
+
   },
   sectionContainer: {
     marginTop: 32,
