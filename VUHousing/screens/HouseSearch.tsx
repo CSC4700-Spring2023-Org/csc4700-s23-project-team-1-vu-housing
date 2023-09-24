@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
+import BackButton from './BackButton';
 import {
   SafeAreaView,
   useColorScheme,
@@ -20,6 +21,7 @@ import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
+import { useNavigation } from '@react-navigation/native';
 
 function HouseSearch({ navigation }) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
@@ -61,6 +63,7 @@ function HouseSearch({ navigation }) {
 
   return (
     <NativeBaseProvider>
+
 
       <View>
       <Box alignItems="center" marginTop="5" marginBottom="5" >
@@ -104,6 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 4,
     elevation: 3,
+    color: 'grey',
   },
   container: {
     flex: 1,
@@ -111,7 +115,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 50, // Adjust the width and height as needed
+    width: 70, // Adjust the width and height as needed
     height: 50,
   },
   header: {

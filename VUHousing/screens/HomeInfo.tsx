@@ -6,6 +6,7 @@
  */
 
 import React, { useState } from 'react';
+import BackButton from './BackButton';
 
 import type { PropsWithChildren } from 'react';
 import {
@@ -19,6 +20,7 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import firestore from '@react-native-firebase/firestore';
 
@@ -91,6 +93,10 @@ export default function HomeInfo({ route, navigation }) {
 
           <Text color="#001F58" fontSize="4xl" bold>Landlord Contact:</Text>
           <Text style="#001F58" fontSize="md">{landlord}</Text>
+
+          <View>
+            <BackButton text="Go Back" />
+          </View>
 
 
           <Text alignSelf="center">©VUHousing 2023</Text>
