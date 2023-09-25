@@ -82,18 +82,15 @@ function HouseSearch({ navigation }) {
   return (
     <NativeBaseProvider>
       <View>
-        <Box alignItems="center" marginTop="5" marginBottom="5">
+        <Box alignItems="center" marginTop="2" marginBottom="2">
           <Text color="#001F58" fontSize="3xl" bold>
             House Search
           </Text>
-        </Box>
 
-        <View style={styles.banner}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.label}>Beds</Text>
-          <Text style={styles.label}>Baths</Text>
-          <Text style={styles.label}>Price</Text>
-        </View>
+          <Text color="#3eb7e5" fontSize="md" bold>
+            Filter Houses
+          </Text>
+        </Box>
 
         <Box flexDirection={'row'} w="99%">
           <Input
@@ -149,8 +146,8 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
   const [isLoadingFilter, setIsLoadingFilter] = useState(false); // State for the Filter button
   const [isLoadingClear, setIsLoadingClear] = useState(false);   // State for the Clear Filters button
 
-  const buttonColorFilter = isLoadingFilter ? '#b2d7e6' : '#007aff'; // Light blue when loading, dark blue when not
-  const buttonColorClear = isLoadingClear ? '#b2d7e6' : '#007aff';
+  const buttonColorFilter = isLoadingFilter ? '#001F58' : '#007aff'; // Light blue when loading, dark blue when not
+  const buttonColorClear = isLoadingClear ? '#001F58' : '#007aff';
 
   const handlePressFilter = () => {
     if (isLoadingFilter) {
@@ -186,7 +183,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
       <Box flexDirection='row' alignItems="center" alignSelf='center'>
         <Animatable.View animation={isLoadingFilter ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: '#001F58' }}
+            style={{ backgroundColor: buttonColorFilter, marginRight: 20, marginTop: 10, marginBottom: 10 }}
             mode="contained"
             onPress={handlePressFilter}
             disabled={isLoadingFilter}
@@ -200,7 +197,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
         </Animatable.View>
         <Animatable.View animation={isLoadingClear ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: '#001F58' }}
+            style={{backgroundColor: buttonColorFilter, marginTop: 10, marginBottom: 10 }}
             mode="contained"
             onPress={handlePressClear}
             disabled={isLoadingClear}
@@ -225,9 +222,9 @@ const styles = StyleSheet.create({
     fontSize: 40,
   },
   filterButton: {
-    alignItems: 'left',
     justifyContent: 'center',
     paddingVertical: 12,
+    paddingRight: 15,
     paddingHorizontal: 3,
     borderRadius: 4,
     elevation: 3,
