@@ -91,6 +91,13 @@ function HouseSearch({ navigation }) {
           <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
         </Box>
 
+        <View style={styles.banner}>
+          <Text style={styles.label}>Address</Text>
+          <Text style={styles.label}>Beds</Text>
+          <Text style={styles.label}>Baths</Text>
+          <Text style={styles.label}>Price</Text>
+        </View>
+
         <Box flexDirection={'row'} w="99%">
           <Input
             placeholder="Beds"
@@ -208,5 +215,42 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  title: {
+    textAlign: 'center',
+    marginVertical: 20,
+    fontFamily: 'AlNile-Bold',
+    fontSize: 40,
+  },
+  filterButton: {
+    alignItems: 'left',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 3,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'black',
+  },
+  banner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: 50, // Adjust the width and height as needed
+    height: 50,
+  },
+});
 
 export default HouseSearch;
