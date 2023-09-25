@@ -86,7 +86,6 @@ function HouseSearch({ navigation }) {
           <Text color="#001F58" fontSize="3xl" bold>
             House Search
           </Text>
-          <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
         </Box>
 
         <Box flexDirection={'row'} w="99%">
@@ -109,8 +108,12 @@ function HouseSearch({ navigation }) {
             value={price}
           />
         </Box>
+        <Box>
+          <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
+        </Box>
 
         {/* Render your HouseTable and other components here */}
+        <HouseTable></HouseTable>
 
         <FlatList
           style={{ height: '65%' }}
@@ -176,7 +179,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
       <Box flexDirection='row' alignItems="center" alignSelf='center'>
         <Animatable.View animation={isLoadingFilter ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: buttonColorFilter }}
+            style={{ backgroundColor: '#001F58' }}
             mode="contained"
             onPress={handlePressFilter}
             disabled={isLoadingFilter}
@@ -190,7 +193,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
         </Animatable.View>
         <Animatable.View animation={isLoadingClear ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: buttonColorClear }}
+            style={{ backgroundColor: '#001F58' }}
             mode="contained"
             onPress={handlePressClear}
             disabled={isLoadingClear}
@@ -198,7 +201,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
             {isLoadingClear ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text style={{ color: 'white' }}>Clear Filters</Text>
+              <Text style={{ color: 'white' }}>Clear</Text>
             )}
           </Button>
         </Animatable.View>
