@@ -91,13 +91,6 @@ function HouseSearch({ navigation }) {
           <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
         </Box>
 
-        <View style={styles.banner}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.label}>Beds</Text>
-          <Text style={styles.label}>Baths</Text>
-          <Text style={styles.label}>Price</Text>
-        </View>
-
         <Box flexDirection={'row'} w="99%">
           <Input
             placeholder="Beds"
@@ -119,13 +112,22 @@ function HouseSearch({ navigation }) {
           />
         </Box>
 
+        <View style={styles.banner}>
+          <Text style={styles.addressLabel}>Address</Text>
+          <Text style={styles.bedLabel}>Beds</Text>
+          <Text style={styles.bathLabel}>Baths</Text>
+          <Text style={styles.priceLabel}>Price</Text>
+        </View>
+
+        
+
         {/* Render your HouseTable and other components here */}
 
         <FlatList
-          style={{ height: '65%' }}
+          style={{ height: '65%', marginTop: 35 }}
           data={users}
           renderItem={({ item }) => (
-            <DataTable.Row onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}>
+            <DataTable.Row style={{ marginRight: 20}} onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}>
               <DataTable.Cell>{item.Address}</DataTable.Cell>
               <DataTable.Cell>{item.Beds}</DataTable.Cell>
               <DataTable.Cell>{item.Baths}</DataTable.Cell>
@@ -224,7 +226,6 @@ const styles = StyleSheet.create({
     fontSize: 40,
   },
   filterButton: {
-    alignItems: 'left',
     justifyContent: 'center',
     paddingVertical: 12,
     paddingHorizontal: 3,
@@ -234,13 +235,30 @@ const styles = StyleSheet.create({
   },
   banner: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-    paddingHorizontal: 16,
+    marginTop: 20,
+    color: 'grey',
   },
-  label: {
+  addressLabel: {
     fontWeight: 'bold',
+    marginRight: 140,
+    marginLeft: 15,
     fontSize: 16,
+    color: 'grey',
+  },
+  bedLabel: {
+    fontWeight: 'bold',
+    marginRight: 10,
+    fontSize: 16,
+  },
+  bathLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  priceLabel: {
+    fontSize: 16, 
+    fontWeight: 'bold',
+    marginRight: 27,
   },
   container: {
     flex: 1,
