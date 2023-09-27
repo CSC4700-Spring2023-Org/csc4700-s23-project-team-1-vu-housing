@@ -13,8 +13,14 @@ Make sure to navigate into the VUHousing Folder before executing any commands:
 Step 1: install npm dependencies \
 `npm install`
 
-Step 2: install axios package (required to run application) \
+Step 2: install packages (required to run application) \
 `npm install axios`
+`npm i --save-dev @types/react-progress-button`
+`npm install react-progress-button --save`
+`npm install @react-navigation/native @react-navigation/stack`
+`npm install react-native-animatable`
+`npm install react-native-reanimated`
+`npm install react-native-paper react-native-svg`
 
 Step 3: Switch to the ios directory \
 `cd ios`
