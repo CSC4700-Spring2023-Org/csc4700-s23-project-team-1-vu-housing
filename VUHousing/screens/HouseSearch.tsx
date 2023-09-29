@@ -112,26 +112,27 @@ function HouseSearch({ navigation }) {
           />
         </Box>
 
-        <View style={styles.banner}>
-          <Text style={styles.addressLabel}>Address</Text>
-          <Text style={styles.bedLabel}>Beds</Text>
-          <Text style={styles.bathLabel}>Baths</Text>
-          <Text style={styles.priceLabel}>Price</Text>
+        <View style={styles.houseTable}>
+          <HouseTable></HouseTable>
         </View>
-
-        
-
-        {/* Render your HouseTable and other components here */}
-
         <FlatList
-          style={{ height: '65%', marginTop: 35 }}
           data={users}
           renderItem={({ item }) => (
-            <DataTable.Row style={{ marginRight: 20}} onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}>
-              <DataTable.Cell>{item.Address}</DataTable.Cell>
-              <DataTable.Cell>{item.Beds}</DataTable.Cell>
-              <DataTable.Cell>{item.Baths}</DataTable.Cell>
-              <DataTable.Cell>{item.Price}</DataTable.Cell>
+            <DataTable.Row style={{ marginRight: 60 }} onPress={() => navigation.navigate("HomeInfo", { docID: item.id })}>
+              <View style={{ minWidth: 70, maxWidth: 200, marginRight: 10}}>
+                <DataTable.Cell>{item.Address}</DataTable.Cell>
+              </View>
+              
+              <View style={{ marginRight: 15, }}>
+                <DataTable.Cell>{item.Beds}</DataTable.Cell>    
+              </View>
+              <View style={{ marginLeft: 35, }}>
+                <DataTable.Cell>{item.Baths}</DataTable.Cell>
+              </View>
+
+              <View style={{ marginLeft: 50, }}>
+                <DataTable.Cell>{item.Price}</DataTable.Cell>
+              </View>
             </DataTable.Row>
           )}
           keyExtractor={(item) => item.id}
@@ -142,7 +143,7 @@ function HouseSearch({ navigation }) {
         </View>
 
       </View>
-    </NativeBaseProvider>
+    </NativeBaseProvider >
   );
 }
 
@@ -225,6 +226,12 @@ const styles = StyleSheet.create({
     fontFamily: 'AlNile-Bold',
     fontSize: 40,
   },
+  houseTable: {
+    justifyContent: "space-evenly",
+    minWidth: 350,
+    marginLeft: 80,
+    marginRight: 80,
+  },
   filterButton: {
     justifyContent: 'center',
     paddingVertical: 12,
@@ -238,32 +245,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: 'grey',
   },
-  addressLabel: {
-    fontWeight: 'bold',
-    marginRight: 140,
-    marginLeft: 15,
-    fontSize: 16,
-    color: 'grey',
-  },
-  bedLabel: {
-    fontWeight: 'bold',
-    marginRight: 10,
-    fontSize: 16,
-  },
-  bathLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  priceLabel: {
-    fontSize: 16, 
-    fontWeight: 'bold',
-    marginRight: 27,
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   image: {
     width: 50, // Adjust the width and height as needed
