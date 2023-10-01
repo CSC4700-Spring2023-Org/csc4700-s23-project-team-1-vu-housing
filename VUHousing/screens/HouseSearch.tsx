@@ -52,34 +52,35 @@ function HouseSearch({ navigation }) {
     fetchData();
   }, []);
 
-
-  // const events = firestore().collection('Houses');
-  // events.get().then((querySnapshot) => {
-  //  const user = [];
-  //  querySnapshot.forEach((doc) => {
-  //    user.push({ id: doc.id, ...doc.data() });
-  //  });
-  //  setUsers(user);
-  // });
-
-
-
    function clearFilters(){
     setBeds("");
     setBaths("");
     setPrice("");
+
+    // Filters have been cleared, just show everything in database
+    const events = firestore().collection('Houses');
+    events.get().then((querySnapshot) => {
+    const user = [];
+    querySnapshot.forEach((doc) => {
+     user.push({ id: doc.id, ...doc.data() });
+    });
+    setUsers(user);
+    });
    }
- //TODO: DP Just check if the text values are nonzero and if they are then query based on non-ZeroInputs
- //TODO: Rewrite this function by using the above code to query the Houses Collection. Reference
- // The code in checkLogin() on LoginScreen.tsx. Might need to make this an async function
 
     function FilterQuery(){
-    console.log("BEDS: "+beds)
-    console.log("BATHS: "+baths)
-    console.log("{Price} "+price)
-
     let bedInt = parseInt(beds); 
-    let bathInt = parseInt(baths);  
+    let bathInt = parseInt(baths);
+    
+    // debug console prints
+    //console.log("---")
+    //console.log("BEDS: "+beds+" type: " + typeof(beds))
+    //console.log("BEDS: "+baths+" type: " + typeof(baths))
+    //console.log("BEDSINT: "+bedInt+" type: " + typeof(bedInt))
+    //console.log("BEDSINT: "+bathInt+" type: " + typeof(bathInt))
+    //console.log("{Price} "+price+" type: " + typeof(price))
+
+      
     
     // Check if filter inputs are non-zero, alert if any are zero (might change later on)
     if(bedInt == 0 || bathInt == 0 || price == "")
@@ -89,12 +90,11 @@ function HouseSearch({ navigation }) {
 
     // Query database for entries according to filter values
     // Note: can only use inequality on one field, must use == on others. 
-    // Alternate approach could be to generate three different queries then combine the results at the end then display....
-    const events = firestore().collection('Houses').where("Beds","==",bedInt).where("Bath","==",bathInt).where("Price","==",price)
+    const events = firestore().collection('Houses').where("Beds","==",bedInt).where("Baths","==",bathInt).where("Price","==",price)
     events.get().then((querySnapshot) => {
       const user = []
       querySnapshot.forEach((doc) => {
-        console.log("did filter thing"); 
+        //console.log("did filter thing"); 
         user.push({ id: doc.id, ...doc.data() });
       })
       setUsers(user)
