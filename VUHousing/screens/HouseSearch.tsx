@@ -86,7 +86,7 @@ function HouseSearch({ navigation }) {
           <Text color="#001F58" fontSize="3xl" bold>
             House Search
           </Text>
-
+          
           <Text color="#3eb7e5" fontSize="md" bold>
             Filter Houses
           </Text>
@@ -115,19 +115,29 @@ function HouseSearch({ navigation }) {
         <Box>
           <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
         </Box>
-
-        {/* Render your HouseTable and other components here */}
-        <HouseTable></HouseTable>
+        
+        <View style={styles.houseTable}>
+          <HouseTable></HouseTable>
+        </View>
 
         <FlatList
-          style={{ height: '65%' }}
           data={users}
           renderItem={({ item }) => (
-            <DataTable.Row onPress={() => navigation.navigate('HomeInfo', { docID: item.id })}>
-              <DataTable.Cell>{item.Address}</DataTable.Cell>
-              <DataTable.Cell>{item.Beds}</DataTable.Cell>
-              <DataTable.Cell>{item.Baths}</DataTable.Cell>
-              <DataTable.Cell>{item.Price}</DataTable.Cell>
+            <DataTable.Row style={{ marginRight: 60 }} onPress={() => navigation.navigate("HomeInfo", { docID: item.id })}>
+              <View style={{ minWidth: 70, maxWidth: 200, marginRight: 10}}>
+                <DataTable.Cell>{item.Address}</DataTable.Cell>
+              </View>
+              
+              <View style={{ marginRight: 15, }}>
+                <DataTable.Cell>{item.Beds}</DataTable.Cell>    
+              </View>
+              <View style={{ marginLeft: 35, }}>
+                <DataTable.Cell>{item.Baths}</DataTable.Cell>
+              </View>
+
+              <View style={{ marginLeft: 50, }}>
+                <DataTable.Cell>{item.Price}</DataTable.Cell>
+              </View>
             </DataTable.Row>
           )}
           keyExtractor={(item) => item.id}
@@ -138,7 +148,7 @@ function HouseSearch({ navigation }) {
         </View>
 
       </View>
-    </NativeBaseProvider>
+    </NativeBaseProvider >
   );
 }
 
@@ -221,6 +231,12 @@ const styles = StyleSheet.create({
     fontFamily: 'AlNile-Bold',
     fontSize: 40,
   },
+  houseTable: {
+    justifyContent: "space-evenly",
+    minWidth: 350,
+    marginLeft: 80,
+    marginRight: 80,
+  },
   filterButton: {
     justifyContent: 'center',
     paddingVertical: 12,
@@ -232,18 +248,12 @@ const styles = StyleSheet.create({
   },
   banner: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-    paddingHorizontal: 16,
-  },
-  label: {
-    fontWeight: 'bold',
-    fontSize: 16,
+    marginTop: 20,
+    color: 'grey',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   image: {
     width: 50, // Adjust the width and height as needed

@@ -77,7 +77,7 @@ export default function Signup({ navigation }) {
           Password: password
         })
         .then(() => {
-          console.log('House added!');
+          console.log('User added!');
           navigation.navigate("HomeScreen")
         });
     }

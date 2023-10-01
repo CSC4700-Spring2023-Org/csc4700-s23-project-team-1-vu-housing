@@ -77,7 +77,7 @@ export default function HomeInfo({ route, navigation }) {
         <Image source={{ uri: streetView }} style={styles.image} />
       </View>
 
-      <Box flex={1} bg="#ffffff" alignItems="center"  >
+      <Box flex={1} bg="#ffffff" alignItems="center" marginRight='10' marginLeft='2' >
         <View style={styles.container}>
           <Text color="#001F58" fontSize="4xl" bold>Address:</Text>
           <Text style="#001F58" fontSize="md">{address}</Text>
