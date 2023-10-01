@@ -15,13 +15,6 @@ import {
 
 import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
@@ -58,13 +51,6 @@ function HouseSearch({ navigation }) {
     fetchData();
   }, []);
 
-  const FilterQuery = () => {
-    console.log('BEDS' + beds);
-    console.log('BATHS' + baths);
-    console.log('Price' + price);
-
-    // Implement your filtering logic here using beds, baths, and price state variables
-  };
 
   const events = firestore().collection('Houses');
   events.get().then((querySnapshot) => {
@@ -75,20 +61,35 @@ function HouseSearch({ navigation }) {
     setUsers(user);
   });
 
-  const clearFilters = () => {
-    setBeds('');
-    setBaths('');
-    setPrice('');
-  };
+
+
+   function clearFilters(){
+    setBeds("");
+    setBaths("");
+    setPrice("");
+   }
+ //TODO: DP Just check if the text values are nonzero and if they are then query based on non-ZeroInputs
+ //TODO: Rewrite this function by using the above code to query the Houses Collection. Reference
+ // The code in checkLogin() on LoginScreen.tsx. Might need to make this an async function
+
+   function FilterQuery(){
+    console.log("BEDS: "+beds)
+    console.log("BATHS: "+baths)
+    console.log("{Price} "+price)
+   }
+    
 
   return (
     <NativeBaseProvider>
       <View>
-        <Box alignItems="center" marginTop="5" marginBottom="5">
+        <Box alignItems="center" marginTop="2" marginBottom="2">
           <Text color="#001F58" fontSize="3xl" bold>
             House Search
           </Text>
-          <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
+          
+          <Text color="#3eb7e5" fontSize="md" bold>
+            Filter Houses
+          </Text>
         </Box>
 
         <Box flexDirection={'row'} w="99%">
@@ -111,10 +112,14 @@ function HouseSearch({ navigation }) {
             value={price}
           />
         </Box>
-
+        <Box>
+          <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
+        </Box>
+        
         <View style={styles.houseTable}>
           <HouseTable></HouseTable>
         </View>
+
         <FlatList
           data={users}
           renderItem={({ item }) => (
@@ -151,8 +156,8 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
   const [isLoadingFilter, setIsLoadingFilter] = useState(false); // State for the Filter button
   const [isLoadingClear, setIsLoadingClear] = useState(false);   // State for the Clear Filters button
 
-  const buttonColorFilter = isLoadingFilter ? '#b2d7e6' : '#007aff'; // Light blue when loading, dark blue when not
-  const buttonColorClear = isLoadingClear ? '#b2d7e6' : '#007aff';
+  const buttonColorFilter = isLoadingFilter ? '#001F58' : '#007aff'; // Light blue when loading, dark blue when not
+  const buttonColorClear = isLoadingClear ? '#001F58' : '#007aff';
 
   const handlePressFilter = () => {
     if (isLoadingFilter) {
@@ -188,7 +193,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
       <Box flexDirection='row' alignItems="center" alignSelf='center'>
         <Animatable.View animation={isLoadingFilter ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: buttonColorFilter }}
+            style={{ backgroundColor: buttonColorFilter, marginRight: 20, marginTop: 10, marginBottom: 10 }}
             mode="contained"
             onPress={handlePressFilter}
             disabled={isLoadingFilter}
@@ -202,7 +207,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
         </Animatable.View>
         <Animatable.View animation={isLoadingClear ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: buttonColorClear }}
+            style={{backgroundColor: buttonColorFilter, marginTop: 10, marginBottom: 10 }}
             mode="contained"
             onPress={handlePressClear}
             disabled={isLoadingClear}
@@ -210,7 +215,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
             {isLoadingClear ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text style={{ color: 'white' }}>Clear Filters</Text>
+              <Text style={{ color: 'white' }}>Clear</Text>
             )}
           </Button>
         </Animatable.View>
@@ -235,6 +240,7 @@ const styles = StyleSheet.create({
   filterButton: {
     justifyContent: 'center',
     paddingVertical: 12,
+    paddingRight: 15,
     paddingHorizontal: 3,
     borderRadius: 4,
     elevation: 3,
