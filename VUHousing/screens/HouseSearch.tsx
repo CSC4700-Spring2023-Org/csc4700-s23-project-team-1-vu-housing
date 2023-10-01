@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
@@ -52,14 +53,14 @@ function HouseSearch({ navigation }) {
   }, []);
 
 
-  const events = firestore().collection('Houses');
-  events.get().then((querySnapshot) => {
-    const user = [];
-    querySnapshot.forEach((doc) => {
-      user.push({ id: doc.id, ...doc.data() });
-    });
-    setUsers(user);
-  });
+  // const events = firestore().collection('Houses');
+  // events.get().then((querySnapshot) => {
+  //  const user = [];
+  //  querySnapshot.forEach((doc) => {
+  //    user.push({ id: doc.id, ...doc.data() });
+  //  });
+  //  setUsers(user);
+  // });
 
 
 
@@ -72,10 +73,32 @@ function HouseSearch({ navigation }) {
  //TODO: Rewrite this function by using the above code to query the Houses Collection. Reference
  // The code in checkLogin() on LoginScreen.tsx. Might need to make this an async function
 
-   function FilterQuery(){
+    function FilterQuery(){
     console.log("BEDS: "+beds)
     console.log("BATHS: "+baths)
     console.log("{Price} "+price)
+
+    let bedInt = parseInt(beds); 
+    let bathInt = parseInt(baths);  
+    
+    // Check if filter inputs are non-zero, alert if any are zero (might change later on)
+    if(bedInt == 0 || bathInt == 0 || price == "")
+    {
+      Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
+    }
+
+    // Query database for entries according to filter values
+    // Note: can only use inequality on one field, must use == on others. 
+    // Alternate approach could be to generate three different queries then combine the results at the end then display....
+    const events = firestore().collection('Houses').where("Beds","==",bedInt).where("Bath","==",bathInt).where("Price","==",price)
+    events.get().then((querySnapshot) => {
+      const user = []
+      querySnapshot.forEach((doc) => {
+        console.log("did filter thing"); 
+        user.push({ id: doc.id, ...doc.data() });
+      })
+      setUsers(user)
+   })
    }
     
 
