@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 
+import BackButton from './BackButton';
+
 import {
   Colors,
   DebugInstructions,
@@ -39,6 +41,10 @@ export default function HomeScreen({navigation}) {
         <Button  
         onPress={()=>navigation.navigate("UserSearch")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Search for Roommates</Button>
       </Box>
+
+        <View>
+          <BackButton text="Go Back" />
+        </View>
       </NativeBaseProvider>
      
     );

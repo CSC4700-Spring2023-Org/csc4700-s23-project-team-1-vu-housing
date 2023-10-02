@@ -11,17 +11,11 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
@@ -31,108 +25,263 @@ import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
 
 function HouseSearch({ navigation }) {
-  const [loading, setLoading] = useState(true); // Set loading to true on component mount
-  const [users, setUsers] = useState([]); // Initial empty array of users
-  const [address, setAddress] = useState([]);
-  const [beds, setBeds] = useState("");
-  const [baths, setBaths] = useState("");
-  const [price, setPrice]=useState("")
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [beds, setBeds] = useState('');
+  const [baths, setBaths] = useState('');
+  const [price, setPrice] = useState('');
 
-  
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await firestore().collection('Houses').get();
+        const userData = [];
 
-  const events = firestore().collection('Houses')
-  events.get().then((querySnapshot) => {
-      const user = []
-      querySnapshot.forEach((doc) => {
-         user.push({ id: doc.id, ...doc.data() })
-      })
-      setUsers(user)
-   })
+        querySnapshot.forEach((doc) => {
+          userData.push({ id: doc.id, ...doc.data() });
+        });
 
+        setUsers(userData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false); // Handle the error gracefully
+      }
+    };
 
+    fetchData();
+  }, []);
 
    function clearFilters(){
     setBeds("");
     setBaths("");
     setPrice("");
-   }
- //TODO: DP Just check if the text values are nonzero and if they are then query based on non-ZeroInputs
- //TODO: Rewrite this function by using the above code to query the Houses Collection. Reference
- // The code in checkLogin() on LoginScreen.tsx. Might need to make this an async function
-   function FilterQuery(){
-    console.log("BEDS"+beds)
-    console.log("BATHS"+baths)
-    console.log("{Price}"+price)
 
+    // Filters have been cleared, just show everything in database
+    const events = firestore().collection('Houses');
+    events.get().then((querySnapshot) => {
+    const user = [];
+    querySnapshot.forEach((doc) => {
+     user.push({ id: doc.id, ...doc.data() });
+    });
+    setUsers(user);
+    });
+   }
+
+    function FilterQuery(){
+    let bedInt = parseInt(beds); 
+    let bathInt = parseInt(baths);
+    
+    // debug console prints
+    //console.log("---")
+    //console.log("BEDS: "+beds+" type: " + typeof(beds))
+    //console.log("BEDS: "+baths+" type: " + typeof(baths))
+    //console.log("BEDSINT: "+bedInt+" type: " + typeof(bedInt))
+    //console.log("BEDSINT: "+bathInt+" type: " + typeof(bathInt))
+    //console.log("{Price} "+price+" type: " + typeof(price))
+
+      
+    
+    // Check if filter inputs are non-zero, alert if any are zero (might change later on)
+    if(bedInt == 0 || bathInt == 0 || price == "")
+    {
+      Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
+    }
+
+    // Query database for entries according to filter values
+    // Note: can only use inequality on one field, must use == on others. 
+    const events = firestore().collection('Houses').where("Beds","==",bedInt).where("Baths","==",bathInt).where("Price","==",price)
+    events.get().then((querySnapshot) => {
+      const user = []
+      querySnapshot.forEach((doc) => {
+        //console.log("did filter thing"); 
+        user.push({ id: doc.id, ...doc.data() });
+      })
+      setUsers(user)
+   })
    }
     
 
   return (
     <NativeBaseProvider>
-
-
       <View>
-      <Box alignItems="center" marginTop="5" marginBottom="5" >
-        <Text fontSize="4xl" bold>House Search</Text>
-      </Box>
-            
-     
-          <Box flexDirection={'row'} w='99%'>
-            <Input placeholder='Beds' w='33%' onChangeText={(val) => setBeds((val))} value={String(beds)}></Input>
-            <Input placeholder='Baths' w='33%' onChangeText={(val) => setBaths((val))} value={String(baths)}></Input>
-            <Input placeholder='Price' w='33%' onChangeText={(val) => setPrice((val))} value={String(price)}></Input>
-          </Box>
-          <Box flexDirection='row' alignItems="center" alignSelf='center'>
-            <Button title='filter' bgColor="#001F58" size="sm" w="100" alignSelf={'center'} borderRadius="50" _text={{ color: '#FFFFFF' }} onPress={() => FilterQuery()} >Filter</Button>
-            <Button title='clear' bgColor="#001F58" size="sm" w="100" alignSelf={'center'} borderRadius="50" _text={{ color: '#FFFFFF' }} onPress={() => clearFilters()} >Clear</Button>
-          </Box>
-          <HouseTable></HouseTable>
+        <Box alignItems="center" marginTop="2" marginBottom="2">
+          <Text color="#001F58" fontSize="3xl" bold>
+            House Search
+          </Text>
+          
+          <Text color="#3eb7e5" fontSize="md" bold>
+            Filter Houses
+          </Text>
+        </Box>
 
-          <FlatList
-          style={{height:'65%'}}
+        <Box flexDirection={'row'} w="99%">
+          <Input
+            placeholder="Beds"
+            w="33%"
+            onChangeText={(val) => setBeds(val)}
+            value={beds}
+          />
+          <Input
+            placeholder="Baths"
+            w="33%"
+            onChangeText={(val) => setBaths(val)}
+            value={baths}
+          />
+          <Input
+            placeholder="Price"
+            w="33%"
+            onChangeText={(val) => setPrice(val)}
+            value={price}
+          />
+        </Box>
+        <Box>
+          <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
+        </Box>
+        
+        <View style={styles.houseTable}>
+          <HouseTable></HouseTable>
+        </View>
+
+        <FlatList
           data={users}
           renderItem={({ item }) => (
-          <DataTable.Row onPress={()=>navigation.navigate("HomeInfo",{docID:item.id})}>
-          <DataTable.Cell>{item.Address}</DataTable.Cell>
-          <DataTable.Cell>{item.Beds}</DataTable.Cell>
-          <DataTable.Cell>{item.Baths}</DataTable.Cell>
-          <DataTable.Cell>{item.Price}</DataTable.Cell>
-          </DataTable.Row>
-        )}
-        keyExtractor={(item) => item.id}
-      />
+            <DataTable.Row style={{ marginRight: 60 }} onPress={() => navigation.navigate("HomeInfo", { docID: item.id })}>
+              <View style={{ minWidth: 70, maxWidth: 200, marginRight: 10}}>
+                <DataTable.Cell>{item.Address}</DataTable.Cell>
+              </View>
+              
+              <View style={{ marginRight: 15, }}>
+                <DataTable.Cell>{item.Beds}</DataTable.Cell>    
+              </View>
+              <View style={{ marginLeft: 35, }}>
+                <DataTable.Cell>{item.Baths}</DataTable.Cell>
+              </View>
+
+              <View style={{ marginLeft: 50, }}>
+                <DataTable.Cell>{item.Price}</DataTable.Cell>
+              </View>
+            </DataTable.Row>
+          )}
+          keyExtractor={(item) => item.id}
+        />
+
+        <View>
+          <BackButton text="Go Back" />
+        </View>
+
       </View>
     </NativeBaseProvider >
   );
 }
 
+const CoolButton = ({ onPress, clearFilters, isLoading }) => {
+  const [isLoadingFilter, setIsLoadingFilter] = useState(false); // State for the Filter button
+  const [isLoadingClear, setIsLoadingClear] = useState(false);   // State for the Clear Filters button
 
+  const buttonColorFilter = isLoadingFilter ? '#001F58' : '#007aff'; // Light blue when loading, dark blue when not
+  const buttonColorClear = isLoadingClear ? '#001F58' : '#007aff';
+
+  const handlePressFilter = () => {
+    if (isLoadingFilter) {
+      return;
+    }
+    setIsLoadingFilter(true);
+
+    setTimeout(() => {
+      setIsLoadingFilter(false);
+      if (onPress) {
+        onPress();
+      } else {
+        console.log('Filter Clicked!');
+      }
+    }, 1000); // Replace with your actual async call
+  };
+
+  const handlePressClear = () => {
+    if (isLoadingClear) {
+      return;
+    }
+    setIsLoadingClear(true);
+
+    setTimeout(() => {
+      setIsLoadingClear(false);
+      clearFilters(); // Call clearFilters function when Clear Filters button is pressed
+      console.log('Clear Filters Clicked!');
+    }, 1000); // Replace with your actual async call
+  };
+
+  return (
+    <View>
+      <Box flexDirection='row' alignItems="center" alignSelf='center'>
+        <Animatable.View animation={isLoadingFilter ? 'swing' : undefined}>
+          <Button
+            style={{ backgroundColor: buttonColorFilter, marginRight: 20, marginTop: 10, marginBottom: 10 }}
+            mode="contained"
+            onPress={handlePressFilter}
+            disabled={isLoadingFilter}
+          >
+            {isLoadingFilter ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text style={{ color: 'white' }}>Filter</Text>
+            )}
+          </Button>
+        </Animatable.View>
+        <Animatable.View animation={isLoadingClear ? 'swing' : undefined}>
+          <Button
+            style={{backgroundColor: buttonColorFilter, marginTop: 10, marginBottom: 10 }}
+            mode="contained"
+            onPress={handlePressClear}
+            disabled={isLoadingClear}
+          >
+            {isLoadingClear ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text style={{ color: 'white' }}>Clear</Text>
+            )}
+          </Button>
+        </Animatable.View>
+      </Box>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
+  title: {
+    textAlign: 'center',
+    marginVertical: 20,
+    fontFamily: 'AlNile-Bold',
+    fontSize: 40,
+  },
+  houseTable: {
+    justifyContent: "space-evenly",
+    minWidth: 350,
+    marginLeft: 80,
+    marginRight: 80,
+  },
   filterButton: {
     justifyContent: 'center',
+    paddingVertical: 12,
+    paddingRight: 15,
+    paddingHorizontal: 3,
     borderRadius: 4,
     elevation: 3,
+    backgroundColor: 'black',
+  },
+  banner: {
+    flexDirection: 'row',
+    marginTop: 20,
     color: 'grey',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   image: {
-    width: 70, // Adjust the width and height as needed
+    width: 50, // Adjust the width and height as needed
     height: 50,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-    paddingHorizontal: 16,
   },
 });
 
 export default HouseSearch;
-
