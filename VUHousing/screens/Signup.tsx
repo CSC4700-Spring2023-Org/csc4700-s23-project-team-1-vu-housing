@@ -30,7 +30,13 @@ export default function Signup({ navigation }) {
   const [phone, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [users, setUsers] = useState([]);
   const [passwordRE, setPasswordRE] = useState('');
+
+  
+
+  console.log("Users below")
+  console.log()
 
   var passwordValid = true
   var validEmail = true
@@ -50,13 +56,13 @@ export default function Signup({ navigation }) {
       Alert.alert("Password Error", "Passwords field cannot be blank. Please fill this out")
 
     }
-
     var slicedEmail = email.slice(email.indexOf('@'))
     var invalidEmail = "This is not a valid email address. Please use a villanova.edu email to register."
     if (slicedEmail !== '@villanova.edu') {
       validEmail = false
       Alert.alert('Invalid Email', invalidEmail);
-    }
+    } 
+  
 
     var phoneFormat = phoneCheck(phone.substring(0, 3)) && phone.substring(3, 4).includes('-')
       && phoneCheck(phone.substring(4, 7)) && phone.substring(7, 8).includes('-')
@@ -77,7 +83,7 @@ export default function Signup({ navigation }) {
           Password: password
         })
         .then(() => {
-          console.log('House added!');
+          console.log('user!');
           navigation.navigate("HomeScreen")
         });
     }

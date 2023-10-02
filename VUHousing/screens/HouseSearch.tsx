@@ -26,6 +26,7 @@ import { useNavigation } from '@react-navigation/native';
 function HouseSearch({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const [houses,setHouses]=useState([]);
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
   const [price, setPrice] = useState('');
@@ -170,7 +171,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
     setTimeout(() => {
       setIsLoadingClear(false);
       clearFilters(); // Call clearFilters function when Clear Filters button is pressed
-      console.log('Clear Filters Clicked!');
+      //console.log('Clear Filters Clicked!');
     }, 1000); // Replace with your actual async call
   };
 
