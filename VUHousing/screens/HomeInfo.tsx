@@ -11,6 +11,7 @@ import BackButton from './BackButton';
 import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
+  Alert,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -43,13 +44,21 @@ type SectionProps = PropsWithChildren<{
 export default function HomeInfo({ route, navigation }) {
   const obj = route.params
   //console.log(obj.docID)
-  
+
+  const [reviewButtonStyle, setReviewButtonStyle] = useState("flex");
+
   const [address, setAddress] = useState("")
   const [beds, setBeds] = useState(0)
   const [baths, setBaths] = useState(0)
   const [price, setPrice] = useState(0)
   const [landlord, setLandlord] = useState("")
   const [streetView, setStreetView] = useState("")
+
+  const [review, setReview] = useState(0.0)
+  var [reviewCount, setReviewCount] = useState(0)
+  const [reviewData, setReviewData] = useState(0.0)
+
+
 
 
   const events = firestore()
@@ -63,10 +72,31 @@ export default function HomeInfo({ route, navigation }) {
       setPrice(documentSnapshot.data().Price)
       setLandlord(documentSnapshot.data().Landlord)
       setStreetView(documentSnapshot.data().StreetView)
+      setReviewData(documentSnapshot.data().Review)
+      setReviewCount(documentSnapshot.data().ReviewCount)
     });
 
-
-
+  var reviewArray = [reviewData, reviewCount]
+  function onReviewPress() {
+    for (var i = 0; i < reviewArray.length; i++) {
+      if (ifFieldsEmpty(String(reviewArray[i]))) {
+        Alert.alert("Review Error:", "You have not properlly filled the input for a review. Please try again.")
+      }
+      else {
+        reviewCount = reviewCount + 1
+        firestore()
+          .collection('Houses')
+          .add({
+            Review: review,
+            ReviewCount: reviewCount
+          })
+          .then(() => {
+            console.log('Review added!');
+          });
+        navigation.navigate("HouseSearch")
+      }
+    }
+  }
 
   return (
     <NativeBaseProvider>
@@ -80,20 +110,40 @@ export default function HomeInfo({ route, navigation }) {
       <Box flex={1} bg="#ffffff" alignItems="center" marginRight='10' marginLeft='2' >
         <View style={styles.container}>
           <Text color="#001F58" fontSize="4xl" bold>Address:</Text>
-          <Text style="#001F58" fontSize="md">{address}</Text>
+          <Text fontSize="md">{address}</Text>
+          
+          <Box flexDirection="row" marginRight='10'>
+            <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
+            <Text fontSize="md" marginTop='5' marginLeft='5' marginRight='10' alignItems='center'>{beds}</Text>
 
-          <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
-          <Text style="#001F58" fontSize="md">{beds}</Text>
-
-          <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
-          <Text style="#001F58" fontSize="md">{baths}</Text>
+            <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
+            <Text fontSize="md" marginLeft='5' marginTop='5' alignItems='center'>{baths}</Text>
+          </Box>
 
           <Text color="#001F58" fontSize="4xl" bold>Price:</Text>
-          <Text style="#001F58" fontSize="md">{price}</Text>
+          <Text fontSize="md">{price}</Text>
 
           <Text color="#001F58" fontSize="4xl" bold>Landlord Contact:</Text>
-          <Text style="#001F58" fontSize="md">{landlord}</Text>
+          <Text fontSize="md">{landlord}</Text>
 
+          <Text color="#001F58" fontSize="4xl" bold>Reviews:</Text>
+          <Text style="#001F58" fontSize="md">{review}</Text>
+
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Leave a review!</Text>
+            <Input borderColor="#001F58" borderRadius="10" borderWidth="2" placeholder="(0-5 V's up)"
+              w="100%" autoCapitalize="none" h="50" fontSize="lg"
+              onChangeText={(val) => setReview(val)} />
+          </Box>
+
+          <Box marginTop="9" >
+            <Button alignSelf="center"
+              bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+              onPress={() => { onReviewPress(); }}>
+              Submit Review
+            </Button>
+          </Box>
+      
           <View>
             <BackButton text="Go Back" />
           </View>
@@ -139,5 +189,14 @@ const styles = StyleSheet.create({
 
   }
 });
+
+function ifFieldsEmpty(str: string) {
+  if (str.length == 0) {
+    return true
+  }
+  else {
+    return false
+  }
+}
 
 

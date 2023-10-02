@@ -32,7 +32,7 @@ export default function AddListing({ navigation }) {
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
-  var fieldsFilled=false
+  var fieldsFilled = false
   // price = priceToNum(price)
 
 
@@ -48,10 +48,12 @@ export default function AddListing({ navigation }) {
   const [submitText, setSubmitText] = useState('')
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info')
 
+  const [review, setReview] = useState(0.0)
+
   var fieldsFilled = false
 
-  var houseItems = [address, houseType, landlordContact, price]
-  for (var counter: number = 0; counter < 6; counter++) {
+  var houseItems = [address, houseType, landlordContact, price, review]
+  for (var counter: number = 0; counter < houseItems.length; counter++) {
     if (ifFieldsEmpty(String(houseItems[counter]))) {
       fieldsFilled = false
       break
@@ -128,7 +130,9 @@ export default function AddListing({ navigation }) {
             Price: price,
             Type: houseType,
             Landlord: landlordContact,
-            StreetView: houseStreetView
+            StreetView: houseStreetView,
+            Review: review,
+            ReviewCount: 1
           })
           .then(() => {
             console.log('House added!');
@@ -182,6 +186,13 @@ export default function AddListing({ navigation }) {
               <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="$1,750"
                 w="100%" autoCapitalize="none" h="50"
                 onChangeText={(val) => setPrice(val)} />
+            </Box>
+
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold>Review</Text>
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={2} borderWidth="2" placeholder="(0-5) V's up"
+                w="100%" autoCapitalize="none" h="50"
+                onChangeText={(val) => setReview(val)} />
             </Box>
 
             <Box marginTop="9" >
