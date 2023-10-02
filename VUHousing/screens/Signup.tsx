@@ -83,7 +83,7 @@ export default function Signup({ navigation }) {
           Password: password
         })
         .then(() => {
-          console.log('user!');
+          console.log('User added!');
           navigation.navigate("HomeScreen")
         });
     }
