@@ -120,6 +120,7 @@ export default function AddListing({ navigation }) {
     if (phoneFormat || emailCheck(landlordContact)) {
 
       if (apiCheck(apiItems)) {
+        var floatingReview = parseFloat(review.toPrecision(2))
         //New Writing to data base Section
         firestore()
           .collection('Houses')
@@ -131,7 +132,7 @@ export default function AddListing({ navigation }) {
             Type: houseType,
             Landlord: landlordContact,
             StreetView: houseStreetView,
-            Review: review,
+            Review: floatingReview,
             ReviewCount: 1
           })
           .then(() => {

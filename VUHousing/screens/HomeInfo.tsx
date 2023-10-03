@@ -1,11 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackButton from './BackButton';
 
 import type { PropsWithChildren } from 'react';
@@ -27,75 +20,87 @@ import firestore from '@react-native-firebase/firestore';
 
 import { NativeBaseProvider, Box, Text, Input, Button, useToast } from "native-base";
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-
-
 export default function HomeInfo({ route, navigation }) {
-  const obj = route.params
-  //console.log(obj.docID)
+  const obj = route.params;
 
-  const [reviewButtonStyle, setReviewButtonStyle] = useState("flex");
+  const [address, setAddress] = useState("");
+  const [beds, setBeds] = useState(0);
+  const [baths, setBaths] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [landlord, setLandlord] = useState("");
+  const [streetView, setStreetView] = useState("");
 
-  const [address, setAddress] = useState("")
-  const [beds, setBeds] = useState(0)
-  const [baths, setBaths] = useState(0)
-  const [price, setPrice] = useState(0)
-  const [landlord, setLandlord] = useState("")
-  const [streetView, setStreetView] = useState("")
+  const [reviewData, setReviewData] = useState(0.0);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [userReview, setUserReview] = useState(0.0)
 
-  const [review, setReview] = useState(0.0)
-  var [reviewCount, setReviewCount] = useState(0)
-  const [reviewData, setReviewData] = useState(0.0)
-
-
-
-
-  const events = firestore()
-    .collection('Houses')
-    .doc(obj.docID)
-    .get()
-    .then(documentSnapshot => {
-      setAddress(documentSnapshot.data().Address)
-      setBeds(documentSnapshot.data().Beds)
-      setBaths(documentSnapshot.data().Baths)
-      setPrice(documentSnapshot.data().Price)
-      setLandlord(documentSnapshot.data().Landlord)
-      setStreetView(documentSnapshot.data().StreetView)
-      setReviewData(documentSnapshot.data().Review)
-      setReviewCount(documentSnapshot.data().ReviewCount)
-    });
-
-  var reviewArray = [reviewData, reviewCount]
-  function onReviewPress() {
-    for (var i = 0; i < reviewArray.length; i++) {
-      if (ifFieldsEmpty(String(reviewArray[i]))) {
-        Alert.alert("Review Error:", "You have not properlly filled the input for a review. Please try again.")
-      }
-      else {
-        reviewCount = reviewCount + 1
-        firestore()
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const documentSnapshot = await firestore()
           .collection('Houses')
-          .add({
-            Review: review,
-            ReviewCount: reviewCount
-          })
-          .then(() => {
-            console.log('Review added!');
-          });
-        navigation.navigate("HouseSearch")
+          .doc(obj.docID)
+          .get();
+
+        const data = documentSnapshot.data();
+
+        if (data) {
+          setAddress(data.Address);
+          setBeds(data.Beds);
+          setBaths(data.Baths);
+          setPrice(data.Price);
+          setLandlord(data.Landlord);
+          setStreetView(data.StreetView);
+          setReviewData(data.Review);
+          setReviewCount(data.ReviewCount);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
+    };
+
+    fetchData();
+  }, [obj.docID]);
+
+  const onReviewPress = () => {
+    if (ifFieldsEmpty(String(userReview))) {
+      Alert.alert("Review Error:", "Please fill out the field and try again")
+      return;
     }
+    else if (userReview < 0 || userReview > 5) {
+      Alert.alert("Review Error:", "Review score must be between 0.0 and 5.0.");
+      return;
+    }
+    else {
+      var newReviewCount = reviewCount + 1;
+
+      var floatingReview = parseFloat(userReview.toPrecision(2))
+      var floatingReviewData = parseFloat(reviewData.toPrecision(2))
+      var floatingReviewCount = parseFloat(newReviewCount.toPrecision(2))
+
+     
+      var newReview = (floatingReviewData * floatingReviewCount + floatingReview) / floatingReviewCount;
+
+      firestore()
+        .collection('Houses')
+        .doc(obj.docID)
+        .update({
+          Review: newReview,
+          ReviewCount: newReviewCount,
+        })
+        .then(() => {
+          console.log('Review added!');
+          console.log('Reviews: ' + newReviewCount + " Score: " + newReview);
+          navigation.navigate("HouseSearch");
+        })
+        .catch((error) => {
+          console.error("Error updating review:", error);
+        });
+    };
   }
 
   return (
@@ -108,7 +113,7 @@ export default function HomeInfo({ route, navigation }) {
       </View>
 
       <Box flex={1} bg="#ffffff" alignItems="center" marginRight='10' marginLeft='2' >
-        <View style={styles.container}>
+        <View style={styles.sectionContainer}>
           <Text color="#001F58" fontSize="4xl" bold>Address:</Text>
           <Text fontSize="md">{address}</Text>
           
@@ -127,13 +132,13 @@ export default function HomeInfo({ route, navigation }) {
           <Text fontSize="md">{landlord}</Text>
 
           <Text color="#001F58" fontSize="4xl" bold>Reviews:</Text>
-          <Text style="#001F58" fontSize="md">{review}</Text>
+          <Text fontSize="md">{reviewData}</Text>
 
           <Box flexDirection="column" >
             <Text color="#001F58" fontSize="2xl" bold>Leave a review!</Text>
-            <Input borderColor="#001F58" borderRadius="10" borderWidth="2" placeholder="(0-5 V's up)"
+            <Input borderColor="#001F58" borderRadius="10" borderWidth="2" placeholder="(0.0-5.0 V's up)"
               w="100%" autoCapitalize="none" h="50" fontSize="lg"
-              onChangeText={(val) => setReview(val)} />
+              onChangeText={(val) => setUserReview(val)} />
           </Box>
 
           <Box marginTop="9" >
