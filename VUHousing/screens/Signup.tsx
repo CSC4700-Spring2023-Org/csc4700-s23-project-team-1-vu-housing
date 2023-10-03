@@ -35,14 +35,27 @@ export default function Signup({ navigation }) {
 
   
 
-  console.log("Users below")
-  console.log()
-
+  
   var passwordValid = true
   var validEmail = true
   var validName = true
 
+  async function checkValidityAndSubmit(){
+    const userCollection = firestore().collection('Users')
+    const user = await userCollection.where('Email', "==", email).get()
+      //if not user exists, throw and alert... Otherwise navigate to homeScreen.
+      if (!user.empty) {
+        Alert.alert("Email In Use", "There is already a user with this email. Please try logging in")
+      }
+      else {
+       onSubmitPress()
+      }
+  }
+
   const onSubmitPress = () => {
+    
+    
+
     if (name.length === 0) {
       validName = false
       Alert.alert("Name Error", "User's name field cannot be empty. Please fill this out")
@@ -138,7 +151,7 @@ export default function Signup({ navigation }) {
             <Box marginTop="9" >
               <Button alignSelf="center"
                 bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
-                onPress={() => { onSubmitPress() }}>
+                onPress={() => { checkValidityAndSubmit() }}>
                 Submit
               </Button>
             </Box>
