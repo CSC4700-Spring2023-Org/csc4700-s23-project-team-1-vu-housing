@@ -197,9 +197,10 @@ export default function AddListing({navigation}) {
       } else if (response.errorMessage) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        const source = {uri: response.assets.uri};
+        const source = {uri: response.assets[0].uri};
         console.log(source);
-        setImage(source);
+        setSelectedImage(source);
+        uploadImage();
       }
     });
   };
