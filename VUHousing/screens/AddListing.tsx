@@ -206,29 +206,33 @@ export default function AddListing({navigation}) {
   };
 
   const uploadImage = async () => {
-    const {uri} = image;
-    const filename = uri.substring(uri.lastIndexOf('/') + 1);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    setUploading(true);
-    setTransferred(0);
-    const task = storage().ref(filename).putFile(uploadUri);
-    // set progress state
-    task.on('state_changed', snapshot => {
-      setTransferred(
-        Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
+    console.log('upload running');
+    if (image == null) {
+      const {uri} = image;
+      const filename = uri.substring(uri.lastIndexOf('/') + 1);
+      const uploadUri =
+        Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+      setUploading(true);
+      setTransferred(0);
+      const task = storage().ref(filename).putFile(uploadUri);
+      // set progress state
+      task.on('state_changed', snapshot => {
+        setTransferred(
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
+        );
+      });
+      try {
+        await task;
+      } catch (e) {
+        console.error(e);
+      }
+      setUploading(false);
+      Alert.alert(
+        'Photo uploaded!',
+        'Your photo has been uploaded to Firebase Cloud Storage!',
       );
-    });
-    try {
-      await task;
-    } catch (e) {
-      console.error(e);
+      setImage(null);
     }
-    setUploading(false);
-    Alert.alert(
-      'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!',
-    );
-    setImage(null);
   };
 
   return (
