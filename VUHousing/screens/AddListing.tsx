@@ -50,6 +50,7 @@ export default function AddListing({navigation}) {
   var fieldsFilled = false;
   // price = priceToNum(price)
 
+
   const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
   const [submitButtonStyle, setSubmitButtonStyle] = useState('none');
 
