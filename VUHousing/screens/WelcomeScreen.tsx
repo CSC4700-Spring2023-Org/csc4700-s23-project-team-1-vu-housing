@@ -103,15 +103,9 @@ export default function WelcomeScreen({ route, navigation }) {
             }}
           >
 
-            {/*<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              {imageUrl ? (
-                <Image source={{ uri: imageUrl }} style={{ width: 200, height: 200 }} />
-              ) : (
-                <Text>No image found.</Text>
-              )}
-            </View>
-              */}
-            <Image style={styles.image} source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/vu-housing.appspot.com/o/cityBackgroundAI.jpg?alt=media&token=04e625ef-9a7b-4af5-b214-d976d085889c&_gl=1*1nhr3e4*_ga*NjExOTkyNTQ1LjE2ODE3Nzc5MzY.*_ga_CW55HF8NVT*MTY5NjE5OTAzNy4xMC4xLjE2OTYxOTk1MjEuNTUuMC4w' }} />
+
+            <Image style={styles.image} source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/vu-housing.appspot.com/o/banner.png?alt=media&token=8f6c97bf-abd6-47b6-a9a9-b601ae85d276&_gl=1*xikd8u*_ga*NjExOTkyNTQ1LjE2ODE3Nzc5MzY.*_ga_CW55HF8NVT*MTY5NjI1OTQwNy4xMS4xLjE2OTYyNjA3ODUuNDguMC4w'}}/>
+            
           </View>
 
           <Button
@@ -160,7 +154,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 400,
-    height: 200,
+    height: 400,
   },
 });
 
