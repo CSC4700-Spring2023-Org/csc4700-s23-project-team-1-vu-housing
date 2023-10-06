@@ -37,6 +37,7 @@ export default function HomeInfo({ route, navigation }) {
   const [reviewData, setReviewData] = useState(0.0);
   const [reviewCount, setReviewCount] = useState(0);
   const [userReview, setUserReview] = useState(0.0)
+  var [reviewString, setReviewString] = useState("")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +58,7 @@ export default function HomeInfo({ route, navigation }) {
           setStreetView(data.StreetView);
           setReviewData(data.Review);
           setReviewCount(data.ReviewCount);
+          setReviewString("(" + String(reviewCount) + ")")
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -76,14 +78,16 @@ export default function HomeInfo({ route, navigation }) {
       return;
     }
     else {
-      var newReviewCount = reviewCount + 1;
-
-      var floatingReview = parseFloat(userReview.toPrecision(2))
-      var floatingReviewData = parseFloat(reviewData.toPrecision(2))
-      var floatingReviewCount = parseFloat(newReviewCount.toPrecision(2))
-
      
-      var newReview = (floatingReviewData * floatingReviewCount + floatingReview) / floatingReviewCount;
+      var floatingReview = eval(userReview)
+      var floatingReviewData = eval(reviewData)
+      var floatingReviewCount = eval(reviewCount)
+     
+      var newReview = 0.0 
+      newReview = floatingReviewData * floatingReviewCount + floatingReview;
+      var newReviewCount = reviewCount +1
+      
+      newReview = (newReview / newReviewCount).toFixed(2)      
 
       firestore()
         .collection('Houses')
@@ -117,12 +121,16 @@ export default function HomeInfo({ route, navigation }) {
           <Text color="#001F58" fontSize="4xl" bold>Address:</Text>
           <Text fontSize="md">{address}</Text>
           
-          <Box flexDirection="row" marginRight='10'>
-            <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
-            <Text fontSize="md" marginTop='5' marginLeft='5' marginRight='10' alignItems='center'>{beds}</Text>
+          <Box flexDirection="row" justifyContent="space-between" marginBottom={2}>
+            <Box flex={1}>
+              <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
+              <Text fontSize="md" alignItems='center'>{beds}</Text>
+            </Box>
 
-            <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
-            <Text fontSize="md" marginLeft='5' marginTop='5' alignItems='center'>{baths}</Text>
+            <Box flex={1}>
+              <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
+              <Text fontSize="md" alignItems='center'>{baths}</Text>
+            </Box>
           </Box>
 
           <Text color="#001F58" fontSize="4xl" bold>Price:</Text>
@@ -132,7 +140,7 @@ export default function HomeInfo({ route, navigation }) {
           <Text fontSize="md">{landlord}</Text>
 
           <Text color="#001F58" fontSize="4xl" bold>Reviews:</Text>
-          <Text fontSize="md">{reviewData}</Text>
+          <Text fontSize="md">{reviewString} {reviewData}</Text>
 
           <Box flexDirection="column" >
             <Text color="#001F58" fontSize="2xl" bold>Leave a review!</Text>
@@ -167,9 +175,6 @@ const styles = StyleSheet.create({
     height: 200,
 
   },
-  sectionContainer: {
-    marginTop: 32,
-  },
   sectionTitle: {
     fontSize: 24,
     lineHeight: 24,
@@ -203,5 +208,3 @@ function ifFieldsEmpty(str: string) {
     return false
   }
 }
-
-

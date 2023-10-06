@@ -25,6 +25,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
 import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
 export default function AddListing({ navigation }) {
@@ -120,7 +121,7 @@ export default function AddListing({ navigation }) {
     if (phoneFormat || emailCheck(landlordContact)) {
 
       if (apiCheck(apiItems)) {
-        var floatingReview = parseFloat(review.toPrecision(2))
+        var floatingReview = eval(review)
         //New Writing to data base Section
         firestore()
           .collection('Houses')
