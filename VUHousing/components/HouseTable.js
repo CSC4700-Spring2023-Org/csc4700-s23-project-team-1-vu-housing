@@ -23,7 +23,7 @@ export default HouseTable;
   
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
+    padding:15
   },
   tableHeader: {
     backgroundColor: '#DCDCDC',

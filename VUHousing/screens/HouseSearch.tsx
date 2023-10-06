@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
@@ -26,6 +27,7 @@ import { useNavigation } from '@react-navigation/native';
 function HouseSearch({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const [houses,setHouses]=useState([]);
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
   const [price, setPrice] = useState('');
@@ -51,31 +53,53 @@ function HouseSearch({ navigation }) {
     fetchData();
   }, []);
 
-
-  const events = firestore().collection('Houses');
-  events.get().then((querySnapshot) => {
-    const user = [];
-    querySnapshot.forEach((doc) => {
-      user.push({ id: doc.id, ...doc.data() });
-    });
-    setUsers(user);
-  });
-
-
-
    function clearFilters(){
     setBeds("");
     setBaths("");
     setPrice("");
-   }
- //TODO: DP Just check if the text values are nonzero and if they are then query based on non-ZeroInputs
- //TODO: Rewrite this function by using the above code to query the Houses Collection. Reference
- // The code in checkLogin() on LoginScreen.tsx. Might need to make this an async function
 
-   function FilterQuery(){
-    console.log("BEDS: "+beds)
-    console.log("BATHS: "+baths)
-    console.log("{Price} "+price)
+    // Filters have been cleared, just show everything in database
+    const events = firestore().collection('Houses');
+    events.get().then((querySnapshot) => {
+    const user = [];
+    querySnapshot.forEach((doc) => {
+     user.push({ id: doc.id, ...doc.data() });
+    });
+    setUsers(user);
+    });
+   }
+
+    function FilterQuery(){
+    let bedInt = parseInt(beds); 
+    let bathInt = parseInt(baths);
+    
+    // debug console prints
+    //console.log("---")
+    //console.log("BEDS: "+beds+" type: " + typeof(beds))
+    //console.log("BEDS: "+baths+" type: " + typeof(baths))
+    //console.log("BEDSINT: "+bedInt+" type: " + typeof(bedInt))
+    //console.log("BEDSINT: "+bathInt+" type: " + typeof(bathInt))
+    //console.log("{Price} "+price+" type: " + typeof(price))
+
+      
+    
+    // Check if filter inputs are non-zero, alert if any are zero (might change later on)
+    if(bedInt == 0 || bathInt == 0 || price == "")
+    {
+      Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
+    }
+
+    // Query database for entries according to filter values
+    // Note: can only use inequality on one field, must use == on others. 
+    const events = firestore().collection('Houses').where("Beds","==",bedInt).where("Baths","==",bathInt).where("Price","==",price)
+    events.get().then((querySnapshot) => {
+      const user = []
+      querySnapshot.forEach((doc) => {
+        //console.log("did filter thing"); 
+        user.push({ id: doc.id, ...doc.data() });
+      })
+      setUsers(user)
+   })
    }
     
 
@@ -124,20 +148,19 @@ function HouseSearch({ navigation }) {
           data={users}
           renderItem={({ item }) => (
             <DataTable.Row style={{ marginRight: 60 }} onPress={() => navigation.navigate("HomeInfo", { docID: item.id })}>
-              <View style={{ minWidth: 70, maxWidth: 200, marginRight: 10}}>
+              <View style={{ minWidth: 70, maxWidth: 100, marginRight: 10}}>
                 <DataTable.Cell>{item.Address}</DataTable.Cell>
               </View>
               
-              <View style={{ marginRight: 15, }}>
+             
                 <DataTable.Cell>{item.Beds}</DataTable.Cell>    
-              </View>
-              <View style={{ marginLeft: 35, }}>
+     
+             
                 <DataTable.Cell>{item.Baths}</DataTable.Cell>
-              </View>
+   
 
-              <View style={{ marginLeft: 50, }}>
+             
                 <DataTable.Cell>{item.Price}</DataTable.Cell>
-              </View>
             </DataTable.Row>
           )}
           keyExtractor={(item) => item.id}
@@ -184,7 +207,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
     setTimeout(() => {
       setIsLoadingClear(false);
       clearFilters(); // Call clearFilters function when Clear Filters button is pressed
-      console.log('Clear Filters Clicked!');
+      //console.log('Clear Filters Clicked!');
     }, 1000); // Replace with your actual async call
   };
 
@@ -234,8 +257,7 @@ const styles = StyleSheet.create({
   houseTable: {
     justifyContent: "space-evenly",
     minWidth: 350,
-    marginLeft: 80,
-    marginRight: 80,
+    
   },
   filterButton: {
     justifyContent: 'center',
