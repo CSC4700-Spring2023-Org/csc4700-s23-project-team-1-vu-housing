@@ -67,7 +67,7 @@ export default function HomeInfo({ route, navigation }) {
 
 
 
-
+    //TODO: MAKE EVERYTHING LOOK BETTER TO DISPLAY BACK BUTTON
   return (
     <NativeBaseProvider>
       <View id="LogoBand" style={{
@@ -95,6 +95,7 @@ export default function HomeInfo({ route, navigation }) {
           <Text style="#001F58" fontSize="md">{landlord}</Text>
 
           <View>
+            <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
             <BackButton text="Go Back" />
           </View>
 
