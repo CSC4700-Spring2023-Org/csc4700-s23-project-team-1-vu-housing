@@ -14,13 +14,13 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage'
+import GridImageView from 'react-native-grid-image-viewer';
 
 
 
-import { NativeBaseProvider, Box, Text, Input, Button, useToast } from "native-base";
+import { NativeBaseProvider, Box, Text, Input, Button, useToast, FlatList } from "native-base";
 
 import {
   Colors,
@@ -34,11 +34,14 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-
+function renderItem({item}){
+  return <Image source={{uri:item}} style={{height:200, width:200}}></Image>
+}
 
 export default function HousePictures({ route, navigation }) {
   const house=route.params;
   const [address, setAddress] = useState("")
+  const [images, setImages]=useState()
 
   const events = firestore()
     .collection('Houses')
@@ -46,24 +49,8 @@ export default function HousePictures({ route, navigation }) {
     .get()
     .then(documentSnapshot => {
       setAddress(documentSnapshot.data().Address)
+      setImages(documentSnapshot.data().Images)
     });
-
-  let url=""
-  const [URL, setURL]=useState()
-  const func = async()=>{
-    const bruh = await storage().ref('/Jimmy').getDownloadURL();
-    console.log("BRUH")
-    url=bruh
-    console.log(url)
-    setURL(bruh)
-
-  }
-
-  useEffect(() => {
-    // Update the document title using the browser API
-        func()
-
-  });
 
 
   return (
@@ -71,7 +58,10 @@ export default function HousePictures({ route, navigation }) {
       <Box padding='100' >
         <Text>Hellow WOrkd</Text>
         <Text>{address}</Text>
-        
+      </Box>
+      <Box>
+        <Text>Flatlist</Text>
+        <FlatList data={images} renderItem={renderItem} numColumns={3} key={3}></FlatList>
       </Box>
     </NativeBaseProvider>
   );
