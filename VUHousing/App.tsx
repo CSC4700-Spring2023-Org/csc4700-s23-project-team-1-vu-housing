@@ -34,6 +34,7 @@ import AddListing from './screens/AddListing';
 import HouseSearch from './screens/HouseSearch';
 import ListingCreated from './screens/ListingCreated';
 import UserSearch from './screens/UserSearch';
+import HousePictures from './screens/HousePicutures';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -53,6 +54,7 @@ export default function App(){
         <Stack.Screen name="AddListing" component={AddListing} options={{headerShown: false}}/>
         <Stack.Screen name="HouseSearch" component={HouseSearch} options={{headerShown: false}}/>
         <Stack.Screen name="UserSearch" component={UserSearch} options={{headerShown: false}}/>
+        <Stack.Screen name="HousePictures" component={HousePictures} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
     

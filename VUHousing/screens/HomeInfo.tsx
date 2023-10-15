@@ -25,6 +25,7 @@ type SectionProps = PropsWithChildren<{
 }>;
 
 export default function HomeInfo({ route, navigation }) {
+
   const obj = route.params;
 
   const [address, setAddress] = useState("");
@@ -158,6 +159,7 @@ export default function HomeInfo({ route, navigation }) {
           </Box>
       
           <View>
+            <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
             <BackButton text="Go Back" />
           </View>
 
