@@ -26,13 +26,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAcdppScreen';
+
 import {
   NativeBaseProvider,
   Box,
@@ -64,8 +58,10 @@ export default function AddListing({navigation}) {
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info');
 
   //image upload vars
-  const [image, setImage] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [image, setImage] = useState("");
+  //const [selectedImage, setSelectedImage] = useState("");
+  let imageName=""
+  let selectedImage=""
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
 
@@ -200,19 +196,23 @@ export default function AddListing({navigation}) {
       } else {
         const source = {uri: response.assets[0].uri};
         console.log(source);
-        setSelectedImage(source);
+        selectedImage=source.uri;
         uploadImage();
       }
     });
   };
 
   const uploadImage = async () => {
-    const {uri} = image;
-    const filename = uri.substring(uri.lastIndexOf('/') + 1);
+    const uri = selectedImage;
+    const filenameselectedImage= uri.substring(uri.lastIndexOf('/') + 1);
+    console.log("FILENAME SELECTED IMAGE")
+    console.log(filenameselectedImage)
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+    console.log("UPLOAD URI")
+    console.log(uploadUri)
     setUploading(true);
     setTransferred(0);
-    const task = storage().ref(filename).putFile(uploadUri);
+    const task = storage().ref(filenameselectedImage).putFile(uploadUri);
     // set progress state
     task.on('state_changed', snapshot => {
       setTransferred(
@@ -230,6 +230,7 @@ export default function AddListing({navigation}) {
       'Your photo has been uploaded to Firebase Cloud Storage!',
     );
     setImage(null);
+
   };
 
   return (
