@@ -165,7 +165,7 @@ export default function AddListing({ navigation }) {
             });
             var validHouse = true
         } else {
-          
+  
           var validHouse = false
         }
       } else {
@@ -324,7 +324,7 @@ export default function AddListing({ navigation }) {
             <Box marginTop="9" >
               <Button alignSelf="center"
                 bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
-                onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); setSubmitButtonStyle("none"); }}>
+                onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); setSubmitButtonStyle("none"); navigation.navigate("AddListingWaitPage") }}>
                 Submit House Info
               </Button>
 
