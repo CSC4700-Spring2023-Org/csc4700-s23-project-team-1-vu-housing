@@ -187,6 +187,55 @@ export default function AddListing({navigation}) {
       Alert.alert('Landlord contact information is formatted incorrectly.');
     }
   };
+
+  const selectImage = () => {
+    const options = {
+      maxWidth: 2000,
+      maxHeight: 2000,
+    };
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorMessage) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else {
+        const source = {uri: response.assets[0].uri};
+        console.log(source);
+        selectedImage = source.uri;
+        uploadImage();
+      }
+    });
+  };
+
+  const uploadImage = async () => {
+    const uri = selectedImage;
+    const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
+    console.log('FILENAME SELECTED IMAGE');
+    console.log(filenameselectedImage);
+    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+    console.log('UPLOAD URI');
+    console.log(uploadUri);
+    setUploading(true);
+    setTransferred(0);
+    const task = storage().ref(filenameselectedImage).putFile(uploadUri);
+    // set progress state
+    task.on('state_changed', snapshot => {
+      setTransferred(
+        Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
+      );
+    });
+    try {
+      await task;
+    } catch (e) {
+      console.error(e);
+    }
+    setUploading(false);
+    Alert.alert(
+      'Photo uploaded!',
+      'Your photo has been uploaded to Firebase Cloud Storage!',
+    );
+    setImage(null);
+  };
   return (
     <NativeBaseProvider>
       <Box flex={1} bg="#ffffff" alignItems="center">
