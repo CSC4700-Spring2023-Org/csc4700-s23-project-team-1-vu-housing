@@ -63,7 +63,7 @@ export default function AddListing({navigation}) {
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info');
 
   //image upload vars
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -199,7 +199,8 @@ export default function AddListing({navigation}) {
       } else {
         const source = {uri: response.assets[0].uri};
         console.log(source);
-        setSelectedImage(source);
+        setImage(source);
+        console.log(image);
         uploadImage();
       }
     });
@@ -207,7 +208,7 @@ export default function AddListing({navigation}) {
 
   const uploadImage = async () => {
     console.log('upload running');
-    if (image == null) {
+    if (image != '') {
       const {uri} = image;
       const filename = uri.substring(uri.lastIndexOf('/') + 1);
       const uploadUri =
