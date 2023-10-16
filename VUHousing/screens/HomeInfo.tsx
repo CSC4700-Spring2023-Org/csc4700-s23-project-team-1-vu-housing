@@ -84,11 +84,10 @@ export default function HomeInfo({ route, navigation }) {
       var floatingReviewData = eval(reviewData)
       var floatingReviewCount = eval(reviewCount)
      
-      var newReview = 0.0 
       newReview = floatingReviewData * floatingReviewCount + floatingReview;
       var newReviewCount = reviewCount +1
       
-      newReview = (newReview / newReviewCount).toFixed(2)      
+      var newReview = (newReview / newReviewCount).toFixed(2)      
 
       firestore()
         .collection('Houses')
