@@ -1,16 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackButton from './BackButton';
 
 import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
+  Alert,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -26,47 +20,93 @@ import firestore from '@react-native-firebase/firestore';
 
 import { NativeBaseProvider, Box, Text, Input, Button, useToast } from "native-base";
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-
-
 export default function HomeInfo({ route, navigation }) {
-  const obj = route.params
-  //console.log(obj.docID)
-  
-  const [address, setAddress] = useState("")
-  const [beds, setBeds] = useState(0)
-  const [baths, setBaths] = useState(0)
-  const [price, setPrice] = useState(0)
-  const [landlord, setLandlord] = useState("")
-  const [streetView, setStreetView] = useState("")
 
+  const obj = route.params;
 
-  const events = firestore()
-    .collection('Houses')
-    .doc(obj.docID)
-    .get()
-    .then(documentSnapshot => {
-      setAddress(documentSnapshot.data().Address)
-      setBeds(documentSnapshot.data().Beds)
-      setBaths(documentSnapshot.data().Baths)
-      setPrice(documentSnapshot.data().Price)
-      setLandlord(documentSnapshot.data().Landlord)
-      setStreetView(documentSnapshot.data().StreetView)
-    });
+  const [address, setAddress] = useState("");
+  const [beds, setBeds] = useState(0);
+  const [baths, setBaths] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [landlord, setLandlord] = useState("");
+  const [streetView, setStreetView] = useState("");
 
+  const [reviewData, setReviewData] = useState(0.0);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [userReview, setUserReview] = useState(0.0)
+  var [reviewString, setReviewString] = useState("")
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const documentSnapshot = await firestore()
+          .collection('Houses')
+          .doc(obj.docID)
+          .get();
 
+        const data = documentSnapshot.data();
+
+        if (data) {
+          setAddress(data.Address);
+          setBeds(data.Beds);
+          setBaths(data.Baths);
+          setPrice(data.Price);
+          setLandlord(data.Landlord);
+          setStreetView(data.StreetView);
+          setReviewData(data.Review);
+          setReviewCount(data.ReviewCount);
+          setReviewString("(" + String(reviewCount) + ")")
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [obj.docID]);
+
+  const onReviewPress = () => {
+    if (ifFieldsEmpty(String(userReview))) {
+      Alert.alert("Review Error:", "Please fill out the field and try again")
+      return;
+    }
+    else if (userReview < 0 || userReview > 5) {
+      Alert.alert("Review Error:", "Review score must be between 0.0 and 5.0.");
+      return;
+    }
+    else {
+     
+      var floatingReview = eval(userReview)
+      var floatingReviewData = eval(reviewData)
+      var floatingReviewCount = eval(reviewCount)
+     
+      var newReview = 0.0 
+      newReview = floatingReviewData * floatingReviewCount + floatingReview;
+      var newReviewCount = reviewCount +1
+      
+      newReview = (newReview / newReviewCount).toFixed(2)      
+
+      firestore()
+        .collection('Houses')
+        .doc(obj.docID)
+        .update({
+          Review: newReview,
+          ReviewCount: newReviewCount,
+        })
+        .then(() => {
+          console.log('Review added!');
+          console.log('Reviews: ' + newReviewCount + " Score: " + newReview);
+          navigation.navigate("HouseSearch");
+        })
+        .catch((error) => {
+          console.error("Error updating review:", error);
+        });
+    };
+  }
 
   return (
     <NativeBaseProvider>
@@ -78,23 +118,48 @@ export default function HomeInfo({ route, navigation }) {
       </View>
 
       <Box flex={1} bg="#ffffff" alignItems="center" marginRight='10' marginLeft='2' >
-        <View style={styles.container}>
+        <View style={styles.sectionContainer}>
           <Text color="#001F58" fontSize="4xl" bold>Address:</Text>
-          <Text style="#001F58" fontSize="md">{address}</Text>
+          <Text fontSize="md">{address}</Text>
+          
+          <Box flexDirection="row" justifyContent="space-between" marginBottom={2}>
+            <Box flex={1}>
+              <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
+              <Text fontSize="md" alignItems='center'>{beds}</Text>
+            </Box>
 
-          <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
-          <Text style="#001F58" fontSize="md">{beds}</Text>
-
-          <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
-          <Text style="#001F58" fontSize="md">{baths}</Text>
+            <Box flex={1}>
+              <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
+              <Text fontSize="md" alignItems='center'>{baths}</Text>
+            </Box>
+          </Box>
 
           <Text color="#001F58" fontSize="4xl" bold>Price:</Text>
-          <Text style="#001F58" fontSize="md">{price}</Text>
+          <Text fontSize="md">{price}</Text>
 
           <Text color="#001F58" fontSize="4xl" bold>Landlord Contact:</Text>
-          <Text style="#001F58" fontSize="md">{landlord}</Text>
+          <Text fontSize="md">{landlord}</Text>
 
+          <Text color="#001F58" fontSize="4xl" bold>Reviews:</Text>
+          <Text fontSize="md">{reviewString} {reviewData}</Text>
+
+          <Box flexDirection="column" >
+            <Text color="#001F58" fontSize="2xl" bold>Leave a review!</Text>
+            <Input borderColor="#001F58" borderRadius="10" borderWidth="2" placeholder="(0.0-5.0 V's up)"
+              w="100%" autoCapitalize="none" h="50" fontSize="lg"
+              onChangeText={(val) => setUserReview(val)} />
+          </Box>
+
+          <Box marginTop="9" >
+            <Button alignSelf="center"
+              bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+              onPress={() => { onReviewPress(); }}>
+              Submit Review
+            </Button>
+          </Box>
+      
           <View>
+            <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
             <BackButton text="Go Back" />
           </View>
 
@@ -111,9 +176,6 @@ const styles = StyleSheet.create({
     width: 400,
     height: 200,
 
-  },
-  sectionContainer: {
-    marginTop: 32,
   },
   sectionTitle: {
     fontSize: 24,
@@ -140,4 +202,11 @@ const styles = StyleSheet.create({
   }
 });
 
-
+function ifFieldsEmpty(str: string) {
+  if (str.length == 0) {
+    return true
+  }
+  else {
+    return false
+  }
+}

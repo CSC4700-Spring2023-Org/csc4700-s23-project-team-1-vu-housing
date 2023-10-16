@@ -27,6 +27,7 @@ import { useNavigation } from '@react-navigation/native';
 function HouseSearch({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const [houses,setHouses]=useState([]);
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
   const [price, setPrice] = useState('');
@@ -147,20 +148,19 @@ function HouseSearch({ navigation }) {
           data={users}
           renderItem={({ item }) => (
             <DataTable.Row style={{ marginRight: 60 }} onPress={() => navigation.navigate("HomeInfo", { docID: item.id })}>
-              <View style={{ minWidth: 70, maxWidth: 200, marginRight: 10}}>
+              <View style={{ minWidth: 70, maxWidth: 100, marginRight: 10}}>
                 <DataTable.Cell>{item.Address}</DataTable.Cell>
               </View>
               
-              <View style={{ marginRight: 15, }}>
+             
                 <DataTable.Cell>{item.Beds}</DataTable.Cell>    
-              </View>
-              <View style={{ marginLeft: 35, }}>
+     
+             
                 <DataTable.Cell>{item.Baths}</DataTable.Cell>
-              </View>
+   
 
-              <View style={{ marginLeft: 50, }}>
+             
                 <DataTable.Cell>{item.Price}</DataTable.Cell>
-              </View>
             </DataTable.Row>
           )}
           keyExtractor={(item) => item.id}
@@ -207,7 +207,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
     setTimeout(() => {
       setIsLoadingClear(false);
       clearFilters(); // Call clearFilters function when Clear Filters button is pressed
-      console.log('Clear Filters Clicked!');
+      //console.log('Clear Filters Clicked!');
     }, 1000); // Replace with your actual async call
   };
 
@@ -257,8 +257,7 @@ const styles = StyleSheet.create({
   houseTable: {
     justifyContent: "space-evenly",
     minWidth: 350,
-    marginLeft: 80,
-    marginRight: 80,
+    
   },
   filterButton: {
     justifyContent: 'center',
