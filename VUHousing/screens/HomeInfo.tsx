@@ -112,7 +112,7 @@ export default function HomeInfo({ route, navigation }) {
     <NativeBaseProvider>
       <View id="LogoBand" style={{
         backgroundColor: 'white smoke', width: Dimensions.get('screen').width,
-        alignItems: 'center', marginTop: 30
+        alignItems: 'center',
       }}>
         <Image source={{ uri: streetView }} style={styles.image} />
       </View>
@@ -150,7 +150,7 @@ export default function HomeInfo({ route, navigation }) {
               onChangeText={(val) => setUserReview(val)} />
           </Box>
 
-          <Box marginTop="9" >
+          <Box marginTop="2" marginBottom="2">
             <Button alignSelf="center"
               bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
               onPress={() => { onReviewPress(); }}>
@@ -183,9 +183,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sectionDescription: {
-    marginTop: 4,
     fontSize: 18,
-    lineHeight: 18,
+    lineHeight: 10,
     fontWeight: '400',
   },
   highlight: {

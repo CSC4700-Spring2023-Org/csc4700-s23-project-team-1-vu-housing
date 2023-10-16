@@ -16,18 +16,19 @@ import {
 
 import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
 
-
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-function HouseSearch({ navigation }) {
+function HouseSearch() {
+  const navigation = useNavigation(); // Initialize navigation
+
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
-  const [houses,setHouses]=useState([]);
+  const [houses, setHouses] = useState([]);
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
   const [price, setPrice] = useState('');
@@ -46,62 +47,45 @@ function HouseSearch({ navigation }) {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setLoading(false); // Handle the error gracefully
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-   function clearFilters(){
+  function clearFilters() {
     setBeds("");
     setBaths("");
     setPrice("");
 
-    // Filters have been cleared, just show everything in database
     const events = firestore().collection('Houses');
     events.get().then((querySnapshot) => {
-    const user = [];
-    querySnapshot.forEach((doc) => {
-     user.push({ id: doc.id, ...doc.data() });
+      const user = [];
+      querySnapshot.forEach((doc) => {
+        user.push({ id: doc.id, ...doc.data() });
+      });
+      setUsers(user);
     });
-    setUsers(user);
-    });
-   }
+  }
 
-    function FilterQuery(){
-    let bedInt = parseInt(beds); 
+  function FilterQuery() {
+    let bedInt = parseInt(beds);
     let bathInt = parseInt(baths);
-    
-    // debug console prints
-    //console.log("---")
-    //console.log("BEDS: "+beds+" type: " + typeof(beds))
-    //console.log("BEDS: "+baths+" type: " + typeof(baths))
-    //console.log("BEDSINT: "+bedInt+" type: " + typeof(bedInt))
-    //console.log("BEDSINT: "+bathInt+" type: " + typeof(bathInt))
-    //console.log("{Price} "+price+" type: " + typeof(price))
 
-      
-    
-    // Check if filter inputs are non-zero, alert if any are zero (might change later on)
-    if(bedInt == 0 || bathInt == 0 || price == "")
-    {
+    if (bedInt === 0 || bathInt === 0 || price === "") {
       Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
     }
 
-    // Query database for entries according to filter values
-    // Note: can only use inequality on one field, must use == on others. 
-    const events = firestore().collection('Houses').where("Beds","==",bedInt).where("Baths","==",bathInt).where("Price","==",price)
+    const events = firestore().collection('Houses').where("Beds", "==", bedInt).where("Baths", "==", bathInt).where("Price", "==", price);
     events.get().then((querySnapshot) => {
-      const user = []
+      const user = [];
       querySnapshot.forEach((doc) => {
-        //console.log("did filter thing"); 
         user.push({ id: doc.id, ...doc.data() });
-      })
-      setUsers(user)
-   })
-   }
-    
+      });
+      setUsers(user);
+    });
+  }
 
   return (
     <NativeBaseProvider>
@@ -110,7 +94,6 @@ function HouseSearch({ navigation }) {
           <Text color="#001F58" fontSize="3xl" bold>
             House Search
           </Text>
-          
           <Text color="#3eb7e5" fontSize="md" bold>
             Filter Houses
           </Text>
@@ -139,29 +122,47 @@ function HouseSearch({ navigation }) {
         <Box>
           <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
         </Box>
-        
-        <View style={styles.houseTable}>
-          <HouseTable></HouseTable>
+
+        <View style={styles.table}>
+          <View style={[styles.row, styles.headerRow]}>
+            <View style={[styles.cell, styles.addressCell]}>
+              <Text style={styles.headerText}>Address</Text>
+            </View>
+            <View style={styles.cell}>
+              <Text style={styles.headerText}>Beds</Text>
+            </View>
+            <View style={styles.cell}>
+              <Text style={styles.headerText}>Baths</Text>
+            </View>
+            <View style={styles.cell}>
+              <Text style={styles.headerText}>Price</Text>
+            </View>
+          </View>
         </View>
 
         <FlatList
           data={users}
           renderItem={({ item }) => (
-            <DataTable.Row style={{ marginRight: 60 }} onPress={() => navigation.navigate("HomeInfo", { docID: item.id })}>
-              <View style={{ minWidth: 70, maxWidth: 100, marginRight: 10}}>
-                <DataTable.Cell>{item.Address}</DataTable.Cell>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('HomeInfo', { docID: item.id }); // Navigate to the "HomeInfo" screen with docID
+              }}
+            >
+              <View style={styles.row}>
+                <View style={[styles.cell, styles.addressCell]}>
+                  <Text>{item.Address}</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text>{item.Beds}</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text>{item.Baths}</Text>
+                </View>
+                <View style={styles.cell}>
+                  <Text>{item.Price}</Text>
+                </View>
               </View>
-              
-             
-                <DataTable.Cell>{item.Beds}</DataTable.Cell>    
-     
-             
-                <DataTable.Cell>{item.Baths}</DataTable.Cell>
-   
-
-             
-                <DataTable.Cell>{item.Price}</DataTable.Cell>
-            </DataTable.Row>
+            </TouchableOpacity>
           )}
           keyExtractor={(item) => item.id}
         />
@@ -169,17 +170,16 @@ function HouseSearch({ navigation }) {
         <View>
           <BackButton text="Go Back" />
         </View>
-
       </View>
-    </NativeBaseProvider >
+    </NativeBaseProvider>
   );
 }
 
 const CoolButton = ({ onPress, clearFilters, isLoading }) => {
-  const [isLoadingFilter, setIsLoadingFilter] = useState(false); // State for the Filter button
-  const [isLoadingClear, setIsLoadingClear] = useState(false);   // State for the Clear Filters button
+  const [isLoadingFilter, setIsLoadingFilter] = useState(false);
+  const [isLoadingClear, setIsLoadingClear] = useState(false);
 
-  const buttonColorFilter = isLoadingFilter ? '#001F58' : '#007aff'; // Light blue when loading, dark blue when not
+  const buttonColorFilter = isLoadingFilter ? '#001F58' : '#007aff';
   const buttonColorClear = isLoadingClear ? '#001F58' : '#007aff';
 
   const handlePressFilter = () => {
@@ -195,7 +195,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
       } else {
         console.log('Filter Clicked!');
       }
-    }, 1000); // Replace with your actual async call
+    }, 1000);
   };
 
   const handlePressClear = () => {
@@ -206,9 +206,8 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
 
     setTimeout(() => {
       setIsLoadingClear(false);
-      clearFilters(); // Call clearFilters function when Clear Filters button is pressed
-      //console.log('Clear Filters Clicked!');
-    }, 1000); // Replace with your actual async call
+      clearFilters();
+    }, 1000);
   };
 
   return (
@@ -230,7 +229,7 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
         </Animatable.View>
         <Animatable.View animation={isLoadingClear ? 'swing' : undefined}>
           <Button
-            style={{backgroundColor: buttonColorFilter, marginTop: 10, marginBottom: 10 }}
+            style={{ backgroundColor: buttonColorClear, marginTop: 10, marginBottom: 10 }}
             mode="contained"
             onPress={handlePressClear}
             disabled={isLoadingClear}
@@ -257,7 +256,6 @@ const styles = StyleSheet.create({
   houseTable: {
     justifyContent: "space-evenly",
     minWidth: 350,
-    
   },
   filterButton: {
     justifyContent: 'center',
@@ -278,8 +276,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    width: 50, // Adjust the width and height as needed
+    width: 50,
     height: 50,
+  },
+  table: {
+    flexDirection: 'column',
+    borderWidth: 1,
+    borderColor: '#000',
+    width: '100%',
+  },
+  row: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#000',
+  },
+  headerRow: {
+    backgroundColor: '#f0f0f0',
+  },
+  cell: {
+    flex: 1,
+    padding: 10,
+  },
+  addressCell: {
+    flex: 2,
+  },
+  headerText: {
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
