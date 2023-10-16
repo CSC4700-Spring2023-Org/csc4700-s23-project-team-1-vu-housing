@@ -35,7 +35,7 @@ import {
   Hidden,
 } from 'native-base';
 
-import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
+
 
 
 export default function AddListing({navigation}) {
