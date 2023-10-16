@@ -99,7 +99,7 @@ export default function WelcomeScreen({ route, navigation }) {
               backgroundColor: 'whitesmoke',
               width: Dimensions.get('screen').width,
               alignItems: 'center',
-              marginTop: 30,
+              marginTop: 0,
             }}
           >
 
@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 400,
-    height: 400,
+    width: 300,
+    height: 300,
   },
 });
 

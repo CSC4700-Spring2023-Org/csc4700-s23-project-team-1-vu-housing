@@ -26,14 +26,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 
-import {
-  NativeBaseProvider,
-  Box,
-  Button,
-  Text,
-  Input,
-  Hidden,
-} from 'native-base';
+
 
 import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 

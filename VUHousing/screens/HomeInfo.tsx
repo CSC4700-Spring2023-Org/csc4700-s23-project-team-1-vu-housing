@@ -12,11 +12,18 @@ import {
   View,
   Dimensions,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { getFirestore, Timestamp, FieldValue, Filter } from 'firebase-admin/firestore'
 import firestore from '@react-native-firebase/firestore';
+
+//image upload
+import ImagePicker from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
+import * as Progress from 'react-native-progress';
 
 import { NativeBaseProvider, Box, Text, Input, Button, useToast } from "native-base";
 
@@ -34,12 +41,77 @@ export default function HomeInfo({ route, navigation }) {
   const [price, setPrice] = useState(0);
   const [landlord, setLandlord] = useState("");
   const [streetView, setStreetView] = useState("");
+  const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
 
   const [reviewData, setReviewData] = useState(0.0);
   const [reviewCount, setReviewCount] = useState(0);
   const [userReview, setUserReview] = useState(0.0)
   var [reviewString, setReviewString] = useState("")
 
+  //image upload vars
+  const [image, setImage] = useState("");
+  //const [selectedImage, setSelectedImage] = useState("");
+  let imageName=""
+  let selectedImage=""
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
+  const [review, setReview] = useState(0.0)
+
+  const selectImage = () => {
+    const options = {
+      maxWidth: 2000,
+      maxHeight: 2000,
+    };
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorMessage) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else {
+        const source = {uri: response.assets[0].uri};
+        console.log(source);
+        selectedImage=source.uri;
+        uploadImage();
+      }
+    });
+  };
+
+  const uploadImage = async () => {
+    const uri = selectedImage;
+    const filenameselectedImage= uri.substring(uri.lastIndexOf('/') + 1);
+    console.log("FILENAME SELECTED IMAGE")
+    console.log(filenameselectedImage)
+    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+    console.log("UPLOAD URI")
+    console.log(uploadUri)
+    setUploading(true);
+    setTransferred(0);
+    const task = storage().ref(filenameselectedImage).putFile(uploadUri);
+    // set progress state
+    task.on('state_changed', snapshot => {
+      setTransferred(
+        Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
+      );
+    });
+    try {
+      await task;
+    } catch (e) {
+      console.error(e);
+    }
+    setUploading(false);
+    Alert.alert(
+      'Photo uploaded!',
+      'Your photo has been uploaded to Firebase Cloud Storage!',
+    );
+    //Write to firestore Textual Database
+    const downloadURL = await storage().ref("/"+filenameselectedImage).getDownloadURL()
+    const houseReference = await firestore().collection('Houses').doc(obj.docID);
+    const unionRes = await houseReference.update({
+      Images: FieldValue.arrayUnion('greater_virginia')
+    });
+    setImage(null);
+
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -109,6 +181,7 @@ export default function HomeInfo({ route, navigation }) {
   }
 
   return (
+    <ScrollView>
     <NativeBaseProvider>
       <View id="LogoBand" style={{
         backgroundColor: 'white smoke', width: Dimensions.get('screen').width,
@@ -156,10 +229,23 @@ export default function HomeInfo({ route, navigation }) {
               onPress={() => { onReviewPress(); }}>
               Submit Review
             </Button>
+            <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
           </Box>
       
           <View>
-            <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
+          <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                display={enterButtonStyle}
+                _text={{color: '#001F58'}}
+                onPress={() => {
+                  selectImage();
+                }}>
+                Upload Images
+              </Button>
             <BackButton text="Go Back" />
           </View>
 
@@ -168,14 +254,14 @@ export default function HomeInfo({ route, navigation }) {
         </View>
       </Box>
     </NativeBaseProvider>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   image: {
     width: 400,
-    height: 200,
-
+    height: 200
   },
   sectionTitle: {
     fontSize: 24,
