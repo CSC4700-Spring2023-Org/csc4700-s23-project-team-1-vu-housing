@@ -1,6 +1,6 @@
-import axios, {AxiosResponse} from 'axios';
-import React, {useEffect, useRef, useState} from 'react';
-import type {PropsWithChildren} from 'react';
+import axios, { AxiosResponse } from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import type { PropsWithChildren } from 'react';
 import BackButton from './BackButton';
 import {
   Alert,
@@ -17,30 +17,30 @@ import {
 } from 'react-native';
 
 import firestore from '@react-native-firebase/firestore';
-import {DataTable} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
+import { DataTable } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 //image upload
 import ImagePicker from 'react-native-image-picker';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 
 import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
 
-export default function AddListing({navigation}) {
+export default function AddListing({ navigation }) {
   const [address, setAddress] = useState('');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
-  
+
   var fieldsFilled = false;
   // price = priceToNum(price)
 
 
-  const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
-  const [submitButtonStyle, setSubmitButtonStyle] = useState('none');
+  const [loadingTextStyle, setLoadingTextStyle] = useState('none');
+  const [submitButtonStyle, setSubmitButtonStyle] = useState('flex');
 
   const [houseAddress, setHouseAddress] = useState('');
   const [houseBedrooms, setHouseBedrooms] = useState('');
@@ -56,8 +56,8 @@ export default function AddListing({navigation}) {
   //image upload vars
   const [image, setImage] = useState("");
   //const [selectedImage, setSelectedImage] = useState("");
-  let imageName=""
-  let selectedImage=""
+  let imageName = ""
+  let selectedImage = ""
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [review, setReview] = useState(0.0)
@@ -74,7 +74,7 @@ export default function AddListing({navigation}) {
     fieldsFilled = true;
   }
 
-  var onHouseEnterPress = () => {
+  var onHouseSubmitPress = () => {
     if (fieldsFilled) {
       var houseInfo = {
         method: 'GET',
@@ -112,6 +112,7 @@ export default function AddListing({navigation}) {
           setHouseBedrooms(resBed);
           setAPIPrice(apiPrice);
           setHouseStreetView(houseStreetView);
+
         })
         .catch(function (error) {
           if (error.response) {
@@ -123,65 +124,63 @@ export default function AddListing({navigation}) {
             console.log('Error', error.message);
           }
         });
-    } else {
+
+      var apiItems = [
+        houseAddress,
+        houseBedrooms,
+        houseBathrooms,
+        apiPrice,
+        houseStreetView,
+      ];
+
+
+      var phoneFormat =
+        phoneCheck(landlordContact.substring(0, 3)) &&
+        landlordContact.substring(3, 4).includes('-') &&
+        phoneCheck(landlordContact.substring(4, 7)) &&
+        landlordContact.substring(7, 8).includes('-') &&
+        phoneCheck(landlordContact.substring(8, 12)) &&
+        landlordContact.length == 12;
+      if (phoneFormat || emailCheck(landlordContact)) {
+        if (apiCheck(apiItems)) {
+          var floatingReview = eval(review)
+          //New Writing to data base Section
+          firestore()
+            .collection('Houses')
+            .add({
+              Address: houseAddress,
+              Beds: houseBedrooms,
+              Baths: houseBathrooms,
+              Price: price,
+              Type: houseType,
+              Landlord: landlordContact,
+              StreetView: houseStreetView,
+              Review: floatingReview,
+              ReviewCount: 1
+
+            })
+            .then(() => {
+              console.log('House added!');
+              console.log(houseStreetView);
+            });
+            var validHouse = true
+        } else {
+          
+          var validHouse = false
+        }
+      } else {
+        Alert.alert(
+          'Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',
+        );
+        Alert.alert('Landlord contact information is formatted incorrectly.');
+      }
+
+    }
+    else {
       Alert.alert(
         'Field Error',
         'One or more fields is blank. Please fill all fields out, then resubmit',
       );
-    }
-  };
-
-  var apiItems = [
-    houseAddress,
-    houseBedrooms,
-    houseBathrooms,
-    apiPrice,
-    houseStreetView,
-  ];
-  var onSubmitPress = () => {
-    var phoneFormat =
-      phoneCheck(landlordContact.substring(0, 3)) &&
-      landlordContact.substring(3, 4).includes('-') &&
-      phoneCheck(landlordContact.substring(4, 7)) &&
-      landlordContact.substring(7, 8).includes('-') &&
-      phoneCheck(landlordContact.substring(8, 12)) &&
-      landlordContact.length == 12;
-    if (phoneFormat || emailCheck(landlordContact)) {
-      if (apiCheck(apiItems)) {
-        var floatingReview = eval(review)
-        //New Writing to data base Section
-        firestore()
-          .collection('Houses')
-          .add({
-            Address: houseAddress,
-            Beds: houseBedrooms,
-            Baths: houseBathrooms,
-            Price: price,
-            Type: houseType,
-            Landlord: landlordContact,
-            StreetView: houseStreetView,
-            Review: floatingReview,
-            ReviewCount: 1
-
-          })
-          .then(() => {
-            console.log('House added!');
-            console.log(houseStreetView);
-          });
-        navigation.navigate('ListingCreated');
-      } else {
-        setSubmitText('');
-        setEnterHouseText('Enter House Info');
-        Alert.alert(
-          'Invalid address',
-          'Please input a valid address and click "Enter House Info" again, then the verify button',
-        );
-      }
-    } else {
-      Alert.alert(
-        'Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',
-      );
-      Alert.alert('Landlord contact information is formatted incorrectly.');
     }
   };
 
@@ -196,9 +195,9 @@ export default function AddListing({navigation}) {
       } else if (response.errorMessage) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        const source = {uri: response.assets[0].uri};
+        const source = { uri: response.assets[0].uri };
         console.log(source);
-        selectedImage=source.uri;
+        selectedImage = source.uri;
         uploadImage();
       }
     });
@@ -206,7 +205,7 @@ export default function AddListing({navigation}) {
 
   const uploadImage = async () => {
     const uri = selectedImage;
-    const filenameselectedImage= uri.substring(uri.lastIndexOf('/') + 1);
+    const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
     console.log("FILENAME SELECTED IMAGE")
     console.log(filenameselectedImage)
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
@@ -324,26 +323,11 @@ export default function AddListing({navigation}) {
 
             <Box marginTop="9" >
               <Button alignSelf="center"
-                bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={enterButtonStyle} _text={{ color: '#001F58' }}
-                onPress={() => { onHouseEnterPress(); setEnterButtonStyle("none"); setSubmitButtonStyle("flex"); }}>
-                Enter House Info
+                bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
+                onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); setSubmitButtonStyle("none"); }}>
+                Submit House Info
               </Button>
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                display={enterButtonStyle}
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Upload Images
-              </Button>
-            </Box>
 
-            <Box marginTop="9">
               <Button
                 alignSelf="center"
                 bgColor="#0085FF"
@@ -351,15 +335,17 @@ export default function AddListing({navigation}) {
                 w="200"
                 borderRadius="50"
                 display={submitButtonStyle}
-                _text={{color: '#001F58'}}
+                _text={{ color: '#001F58' }}
                 onPress={() => {
-                  onSubmitPress();
-                  setEnterButtonStyle('flex');
-                  setSubmitButtonStyle('none');
+                  selectImage();
                 }}>
-                Verify House Info
+                Upload Images
               </Button>
             </Box>
+
+            <View>
+              <Text display={loadingTextStyle} style={{color: "green", fontWeight: "bold", }}>Loading...</Text>
+            </View>
 
             <View>
               <BackButton text="Go Back" />
