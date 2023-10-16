@@ -167,6 +167,7 @@ function HouseSearch() {
           keyExtractor={(item) => item.id}
         />
 
+
         <View>
           <BackButton text="Go Back" />
         </View>
@@ -295,14 +296,14 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    padding: 10,
+    padding: 5,
   },
   addressCell: {
     flex: 2,
   },
   headerText: {
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
   },
 });
 
