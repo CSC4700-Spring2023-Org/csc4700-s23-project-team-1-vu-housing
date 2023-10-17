@@ -28,18 +28,14 @@ import * as Progress from 'react-native-progress';
 
 
 
-import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
-
-
 export default function AddListing({navigation}) {
   const [address, setAddress] = useState('');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
-  
+
   var fieldsFilled = false;
   // price = priceToNum(price)
-
 
   const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
   const [submitButtonStyle, setSubmitButtonStyle] = useState('none');
@@ -53,22 +49,21 @@ export default function AddListing({navigation}) {
   const [submitText, setSubmitText] = useState('');
   const [enterHouseText, setEnterHouseText] = useState('Enter House Info');
 
-  var fieldsFilled = false
+  var fieldsFilled = false;
 
   //image upload vars
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState('');
   //const [selectedImage, setSelectedImage] = useState("");
-  let imageName=""
-  let selectedImage=""
+  let imageName = '';
+  let selectedImage = '';
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [review, setReview] = useState(0.0)
+  const [review, setReview] = useState(0.0);
 
   var fieldsFilled = false;
 
   var houseItems = [address, houseType, landlordContact, price];
   for (var counter: number = 0; counter < 6; counter++) {
-
     if (ifFieldsEmpty(String(houseItems[counter]))) {
       fieldsFilled = false;
       break;
@@ -150,7 +145,7 @@ export default function AddListing({navigation}) {
       landlordContact.length == 12;
     if (phoneFormat || emailCheck(landlordContact)) {
       if (apiCheck(apiItems)) {
-        var floatingReview = eval(review)
+        var floatingReview = eval(review);
         //New Writing to data base Section
         firestore()
           .collection('Houses')
@@ -164,8 +159,7 @@ export default function AddListing({navigation}) {
             StreetView: houseStreetView,
             Images:[houseStreetView],
             Review: floatingReview,
-            ReviewCount: 1
-
+            ReviewCount: 1,
           })
           .then(() => {
             console.log('House added!');
@@ -201,7 +195,7 @@ export default function AddListing({navigation}) {
       } else {
         const source = {uri: response.assets[0].uri};
         console.log(source);
-        selectedImage=source.uri;
+        selectedImage = source.uri;
         uploadImage();
       }
     });
@@ -209,12 +203,12 @@ export default function AddListing({navigation}) {
 
   const uploadImage = async () => {
     const uri = selectedImage;
-    const filenameselectedImage= uri.substring(uri.lastIndexOf('/') + 1);
-    console.log("FILENAME SELECTED IMAGE")
-    console.log(filenameselectedImage)
+    const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
+    console.log('FILENAME SELECTED IMAGE');
+    console.log(filenameselectedImage);
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    console.log("UPLOAD URI")
-    console.log(uploadUri)
+    console.log('UPLOAD URI');
+    console.log(uploadUri);
     setUploading(true);
     setTransferred(0);
     const task = storage().ref(filenameselectedImage).putFile(uploadUri);
@@ -235,9 +229,7 @@ export default function AddListing({navigation}) {
       'Your photo has been uploaded to Firebase Cloud Storage!',
     );
     setImage(null);
-
   };
-
   return (
     <NativeBaseProvider>
       <Box flex={1} bg="#ffffff" alignItems="center">
@@ -318,17 +310,37 @@ export default function AddListing({navigation}) {
               />
             </Box>
 
-            <Box flexDirection="column" >
-              <Text color="#001F58" fontSize="2xl" bold>Review</Text>
-              <Input borderColor="#001F58" borderRadius="10" marginBottom={2} borderWidth="2" placeholder="(0-5) V's up"
-                w="100%" autoCapitalize="none" h="50"
-                onChangeText={(val) => setReview(val)} />
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                Review
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                marginBottom={2}
+                borderWidth="2"
+                placeholder="(0-5) V's up"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                onChangeText={val => setReview(val)}
+              />
             </Box>
 
-            <Box marginTop="9" >
-              <Button alignSelf="center"
-                bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={enterButtonStyle} _text={{ color: '#001F58' }}
-                onPress={() => { onHouseEnterPress(); setEnterButtonStyle("none"); setSubmitButtonStyle("flex"); }}>
+            <Box marginTop="9">
+              <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                display={enterButtonStyle}
+                _text={{color: '#001F58'}}
+                onPress={() => {
+                  onHouseEnterPress();
+                  setEnterButtonStyle('none');
+                  setSubmitButtonStyle('flex');
+                }}>
                 Enter House Info
               </Button>
               <Button

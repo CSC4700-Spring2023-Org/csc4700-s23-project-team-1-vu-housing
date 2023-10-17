@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import BackButton from './BackButton';
 
-import type { PropsWithChildren } from 'react';
+import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
   Alert,
@@ -27,28 +27,28 @@ import * as Progress from 'react-native-progress';
 
 import { NativeBaseProvider, Box, Text, Input, Button, useToast } from "native-base";
 
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-export default function HomeInfo({ route, navigation }) {
-
+export default function HomeInfo({route, navigation}) {
   const obj = route.params;
 
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState('');
   const [beds, setBeds] = useState(0);
   const [baths, setBaths] = useState(0);
   const [price, setPrice] = useState(0);
+  
   const [landlord, setLandlord] = useState("");
   const [streetView, setStreetView] = useState("");
   const [images, setImages]=useState()
   let imageArray=[]
   const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
-
   const [reviewData, setReviewData] = useState(0.0);
   const [reviewCount, setReviewCount] = useState(0);
-  const [userReview, setUserReview] = useState(0.0)
-  var [reviewString, setReviewString] = useState("")
+  const [userReview, setUserReview] = useState(0.0);
+  var [reviewString, setReviewString] = useState('');
 
   //image upload vars
   const [image, setImage] = useState("");
@@ -133,10 +133,10 @@ export default function HomeInfo({ route, navigation }) {
           setStreetView(data.StreetView);
           setReviewData(data.Review);
           setReviewCount(data.ReviewCount);
-          setReviewString("(" + String(reviewCount) + ")")
+          setReviewString('(' + String(reviewCount) + ')');
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
 
@@ -145,24 +145,20 @@ export default function HomeInfo({ route, navigation }) {
 
   const onReviewPress = () => {
     if (ifFieldsEmpty(String(userReview))) {
-      Alert.alert("Review Error:", "Please fill out the field and try again")
+      Alert.alert('Review Error:', 'Please fill out the field and try again');
       return;
-    }
-    else if (userReview < 0 || userReview > 5) {
-      Alert.alert("Review Error:", "Review score must be between 0.0 and 5.0.");
+    } else if (userReview < 0 || userReview > 5) {
+      Alert.alert('Review Error:', 'Review score must be between 0.0 and 5.0.');
       return;
-    }
-    else {
-     
-      var floatingReview = eval(userReview)
-      var floatingReviewData = eval(reviewData)
-      var floatingReviewCount = eval(reviewCount)
-     
-      var newReview = 0.0 
+    } else {
+      var floatingReview = eval(userReview);
+      var floatingReviewData = eval(reviewData);
+      var floatingReviewCount = eval(reviewCount);
+
       newReview = floatingReviewData * floatingReviewCount + floatingReview;
-      var newReviewCount = reviewCount +1
-      
-      newReview = (newReview / newReviewCount).toFixed(2)      
+      var newReviewCount = reviewCount + 1;
+
+      var newReview = (newReview / newReviewCount).toFixed(2);
 
       firestore()
         .collection('Houses')
@@ -173,39 +169,110 @@ export default function HomeInfo({ route, navigation }) {
         })
         .then(() => {
           console.log('Review added!');
-          console.log('Reviews: ' + newReviewCount + " Score: " + newReview);
-          navigation.navigate("HouseSearch");
+          console.log('Reviews: ' + newReviewCount + ' Score: ' + newReview);
+          navigation.navigate('HouseSearch');
         })
-        .catch((error) => {
-          console.error("Error updating review:", error);
+        .catch(error => {
+          console.error('Error updating review:', error);
         });
-    };
-  }
+    }
+  };
 
   return (
     <ScrollView>
     <NativeBaseProvider>
-      <View id="LogoBand" style={{
-        backgroundColor: 'white smoke', width: Dimensions.get('screen').width,
-        alignItems: 'center', marginTop: 30
-      }}>
-        <Image source={{ uri: streetView }} style={styles.image} />
+      <View
+        id="LogoBand"
+        style={{
+          backgroundColor: 'white smoke',
+          width: Dimensions.get('screen').width,
+          alignItems: 'center',
+        }}>
+        <Image source={{uri: streetView}} style={styles.image} />
       </View>
+      <ScrollView>
+        <Box
+          flex={1}
+          bg="#ffffff"
+          alignItems="center"
+          marginRight="2"
+          marginLeft="2">
+          <View style={styles.sectionContainer}>
+            <Text color="#001F58" fontSize="4xl" bold>
+              Address:
+            </Text>
+            <Text fontSize="md">{address}</Text>
 
-      <Box flex={1} bg="#ffffff" alignItems="center" marginRight='10' marginLeft='2' >
-        <View style={styles.sectionContainer}>
-          <Text color="#001F58" fontSize="4xl" bold>Address:</Text>
-          <Text fontSize="md">{address}</Text>
-          
-          <Box flexDirection="row" justifyContent="space-between" marginBottom={2}>
-            <Box flex={1}>
-              <Text color="#001F58" fontSize="4xl" bold>Beds:</Text>
-              <Text fontSize="md" alignItems='center'>{beds}</Text>
+            <Box
+              flexDirection="row"
+              justifyContent="space-between"
+              marginBottom={2}>
+              <Box flex={1}>
+                <Text color="#001F58" fontSize="4xl" bold>
+                  Beds:
+                </Text>
+                <Text fontSize="md" alignItems="center">
+                  {beds}
+                </Text>
+              </Box>
+
+              <Box flex={1}>
+                <Text color="#001F58" fontSize="4xl" bold>
+                  Bath:
+                </Text>
+                <Text fontSize="md" alignItems="center">
+                  {baths}
+                </Text>
+              </Box>
             </Box>
 
-            <Box flex={1}>
-              <Text color="#001F58" fontSize="4xl" bold>Bath:</Text>
-              <Text fontSize="md" alignItems='center'>{baths}</Text>
+            <Text color="#001F58" fontSize="4xl" bold>
+              Price:
+            </Text>
+            <Text fontSize="md">{price}</Text>
+
+            <Text color="#001F58" fontSize="4xl" bold>
+              Landlord Contact:
+            </Text>
+            <Text fontSize="md">{landlord}</Text>
+
+            <Text color="#001F58" fontSize="4xl" bold>
+              Reviews:
+            </Text>
+            <Text fontSize="md">
+              {reviewString} {reviewData}
+            </Text>
+
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                Leave a review!
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                borderWidth="2"
+                placeholder="(0.0-5.0 V's up)"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                fontSize="lg"
+                onChangeText={val => setUserReview(val)}
+              />
+            </Box>
+
+            <Box marginTop="2" marginBottom="2">
+              <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                _text={{color: '#001F58'}}
+                onPress={() => {
+                  onReviewPress();
+                }}>
+                Submit Review
+              </Button>
             </Box>
           </Box>
 
@@ -251,10 +318,20 @@ export default function HomeInfo({ route, navigation }) {
             <BackButton text="Go Back" />
           </View>
 
+            <View>
+              <Button
+                onPress={() =>
+                  navigation.navigate('HousePictures', {docID: obj.docID})
+                }>
+                Picture Button
+              </Button>
+              <BackButton text="Go Back" />
+            </View>
 
-          <Text alignSelf="center">©VUHousing 2023</Text>
-        </View>
-      </Box>
+            <Text alignSelf="center">©VUHousing 2023</Text>
+          </View>
+        </Box>
+      </ScrollView>
     </NativeBaseProvider>
     </ScrollView>
   );
@@ -263,7 +340,7 @@ export default function HomeInfo({ route, navigation }) {
 const styles = StyleSheet.create({
   image: {
     width: 400,
-    height: 200
+    height: 200,
   },
   sectionTitle: {
     fontSize: 24,
@@ -271,30 +348,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sectionDescription: {
-    marginTop: 4,
     fontSize: 18,
-    lineHeight: 18,
+    lineHeight: 10,
     fontWeight: '400',
   },
   highlight: {
     fontWeight: '700',
   },
   headers: {
-    fontFamily: "AlNile-Bold",
-    fontSize: 35
+    fontFamily: 'AlNile-Bold',
+    fontSize: 35,
   },
   information: {
-    fontFamily: "AlNile",
-    fontSize: 20
-
-  }
+    fontFamily: 'AlNile',
+    fontSize: 20,
+  },
 });
 
 function ifFieldsEmpty(str: string) {
   if (str.length == 0) {
-    return true
-  }
-  else {
-    return false
+    return true;
+  } else {
+    return false;
   }
 }
