@@ -162,6 +162,7 @@ export default function AddListing({navigation}) {
             Type: houseType,
             Landlord: landlordContact,
             StreetView: houseStreetView,
+            Images:[houseStreetView],
             Review: floatingReview,
             ReviewCount: 1
 

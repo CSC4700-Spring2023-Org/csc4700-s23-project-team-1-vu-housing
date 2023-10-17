@@ -34,8 +34,10 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
+const windowWidth = Dimensions.get('window').width;
+
 function renderItem({item}){
-  return <Image source={{uri:item}} style={{height:200, width:200}}></Image>
+  return <Image source={{uri:item}} style={{height:windowWidth/2, width:windowWidth/2, marginBottom:10}}></Image>
 }
 
 export default function HousePictures({ route, navigation }) {
@@ -43,25 +45,29 @@ export default function HousePictures({ route, navigation }) {
   const [address, setAddress] = useState("")
   const [images, setImages]=useState()
 
-  const events = firestore()
-    .collection('Houses')
-    .doc(house.docID)
-    .get()
-    .then(documentSnapshot => {
-      setAddress(documentSnapshot.data().Address)
-      setImages(documentSnapshot.data().Images)
+ 
+
+    useEffect(() => {
+      if(address===""){
+        const events = firestore()
+        .collection('Houses')
+        .doc(house.docID)
+        .get()
+        .then(documentSnapshot => {
+          setAddress(documentSnapshot.data().Address)
+          setImages(documentSnapshot.data().Images)
+        });
+      }
     });
 
 
   return (
     <NativeBaseProvider>
-      <Box padding='100' >
-        <Text>Hellow WOrkd</Text>
-        <Text>{address}</Text>
+      <Box marginTop='10' width='100%'  >
+        <Text color="#001F58" fontSize="xl" bold alignSelf="center">{address}</Text>
       </Box>
       <Box>
-        <Text>Flatlist</Text>
-        <FlatList data={images} renderItem={renderItem} numColumns={3} key={3}></FlatList>
+        <FlatList data={images} renderItem={renderItem} numColumns={2} key={2}></FlatList>
       </Box>
     </NativeBaseProvider>
   );

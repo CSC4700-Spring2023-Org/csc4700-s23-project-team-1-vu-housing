@@ -16,7 +16,7 @@ import {
   Platform
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getFirestore, Timestamp, FieldValue, Filter } from 'firebase-admin/firestore'
+//import {FieldValue} from 'firebase-admin/firestore'
 import firestore from '@react-native-firebase/firestore';
 
 //image upload
@@ -41,6 +41,8 @@ export default function HomeInfo({ route, navigation }) {
   const [price, setPrice] = useState(0);
   const [landlord, setLandlord] = useState("");
   const [streetView, setStreetView] = useState("");
+  const [images, setImages]=useState()
+  let imageArray=[]
   const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
 
   const [reviewData, setReviewData] = useState(0.0);
@@ -79,11 +81,7 @@ export default function HomeInfo({ route, navigation }) {
   const uploadImage = async () => {
     const uri = selectedImage;
     const filenameselectedImage= uri.substring(uri.lastIndexOf('/') + 1);
-    console.log("FILENAME SELECTED IMAGE")
-    console.log(filenameselectedImage)
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    console.log("UPLOAD URI")
-    console.log(uploadUri)
     setUploading(true);
     setTransferred(0);
     const task = storage().ref(filenameselectedImage).putFile(uploadUri);
@@ -105,10 +103,13 @@ export default function HomeInfo({ route, navigation }) {
     );
     //Write to firestore Textual Database
     const downloadURL = await storage().ref("/"+filenameselectedImage).getDownloadURL()
-    const houseReference = await firestore().collection('Houses').doc(obj.docID);
-    const unionRes = await houseReference.update({
-      Images: FieldValue.arrayUnion('greater_virginia')
-    });
+    const houseReference = await firestore().collection('Houses').doc(obj.docID)
+
+    images?.push(downloadURL)
+   
+
+    const res =  houseReference.update({Images: images});
+    
     setImage(null);
 
   };
@@ -128,6 +129,7 @@ export default function HomeInfo({ route, navigation }) {
           setBaths(data.Baths);
           setPrice(data.Price);
           setLandlord(data.Landlord);
+          setImages(data.Images)
           setStreetView(data.StreetView);
           setReviewData(data.Review);
           setReviewCount(data.ReviewCount);
