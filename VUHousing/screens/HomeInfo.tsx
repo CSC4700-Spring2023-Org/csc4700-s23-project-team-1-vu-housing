@@ -180,143 +180,143 @@ export default function HomeInfo({route, navigation}) {
 
   return (
     <ScrollView>
-    <NativeBaseProvider>
-      <View
-        id="LogoBand"
-        style={{
-          backgroundColor: 'white smoke',
-          width: Dimensions.get('screen').width,
-          alignItems: 'center',
-        }}>
-        <Image source={{uri: streetView}} style={styles.image} />
-      </View>
-      <ScrollView>
-        <Box
-          flex={1}
-          bg="#ffffff"
-          alignItems="center"
-          marginRight="2"
-          marginLeft="2">
-          <View style={styles.sectionContainer}>
-            <Text color="#001F58" fontSize="4xl" bold>
-              Address:
-            </Text>
-            <Text fontSize="md">{address}</Text>
+      <NativeBaseProvider>
+        <View
+          id="LogoBand"
+          style={{
+            backgroundColor: 'white smoke',
+            width: Dimensions.get('screen').width,
+            alignItems: 'center',
+          }}>
+          <Image source={{uri: streetView}} style={styles.image} />
+        </View>
+        <ScrollView>
+          <Box
+            flex={1}
+            bg="#ffffff"
+            alignItems="center"
+            marginRight="2"
+            marginLeft="2">
+            <View style={styles.sectionContainer}>
+              <Text color="#001F58" fontSize="4xl" bold>
+                Address:
+              </Text>
+              <Text fontSize="md">{address}</Text>
 
-            <Box
-              flexDirection="row"
-              justifyContent="space-between"
-              marginBottom={2}>
-              <Box flex={1}>
-                <Text color="#001F58" fontSize="4xl" bold>
-                  Beds:
-                </Text>
-                <Text fontSize="md" alignItems="center">
-                  {beds}
-                </Text>
+              <Box
+                flexDirection="row"
+                justifyContent="space-between"
+                marginBottom={2}>
+                  <Box flex={1}>
+                    <Text color="#001F58" fontSize="4xl" bold>
+                      Beds:
+                    </Text>
+                    <Text fontSize="md" alignItems="center">
+                      {beds}
+                    </Text>
+                  </Box>
+
+                  <Box flex={1}>
+                    <Text color="#001F58" fontSize="4xl" bold>
+                      Bath:
+                    </Text>
+                    <Text fontSize="md" alignItems="center">
+                      {baths}
+                    </Text>
+                  </Box>
               </Box>
 
-              <Box flex={1}>
-                <Text color="#001F58" fontSize="4xl" bold>
-                  Bath:
-                </Text>
-                <Text fontSize="md" alignItems="center">
-                  {baths}
-                </Text>
-              </Box>
-            </Box>
+              <Text color="#001F58" fontSize="4xl" bold>
+                Price:
+              </Text>
+              <Text fontSize="md">{price}</Text>
 
-            <Text color="#001F58" fontSize="4xl" bold>
-              Price:
-            </Text>
+              <Text color="#001F58" fontSize="4xl" bold>
+                Landlord Contact:
+              </Text>
+              <Text fontSize="md">{landlord}</Text>
+
+              <Text color="#001F58" fontSize="4xl" bold>
+                Reviews:
+              </Text>
+              <Text fontSize="md">
+                {reviewString} {reviewData}
+              </Text>
+
+              <Box flexDirection="column">
+                <Text color="#001F58" fontSize="2xl" bold>
+                  Leave a review!
+                </Text>
+                <Input
+                  borderColor="#001F58"
+                  borderRadius="10"
+                  borderWidth="2"
+                  placeholder="(0.0-5.0 V's up)"
+                  w="100%"
+                  autoCapitalize="none"
+                  h="50"
+                  fontSize="lg"
+                  onChangeText={val => setUserReview(val)}
+                />
+              </Box>
+
+              <Box marginTop="2" marginBottom="2">
+                <Button
+                  alignSelf="center"
+                  bgColor="#0085FF"
+                  size="lg"
+                  w="200"
+                  borderRadius="50"
+                  _text={{color: '#001F58'}}
+                  onPress={() => {
+                    onReviewPress();
+                  }}>
+                  Submit Review
+                </Button>
+              </Box>
+            </View>
+
+            <Text color="#001F58" fontSize="4xl" bold>Price:</Text>
             <Text fontSize="md">{price}</Text>
 
-            <Text color="#001F58" fontSize="4xl" bold>
-              Landlord Contact:
-            </Text>
+            <Text color="#001F58" fontSize="4xl" bold>Landlord Contact:</Text>
             <Text fontSize="md">{landlord}</Text>
 
-            <Text color="#001F58" fontSize="4xl" bold>
-              Reviews:
-            </Text>
-            <Text fontSize="md">
-              {reviewString} {reviewData}
-            </Text>
+            <Text color="#001F58" fontSize="4xl" bold>Reviews:</Text>
+            <Text fontSize="md">{reviewString} {reviewData}</Text>
 
-            <Box flexDirection="column">
-              <Text color="#001F58" fontSize="2xl" bold>
-                Leave a review!
-              </Text>
-              <Input
-                borderColor="#001F58"
-                borderRadius="10"
-                borderWidth="2"
-                placeholder="(0.0-5.0 V's up)"
-                w="100%"
-                autoCapitalize="none"
-                h="50"
-                fontSize="lg"
-                onChangeText={val => setUserReview(val)}
-              />
+            <Box flexDirection="column" >
+              <Text color="#001F58" fontSize="2xl" bold>Leave a review!</Text>
+              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" placeholder="(0.0-5.0 V's up)"
+                w="100%" autoCapitalize="none" h="50" fontSize="lg"
+                onChangeText={(val) => setUserReview(val)} />
             </Box>
 
-            <Box marginTop="2" marginBottom="2">
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  onReviewPress();
-                }}>
+            <Box marginTop="9" >
+              <Button alignSelf="center"
+                bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
+                onPress={() => { onReviewPress(); }}>
                 Submit Review
               </Button>
+              <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
             </Box>
-          </Box>
-
-          <Text color="#001F58" fontSize="4xl" bold>Price:</Text>
-          <Text fontSize="md">{price}</Text>
-
-          <Text color="#001F58" fontSize="4xl" bold>Landlord Contact:</Text>
-          <Text fontSize="md">{landlord}</Text>
-
-          <Text color="#001F58" fontSize="4xl" bold>Reviews:</Text>
-          <Text fontSize="md">{reviewString} {reviewData}</Text>
-
-          <Box flexDirection="column" >
-            <Text color="#001F58" fontSize="2xl" bold>Leave a review!</Text>
-            <Input borderColor="#001F58" borderRadius="10" borderWidth="2" placeholder="(0.0-5.0 V's up)"
-              w="100%" autoCapitalize="none" h="50" fontSize="lg"
-              onChangeText={(val) => setUserReview(val)} />
-          </Box>
-
-          <Box marginTop="9" >
-            <Button alignSelf="center"
-              bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
-              onPress={() => { onReviewPress(); }}>
-              Submit Review
-            </Button>
-            <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
-          </Box>
       
-          <View>
-          <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                display={enterButtonStyle}
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Upload Images
-              </Button>
-            <BackButton text="Go Back" />
-          </View>
+            <View>
+                <Button
+                  alignSelf="center"
+                  bgColor="#0085FF"
+                  size="lg"
+                  w="200"
+                  borderRadius="50"
+                  display={enterButtonStyle}
+                  _text={{color: '#001F58'}}
+                  onPress={() => {
+                    selectImage();
+                  }}>
+                  Upload Images
+                </Button>
+              <BackButton text="Go Back" />
+            </View>
 
             <View>
               <Button
@@ -329,10 +329,9 @@ export default function HomeInfo({route, navigation}) {
             </View>
 
             <Text alignSelf="center">©VUHousing 2023</Text>
-          </View>
-        </Box>
-      </ScrollView>
-    </NativeBaseProvider>
+          </Box>
+        </ScrollView>
+      </NativeBaseProvider>
     </ScrollView>
   );
 }
