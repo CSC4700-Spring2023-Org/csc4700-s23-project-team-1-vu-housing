@@ -18,7 +18,7 @@ import {
 
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 //image upload
 import ImagePicker from 'react-native-image-picker';
@@ -30,6 +30,7 @@ import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-bas
 
 
 export default function AddListing({ navigation }) {
+
   const [address, setAddress] = useState('');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
@@ -72,6 +73,11 @@ export default function AddListing({ navigation }) {
       break;
     }
     fieldsFilled = true;
+  }
+
+  function moveUser({navigation, validHouse}) {
+    navigation.navigate("AddListingWaitPage", { validHouse })
+
   }
 
   var onHouseSubmitPress = () => {
@@ -163,12 +169,14 @@ export default function AddListing({ navigation }) {
               console.log('House added!');
               console.log(houseStreetView);
             });
-            var validHouse = true
-        } else {
-  
-          var validHouse = false
+            moveUser(validHouse)
+        } 
+        else {
+          moveUser(validHouse)
         }
-      } else {
+      } 
+      else {
+        var validHouse = false
         Alert.alert(
           'Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',
         );
@@ -177,6 +185,7 @@ export default function AddListing({ navigation }) {
 
     }
     else {
+      var validHouse = false
       Alert.alert(
         'Field Error',
         'One or more fields is blank. Please fill all fields out, then resubmit',
@@ -252,7 +261,7 @@ export default function AddListing({ navigation }) {
                 borderRadius="10"
                 marginBottom={6}
                 borderWidth="2"
-                placeholder="12345 NE Wildcat Avenue, Villanova, PA 19010"
+                placeholder="12345 NE Wildcat Avenue Villanova PA 19010"
                 w="100%"
                 autoCapitalize="none"
                 h="50"
@@ -324,7 +333,7 @@ export default function AddListing({ navigation }) {
             <Box marginTop="9" >
               <Button alignSelf="center"
                 bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
-                onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); setSubmitButtonStyle("none"); navigation.navigate("AddListingWaitPage") }}>
+                onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); setSubmitButtonStyle("none"); }}>
                 Submit House Info
               </Button>
 
