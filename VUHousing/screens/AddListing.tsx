@@ -16,6 +16,15 @@ import {
   Platform,
 } from 'react-native';
 
+import {
+  NativeBaseProvider,
+  Box,
+  Text,
+  Input,
+  Button,
+  useToast,
+} from 'native-base';
+
 import firestore from '@react-native-firebase/firestore';
 import {DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
@@ -25,8 +34,6 @@ import ImagePicker from 'react-native-image-picker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
-
-
 
 export default function AddListing({navigation}) {
   const [address, setAddress] = useState('');
@@ -144,6 +151,7 @@ export default function AddListing({navigation}) {
       phoneCheck(landlordContact.substring(8, 12)) &&
       landlordContact.length == 12;
     if (phoneFormat || emailCheck(landlordContact)) {
+      console.log(apiItems);
       if (apiCheck(apiItems)) {
         var floatingReview = eval(review);
         //New Writing to data base Section
@@ -157,7 +165,7 @@ export default function AddListing({navigation}) {
             Type: houseType,
             Landlord: landlordContact,
             StreetView: houseStreetView,
-            Images:[houseStreetView],
+            Images: [houseStreetView, selectImage],
             Review: floatingReview,
             ReviewCount: 1,
           })
@@ -196,39 +204,54 @@ export default function AddListing({navigation}) {
         const source = {uri: response.assets[0].uri};
         console.log(source);
         selectedImage = source.uri;
-        uploadImage();
       }
     });
   };
 
   const uploadImage = async () => {
     const uri = selectedImage;
-    const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
-    console.log('FILENAME SELECTED IMAGE');
-    console.log(filenameselectedImage);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    console.log('UPLOAD URI');
-    console.log(uploadUri);
-    setUploading(true);
-    setTransferred(0);
-    const task = storage().ref(filenameselectedImage).putFile(uploadUri);
-    // set progress state
-    task.on('state_changed', snapshot => {
-      setTransferred(
-        Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
+    if (uri !== '') {
+      const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
+      console.log('FILENAME SELECTED IMAGE');
+      console.log(filenameselectedImage);
+      const uploadUri =
+        Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+      console.log('UPLOAD URI');
+      console.log(uploadUri);
+      setUploading(true);
+      setTransferred(0);
+      const task = storage().ref(filenameselectedImage).putFile(uploadUri);
+      // set progress state
+      task.on('state_changed', snapshot => {
+        setTransferred(
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
+        );
+      });
+      try {
+        await task;
+      } catch (e) {
+        console.error(e);
+      }
+      setUploading(false);
+      Alert.alert(
+        'Photo uploaded!',
+        'Your photo has been uploaded to Firebase Cloud Storage!',
       );
-    });
-    try {
-      await task;
-    } catch (e) {
-      console.error(e);
+
+      /*/Write to firestore Textual Database
+      const downloadURL = await storage()
+        .ref('/' + filenameselectedImage)
+        .getDownloadURL();
+      const houseReference = await firestore()
+        .collection('Houses')
+        .doc(obj.docID);
+
+      images?.push(downloadURL);
+
+      const res = houseReference.update({Images: images});
+      */
+      setImage(null);
     }
-    setUploading(false);
-    Alert.alert(
-      'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!',
-    );
-    setImage(null);
   };
   return (
     <NativeBaseProvider>
@@ -340,6 +363,7 @@ export default function AddListing({navigation}) {
                   onHouseEnterPress();
                   setEnterButtonStyle('none');
                   setSubmitButtonStyle('flex');
+                  uploadImage();
                 }}>
                 Enter House Info
               </Button>
@@ -354,7 +378,7 @@ export default function AddListing({navigation}) {
                 onPress={() => {
                   selectImage();
                 }}>
-                Upload Images
+                Pick Image
               </Button>
             </Box>
 
@@ -368,6 +392,7 @@ export default function AddListing({navigation}) {
                 display={submitButtonStyle}
                 _text={{color: '#001F58'}}
                 onPress={() => {
+                  uploadImage();
                   onSubmitPress();
                   setEnterButtonStyle('flex');
                   setSubmitButtonStyle('none');

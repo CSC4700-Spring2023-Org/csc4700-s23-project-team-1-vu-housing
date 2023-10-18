@@ -13,9 +13,9 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
-  Platform
+  Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 //import {FieldValue} from 'firebase-admin/firestore'
 import firestore from '@react-native-firebase/firestore';
 
@@ -25,8 +25,14 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 
-import { NativeBaseProvider, Box, Text, Input, Button, useToast } from "native-base";
-
+import {
+  NativeBaseProvider,
+  Box,
+  Text,
+  Input,
+  Button,
+  useToast,
+} from 'native-base';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -39,11 +45,11 @@ export default function HomeInfo({route, navigation}) {
   const [beds, setBeds] = useState(0);
   const [baths, setBaths] = useState(0);
   const [price, setPrice] = useState(0);
-  
-  const [landlord, setLandlord] = useState("");
-  const [streetView, setStreetView] = useState("");
-  const [images, setImages]=useState()
-  let imageArray=[]
+
+  const [landlord, setLandlord] = useState('');
+  const [streetView, setStreetView] = useState('');
+  const [images, setImages] = useState();
+  let imageArray = [];
   const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
   const [reviewData, setReviewData] = useState(0.0);
   const [reviewCount, setReviewCount] = useState(0);
@@ -51,13 +57,13 @@ export default function HomeInfo({route, navigation}) {
   var [reviewString, setReviewString] = useState('');
 
   //image upload vars
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState('');
   //const [selectedImage, setSelectedImage] = useState("");
-  let imageName=""
-  let selectedImage=""
+  let imageName = '';
+  let selectedImage = '';
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [review, setReview] = useState(0.0)
+  const [review, setReview] = useState(0.0);
 
   const selectImage = () => {
     const options = {
@@ -72,7 +78,7 @@ export default function HomeInfo({route, navigation}) {
       } else {
         const source = {uri: response.assets[0].uri};
         console.log(source);
-        selectedImage=source.uri;
+        selectedImage = source.uri;
         uploadImage();
       }
     });
@@ -80,7 +86,7 @@ export default function HomeInfo({route, navigation}) {
 
   const uploadImage = async () => {
     const uri = selectedImage;
-    const filenameselectedImage= uri.substring(uri.lastIndexOf('/') + 1);
+    const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
     setUploading(true);
     setTransferred(0);
@@ -102,16 +108,18 @@ export default function HomeInfo({route, navigation}) {
       'Your photo has been uploaded to Firebase Cloud Storage!',
     );
     //Write to firestore Textual Database
-    const downloadURL = await storage().ref("/"+filenameselectedImage).getDownloadURL()
-    const houseReference = await firestore().collection('Houses').doc(obj.docID)
+    const downloadURL = await storage()
+      .ref('/' + filenameselectedImage)
+      .getDownloadURL();
+    const houseReference = await firestore()
+      .collection('Houses')
+      .doc(obj.docID);
 
-    images?.push(downloadURL)
-   
+    images?.push(downloadURL);
 
-    const res =  houseReference.update({Images: images});
-    
+    const res = houseReference.update({Images: images});
+
     setImage(null);
-
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -129,7 +137,7 @@ export default function HomeInfo({route, navigation}) {
           setBaths(data.Baths);
           setPrice(data.Price);
           setLandlord(data.Landlord);
-          setImages(data.Images)
+          setImages(data.Images);
           setStreetView(data.StreetView);
           setReviewData(data.Review);
           setReviewCount(data.ReviewCount);
@@ -207,23 +215,23 @@ export default function HomeInfo({route, navigation}) {
                 flexDirection="row"
                 justifyContent="space-between"
                 marginBottom={2}>
-                  <Box flex={1}>
-                    <Text color="#001F58" fontSize="4xl" bold>
-                      Beds:
-                    </Text>
-                    <Text fontSize="md" alignItems="center">
-                      {beds}
-                    </Text>
-                  </Box>
+                <Box flex={1}>
+                  <Text color="#001F58" fontSize="4xl" bold>
+                    Beds:
+                  </Text>
+                  <Text fontSize="md" alignItems="center">
+                    {beds}
+                  </Text>
+                </Box>
 
-                  <Box flex={1}>
-                    <Text color="#001F58" fontSize="4xl" bold>
-                      Bath:
-                    </Text>
-                    <Text fontSize="md" alignItems="center">
-                      {baths}
-                    </Text>
-                  </Box>
+                <Box flex={1}>
+                  <Text color="#001F58" fontSize="4xl" bold>
+                    Bath:
+                  </Text>
+                  <Text fontSize="md" alignItems="center">
+                    {baths}
+                  </Text>
+                </Box>
               </Box>
 
               <Text color="#001F58" fontSize="4xl" bold>
@@ -276,45 +284,75 @@ export default function HomeInfo({route, navigation}) {
               </Box>
             </View>
 
-            <Text color="#001F58" fontSize="4xl" bold>Price:</Text>
+            <Text color="#001F58" fontSize="4xl" bold>
+              Price:
+            </Text>
             <Text fontSize="md">{price}</Text>
 
-            <Text color="#001F58" fontSize="4xl" bold>Landlord Contact:</Text>
+            <Text color="#001F58" fontSize="4xl" bold>
+              Landlord Contact:
+            </Text>
             <Text fontSize="md">{landlord}</Text>
 
-            <Text color="#001F58" fontSize="4xl" bold>Reviews:</Text>
-            <Text fontSize="md">{reviewString} {reviewData}</Text>
+            <Text color="#001F58" fontSize="4xl" bold>
+              Reviews:
+            </Text>
+            <Text fontSize="md">
+              {reviewString} {reviewData}
+            </Text>
 
-            <Box flexDirection="column" >
-              <Text color="#001F58" fontSize="2xl" bold>Leave a review!</Text>
-              <Input borderColor="#001F58" borderRadius="10" borderWidth="2" placeholder="(0.0-5.0 V's up)"
-                w="100%" autoCapitalize="none" h="50" fontSize="lg"
-                onChangeText={(val) => setUserReview(val)} />
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                Leave a review!
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                borderWidth="2"
+                placeholder="(0.0-5.0 V's up)"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                fontSize="lg"
+                onChangeText={val => setUserReview(val)}
+              />
             </Box>
 
-            <Box marginTop="9" >
-              <Button alignSelf="center"
-                bgColor="#0085FF" size="lg" w="200" borderRadius="50" _text={{ color: '#001F58' }}
-                onPress={() => { onReviewPress(); }}>
+            <Box marginTop="9">
+              <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                _text={{color: '#001F58'}}
+                onPress={() => {
+                  onReviewPress();
+                }}>
                 Submit Review
               </Button>
-              <Button onPress={() => navigation.navigate("HousePictures", { docID: obj.docID })}>Picture Button</Button>
+              <Button
+                onPress={() =>
+                  navigation.navigate('HousePictures', {docID: obj.docID})
+                }>
+                Picture Button
+              </Button>
             </Box>
-      
+
             <View>
-                <Button
-                  alignSelf="center"
-                  bgColor="#0085FF"
-                  size="lg"
-                  w="200"
-                  borderRadius="50"
-                  display={enterButtonStyle}
-                  _text={{color: '#001F58'}}
-                  onPress={() => {
-                    selectImage();
-                  }}>
-                  Upload Images
-                </Button>
+              <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                display={enterButtonStyle}
+                _text={{color: '#001F58'}}
+                onPress={() => {
+                  selectImage();
+                }}>
+                Upload Images
+              </Button>
               <BackButton text="Go Back" />
             </View>
 
