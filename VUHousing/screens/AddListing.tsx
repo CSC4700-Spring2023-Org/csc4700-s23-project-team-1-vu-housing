@@ -16,9 +16,11 @@ import {
   Platform,
 } from 'react-native';
 
+import { createStackNavigator } from '@react-navigation/stack';
+
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, NavigationContainer } from '@react-navigation/native';
 
 //image upload
 import ImagePicker from 'react-native-image-picker';
@@ -28,6 +30,7 @@ import * as Progress from 'react-native-progress';
 
 import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
+const Stack = createStackNavigator();
 
 export default function AddListing({ navigation }) {
 
@@ -75,10 +78,9 @@ export default function AddListing({ navigation }) {
     fieldsFilled = true;
   }
 
-  function moveUser({navigation, validHouse}) {
-    navigation.navigate("AddListingWaitPage", { validHouse })
-
-  }
+  const moveUser = (validHouse) => {
+    navigation.navigate('AddListingWaitPage', { validHouse });
+  };
 
   var onHouseSubmitPress = () => {
     if (fieldsFilled) {
@@ -119,79 +121,79 @@ export default function AddListing({ navigation }) {
           setAPIPrice(apiPrice);
           setHouseStreetView(houseStreetView);
 
+          var apiItems = [
+            houseAddress,
+            houseBedrooms,
+            houseBathrooms,
+            apiPrice,
+            houseStreetView,
+          ];
+
+          var phoneFormat =
+            phoneCheck(landlordContact.substring(0, 3)) &&
+            landlordContact.substring(3, 4).includes('-') &&
+            phoneCheck(landlordContact.substring(4, 7)) &&
+            landlordContact.substring(7, 8).includes('-') &&
+            phoneCheck(landlordContact.substring(8, 12)) &&
+            landlordContact.length == 12;
+
+          if (phoneFormat || emailCheck(landlordContact)) {
+            if (apiCheck(apiItems)) {
+              var floatingReview = eval(review);
+
+              // New Writing to the database section
+              firestore()
+                .collection('Houses')
+                .add({
+                  Address: houseAddress,
+                  Beds: houseBedrooms,
+                  Baths: houseBathrooms,
+                  Price: price,
+                  Type: houseType,
+                  Landlord: landlordContact,
+                  StreetView: houseStreetView,
+                  Review: floatingReview,
+                  ReviewCount: 1,
+                })
+                .then(() => {
+                  console.log('House added!')
+                  console.log(houseStreetView)
+                  moveUser(true); // Navigate to the 'AddListingWaitPage' with validHouse set to true
+                })
+                .catch((error) => {
+                  console.error('Error adding house:', error)
+                });
+            }
+            else {
+              validHouse = false
+              Alert.alert('Invalid API data')
+              moveUser(false) // Navigate to the 'AddListingWaitPage' with validHouse set to false
+            }
+          }
+          else {
+            validHouse = false
+            Alert.alert('Invalid landlord contact information')
+          }
         })
         .catch(function (error) {
+          validHouse = false
           if (error.response) {
-            console.log('Error Code: ' + error.response.status);
-            console.log(error.response.data);
+            console.log('Error Code: ' + error.response.status)
+            console.log(error.response.data)
           } else if (error.request) {
-            console.log(error.request);
+            console.log(error.request)
           } else {
-            console.log('Error', error.message);
+            console.log('Error', error.message)
           }
+          Alert.alert('Error fetching house data')
+          moveUser(false) // Navigate to the 'AddListingWaitPage' with validHouse set to false
         });
-
-      var apiItems = [
-        houseAddress,
-        houseBedrooms,
-        houseBathrooms,
-        apiPrice,
-        houseStreetView,
-      ];
-
-
-      var phoneFormat =
-        phoneCheck(landlordContact.substring(0, 3)) &&
-        landlordContact.substring(3, 4).includes('-') &&
-        phoneCheck(landlordContact.substring(4, 7)) &&
-        landlordContact.substring(7, 8).includes('-') &&
-        phoneCheck(landlordContact.substring(8, 12)) &&
-        landlordContact.length == 12;
-      if (phoneFormat || emailCheck(landlordContact)) {
-        if (apiCheck(apiItems)) {
-          var floatingReview = eval(review)
-          //New Writing to data base Section
-          firestore()
-            .collection('Houses')
-            .add({
-              Address: houseAddress,
-              Beds: houseBedrooms,
-              Baths: houseBathrooms,
-              Price: price,
-              Type: houseType,
-              Landlord: landlordContact,
-              StreetView: houseStreetView,
-              Review: floatingReview,
-              ReviewCount: 1
-
-            })
-            .then(() => {
-              console.log('House added!');
-              console.log(houseStreetView);
-            });
-            moveUser(validHouse)
-        } 
-        else {
-          moveUser(validHouse)
-        }
-      } 
-      else {
-        var validHouse = false
-        Alert.alert(
-          'Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',
-        );
-        Alert.alert('Landlord contact information is formatted incorrectly.');
-      }
-
     }
     else {
-      var validHouse = false
-      Alert.alert(
-        'Field Error',
-        'One or more fields is blank. Please fill all fields out, then resubmit',
-      );
+      Alert.alert("Input Error", "One or more fields are blank please fill them and re-submit")
     }
   };
+
 
   const selectImage = () => {
     const options = {
@@ -244,128 +246,135 @@ export default function AddListing({ navigation }) {
   };
 
   return (
-    <NativeBaseProvider>
-      <Box flex={1} bg="#ffffff" alignItems="center">
-        <View style={styles.container}>
-          <ScrollView>
-            <Text color="#001F58" fontSize="4xl" bold>
-              Create a Listing
-            </Text>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home"> {/* or some other initial route */}
+        <Stack.Screen name="WelcomeScreen" component={'WelcomeScreen'} />
+        <Stack.Screen name="AddListingWaitPage" component={'AddListingWaitPage'} />
+        <NativeBaseProvider>
+          <Box flex={1} bg="#ffffff" alignItems="center">
+            <View style={styles.container}>
+              <ScrollView>
+                <Text color="#001F58" fontSize="4xl" bold>
+                  Create a Listing
+                </Text>
 
-            <Box flexDirection="column">
-              <Text color="#001F58" fontSize="2xl" bold>
-                Address
-              </Text>
-              <Input
-                borderColor="#001F58"
-                borderRadius="10"
-                marginBottom={6}
-                borderWidth="2"
-                placeholder="12345 NE Wildcat Avenue Villanova PA 19010"
-                w="100%"
-                autoCapitalize="none"
-                h="50"
-                fontSize="sm"
-                onChangeText={val => setAddress(val)}
-              />
-            </Box>
+                <Box flexDirection="column">
+                  <Text color="#001F58" fontSize="2xl" bold>
+                    Address
+                  </Text>
+                  <Input
+                    borderColor="#001F58"
+                    borderRadius="10"
+                    marginBottom={6}
+                    borderWidth="2"
+                    placeholder="12345 NE Wildcat Avenue Villanova PA 19010"
+                    w="100%"
+                    autoCapitalize="none"
+                    h="50"
+                    fontSize="sm"
+                    onChangeText={val => setAddress(val)}
+                  />
+                </Box>
 
-            <Box flexDirection="column">
-              <Text color="#001F58" fontSize="2xl" bold>
-                House Type
-              </Text>
-              <Input
-                borderColor="#001F58"
-                borderRadius="10"
-                marginBottom={6}
-                borderWidth="2"
-                placeholder="ex: apartment, house, town-home"
-                w="100%"
-                autoCapitalize="none"
-                h="50"
-                fontSize="lg"
-                onChangeText={val => setHouseType(val)}
-              />
-            </Box>
+                <Box flexDirection="column">
+                  <Text color="#001F58" fontSize="2xl" bold>
+                    House Type
+                  </Text>
+                  <Input
+                    borderColor="#001F58"
+                    borderRadius="10"
+                    marginBottom={6}
+                    borderWidth="2"
+                    placeholder="ex: apartment, house, town-home"
+                    w="100%"
+                    autoCapitalize="none"
+                    h="50"
+                    fontSize="lg"
+                    onChangeText={val => setHouseType(val)}
+                  />
+                </Box>
 
-            <Box flexDirection="column">
-              <Text color="#001F58" fontSize="2xl" bold>
-                Landlord Contact Information
-              </Text>
-              <Input
-                borderColor="#001F58"
-                borderRadius="10"
-                marginBottom={6}
-                borderWidth="2"
-                placeholder="email or cell"
-                w="100%"
-                autoCapitalize="none"
-                h="50"
-                fontSize="lg"
-                onChangeText={val => setLandlordContact(val)}
-              />
-            </Box>
+                <Box flexDirection="column">
+                  <Text color="#001F58" fontSize="2xl" bold>
+                    Landlord Contact Information
+                  </Text>
+                  <Input
+                    borderColor="#001F58"
+                    borderRadius="10"
+                    marginBottom={6}
+                    borderWidth="2"
+                    placeholder="email or cell"
+                    w="100%"
+                    autoCapitalize="none"
+                    h="50"
+                    fontSize="lg"
+                    onChangeText={val => setLandlordContact(val)}
+                  />
+                </Box>
 
-            <Box flexDirection="column">
-              <Text color="#001F58" fontSize="2xl" bold>
-                Monthly Price
-              </Text>
-              <Input
-                borderColor="#001F58"
-                borderRadius="10"
-                marginBottom={6}
-                borderWidth="2"
-                placeholder="$1,750"
-                w="100%"
-                autoCapitalize="none"
-                h="50"
-                onChangeText={val => setPrice(val)}
-              />
-            </Box>
+                <Box flexDirection="column">
+                  <Text color="#001F58" fontSize="2xl" bold>
+                    Monthly Price
+                  </Text>
+                  <Input
+                    borderColor="#001F58"
+                    borderRadius="10"
+                    marginBottom={6}
+                    borderWidth="2"
+                    placeholder="$1,750"
+                    w="100%"
+                    autoCapitalize="none"
+                    h="50"
+                    onChangeText={val => setPrice(val)}
+                  />
+                </Box>
 
-            <Box flexDirection="column" >
-              <Text color="#001F58" fontSize="2xl" bold>Review</Text>
-              <Input borderColor="#001F58" borderRadius="10" marginBottom={2} borderWidth="2" placeholder="(0-5) V's up"
-                w="100%" autoCapitalize="none" h="50"
-                onChangeText={(val) => setReview(val)} />
-            </Box>
+                <Box flexDirection="column" >
+                  <Text color="#001F58" fontSize="2xl" bold>Review</Text>
+                  <Input borderColor="#001F58" borderRadius="10" marginBottom={2} borderWidth="2" placeholder="(0-5) V's up"
+                    w="100%" autoCapitalize="none" h="50"
+                    onChangeText={(val) => setReview(val)} />
+                </Box>
 
-            <Box marginTop="9" >
-              <Button alignSelf="center"
-                bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
-                onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); setSubmitButtonStyle("none"); }}>
-                Submit House Info
-              </Button>
+                <Box marginTop="9" >
+                  <Button alignSelf="center"
+                    bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
+                    onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); }}>
+                    Submit House Info
+                  </Button>
 
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                display={submitButtonStyle}
-                _text={{ color: '#001F58' }}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Upload Images
-              </Button>
-            </Box>
+                  <Button
+                    alignSelf="center"
+                    bgColor="#0085FF"
+                    size="lg"
+                    w="200"
+                    borderRadius="50"
+                    display={submitButtonStyle}
+                    _text={{ color: '#001F58' }}
+                    onPress={() => {
+                      selectImage();
+                    }}>
+                    Upload Images
+                  </Button>
+                </Box>
 
-            <View>
-              <Text display={loadingTextStyle} style={{color: "green", fontWeight: "bold", }}>Loading...</Text>
+                <View>
+                  <Text display={loadingTextStyle} style={{ color: "green", fontWeight: "bold", }}>Loading...</Text>
+                </View>
+
+                <View>
+                  <BackButton text="Go Back" />
+                </View>
+
+                <Text alignSelf="center">©VUHousing 2023</Text>
+              </ScrollView>
             </View>
-
-            <View>
-              <BackButton text="Go Back" />
-            </View>
-
-            <Text alignSelf="center">©VUHousing 2023</Text>
-          </ScrollView>
-        </View>
-      </Box>
-    </NativeBaseProvider>
+          </Box>
+        </NativeBaseProvider>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
+
 }
 
 function apiCheck(arr: string[]) {
