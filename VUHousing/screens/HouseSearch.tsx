@@ -72,19 +72,43 @@ function HouseSearch() {
   function FilterQuery() {
     let bedInt = parseInt(beds);
     let bathInt = parseInt(baths);
+    const filteredHouses = new Set<any>(); 
+    //filteredHouses.add("hello"); 
 
-    if (bedInt === 0 || bathInt === 0 || price === "") {
+    if (bedInt == 0 || bathInt == 0 || price == "") {
       Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
     }
 
-    const events = firestore().collection('Houses').where("Beds", "==", bedInt).where("Baths", "==", bathInt).where("Price", "==", price);
-    events.get().then((querySnapshot) => {
-      const user = [];
+    const queryBeds = firestore().collection('Houses').where("Beds", "<=", bedInt);
+    queryBeds.get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        user.push({ id: doc.id, ...doc.data() });
+        filteredHouses.add({ id: doc.id, ...doc.data() });
+        console.log({ id: doc.id, ...doc.data() });
       });
-      setUsers(user);
+      //setUsers(user);
     });
+
+    const queryBaths = firestore().collection('Houses').where("Baths", "<=", bathInt);
+    queryBaths.get().then((querySnapshot) => {
+      const userBaths = [];
+      querySnapshot.forEach((doc) => {
+        filteredHouses.add({ id: doc.id, ...doc.data() });
+      });
+      //setUsers(user);
+    });
+
+    const queryPrice= firestore().collection('Houses').where("Price", "<=", price);
+    queryPrice.get().then((querySnapshot) => {
+      const userPrice = [];
+      querySnapshot.forEach((doc) => {
+        filteredHouses.add({ id: doc.id, ...doc.data() });
+      });
+      //setUsers(user);
+    });
+
+    setUsers(filteredHouses); 
+    const [first] = filteredHouses;
+    console.log("things: " + first);
   }
 
   return (
