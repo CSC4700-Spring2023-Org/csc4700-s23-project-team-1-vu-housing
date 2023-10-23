@@ -10,10 +10,11 @@ Make sure to navigate into the VUHousing Folder before executing any commands:
 ---
 **To run the application on ios:**
 
-Step 1: install npm dependencies \
+Step 1a: install npm dependencies \
 `npm install`
 
-Step 2: install packages (required to run application) \
+-> (If there are missing packages when trying to build the applicaton):
+Step 1b: Manually install Required Packages \
 `npm install axios`
 `npm i --save-dev @types/react-progress-button`
 `npm install react-progress-button --save`
@@ -21,6 +22,10 @@ Step 2: install packages (required to run application) \
 `npm install react-native-animatable`
 `npm install react-native-reanimated`
 `npm install react-native-paper react-native-svg`
+
+-> (If there is an issue related to a conflicting firebase version): 
+Step 1c: Resolve issues with legacy dependencies
+`npm install --legacy-peer-deps`
 
 Step 3: Switch to the ios directory \
 `cd ios`
@@ -47,6 +52,8 @@ Step 2: Reverse android internal development port \
 
 Step 3: Run `npm install` \
 -> (If Build Error occurs, delete /node-modules then run `npm install` again)
+-> (If there is an error building related to conflicting firebase versions, run `npm install --legacy-peer-deps`) 
+-> (If there are errors related to missing packages, install the packages mentioned in ios instructions step 1b)
 
 Step 4: Start Application \
 `npx react-native run-android`
