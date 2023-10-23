@@ -88,6 +88,7 @@ function HouseSearch({ navigation }) {
     {
       Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
     }
+    
 
     // Query database for entries according to filter values
     // Note: can only use inequality on one field, must use == on others. 
@@ -144,7 +145,9 @@ function HouseSearch({ navigation }) {
           <HouseTable></HouseTable>
         </View>
 
+      
         <FlatList
+          //style={{height:'65%'}}
           data={users}
           renderItem={({ item }) => (
             <DataTable.Row style={{ marginRight: 60 }} onPress={() => navigation.navigate("HomeInfo", { docID: item.id })}>
@@ -165,6 +168,7 @@ function HouseSearch({ navigation }) {
           )}
           keyExtractor={(item) => item.id}
         />
+
 
         <View>
           <BackButton text="Go Back" />
