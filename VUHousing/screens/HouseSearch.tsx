@@ -32,6 +32,7 @@ function HouseSearch() {
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
   const [price, setPrice] = useState('');
+  const [filteredHouses,setfilterHouses]=useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,42 +70,51 @@ function HouseSearch() {
     });
   }
 
-  function FilterQuery() {
+  const FilterQuery = async() => {
     let bedInt = parseInt(beds);
     let bathInt = parseInt(baths);
-    const filteredHouses = new Set<any>(); 
+    //const filteredHouses = new Set<Any[]>; 
     //filteredHouses.add("hello"); 
 
     if (bedInt == 0 || bathInt == 0 || price == "") {
       Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
     }
 
-    const queryBeds = firestore().collection('Houses').where("Beds", "<=", bedInt);
+    const queryBeds = await firestore().collection('Houses').where("Beds", "<=", bedInt);
     queryBeds.get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        filteredHouses.add({ id: doc.id, ...doc.data() });
-        console.log({ id: doc.id, ...doc.data() });
+        filteredHouses.push({ id: doc.id, ...doc.data() });
+       
+        //console.log("DANIEL PEREZ"+ filteredHouses.length)
+       
       });
-      //setUsers(user);
+      console.log("DANIEL PEREZ: "+ filteredHouses.length)
+      setfilterHouses(filteredHouses);
     });
-
-    const queryBaths = firestore().collection('Houses').where("Baths", "<=", bathInt);
+     console.log("BED OBTAINED FROM QUERY ;) :  "+ filteredHouses.length)
+/*
+    const queryBaths = await firestore().collection('Houses').where("Baths", "<=", bathInt);
     queryBaths.get().then((querySnapshot) => {
       const userBaths = [];
       querySnapshot.forEach((doc) => {
-        filteredHouses.add({ id: doc.id, ...doc.data() });
+        filteredHouses.push({ id: doc.id, ...doc.data() });
       });
       //setUsers(user);
     });
+    console.log("BED OBTAINED FROM QUERY ;) :  "+ queryBaths)
+
 
     const queryPrice= firestore().collection('Houses').where("Price", "<=", price);
     queryPrice.get().then((querySnapshot) => {
       const userPrice = [];
       querySnapshot.forEach((doc) => {
-        filteredHouses.add({ id: doc.id, ...doc.data() });
+        filteredHouses.push({ id: doc.id, ...doc.data() });
       });
       //setUsers(user);
     });
+*/
+
+    
 
     setUsers(filteredHouses); 
     const [first] = filteredHouses;
