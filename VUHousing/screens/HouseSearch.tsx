@@ -32,7 +32,9 @@ function HouseSearch() {
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
   const [price, setPrice] = useState('');
-  const [filteredHouses,setfilterHouses]=useState([]);
+  const [filteredHouses,setFiltering] = useState(new Set<Object[]>); 
+
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,55 +72,87 @@ function HouseSearch() {
     });
   }
 
+  const getBeds = async()=>{
+    let bedInt = parseInt(beds);
+    var i;
+    const newSet = new Set<String>; 
+    const queryBeds = await firestore().collection('Houses').where("Beds", ">=", bedInt);
+    queryBeds.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        newSet.add(doc.id);
+       
+      });
+      //setFiltering(newSet)
+      console.log("filteredHouses updated:", newSet);
+      
+    });
+    return newSet
+  }
+
   const FilterQuery = async() => {
     let bedInt = parseInt(beds);
     let bathInt = parseInt(baths);
-    //const filteredHouses = new Set<Any[]>; 
-    //filteredHouses.add("hello"); 
+    let priceInt = parseInt(price)
+    let newSet=new Set<String>;
+    let newUser=[]
 
-    if (bedInt == 0 || bathInt == 0 || price == "") {
+     
+    console.log("BEDS "+bedInt)
+    console.log("PriceInt"+ priceInt)
+    if (isNaN(bedInt) && isNaN(bathInt) && isNaN(priceInt)) {
       Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
     }
-
-    const queryBeds = await firestore().collection('Houses').where("Beds", "<=", bedInt);
-    queryBeds.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        filteredHouses.push({ id: doc.id, ...doc.data() });
-       
-        //console.log("DANIEL PEREZ"+ filteredHouses.length)
-       
-      });
-      console.log("DANIEL PEREZ: "+ filteredHouses.length)
-      setfilterHouses(filteredHouses);
-    });
-     console.log("BED OBTAINED FROM QUERY ;) :  "+ filteredHouses.length)
-/*
-    const queryBaths = await firestore().collection('Houses').where("Baths", "<=", bathInt);
-    queryBaths.get().then((querySnapshot) => {
-      const userBaths = [];
-      querySnapshot.forEach((doc) => {
-        filteredHouses.push({ id: doc.id, ...doc.data() });
-      });
-      //setUsers(user);
-    });
-    console.log("BED OBTAINED FROM QUERY ;) :  "+ queryBaths)
-
-
-    const queryPrice= firestore().collection('Houses').where("Price", "<=", price);
-    queryPrice.get().then((querySnapshot) => {
-      const userPrice = [];
-      querySnapshot.forEach((doc) => {
-        filteredHouses.push({ id: doc.id, ...doc.data() });
-      });
-      //setUsers(user);
-    });
-*/
-
+    if(isNaN(priceInt)){
+      priceInt=1000000000
+    }
+    if(isNaN(bedInt)){
+      bedInt==0
+    }
+    if(isNaN(bathInt)){
+      bathInt=0
+    }
     
 
-    setUsers(filteredHouses); 
-    const [first] = filteredHouses;
-    console.log("things: " + first);
+    /*const queryBeds = await firestore().collection('Houses').where("Beds", ">=", bedInt);
+    queryBeds.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        newSet.add(doc.id);
+       
+      });
+      console.log("new Set after Bed Query updated:", newSet);
+      
+    });
+
+    const queryBaths = await firestore().collection('Houses').where("Baths", ">=", bathInt);
+    queryBaths.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        newSet.add(doc.id);
+       
+      });
+      console.log("NEW SET AFTER BATHS", newSet);
+      
+    });
+
+    for(id in newSet.values()){
+
+    }
+*/
+console.log("QUERY" + users.length)
+for(let i=0; i<users.length; i++){
+ if(users[i].Beds>=bedInt && users[i].Baths>=bathInt && parseInt(users[i].Price)<=priceInt){
+  newUser.push(users[i])
+ }
+}
+console.log(newUser)
+setUsers(newUser)
+
+
+
+
+    
+    
+   
+
   }
 
   return (
@@ -135,19 +169,19 @@ function HouseSearch() {
 
         <Box flexDirection={'row'} w="99%">
           <Input
-            placeholder="Beds"
+            placeholder="Min Beds"
             w="33%"
             onChangeText={(val) => setBeds(val)}
             value={beds}
           />
           <Input
-            placeholder="Baths"
+            placeholder="Min Baths"
             w="33%"
             onChangeText={(val) => setBaths(val)}
             value={baths}
           />
           <Input
-            placeholder="Price"
+            placeholder="Max Price"
             w="33%"
             onChangeText={(val) => setPrice(val)}
             value={price}
