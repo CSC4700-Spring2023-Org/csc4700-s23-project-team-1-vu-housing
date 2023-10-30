@@ -1,6 +1,6 @@
-import axios, {AxiosResponse} from 'axios';
-import React, {useEffect, useRef, useState} from 'react';
-import type {PropsWithChildren} from 'react';
+import axios, { AxiosResponse } from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import type { PropsWithChildren } from 'react';
 import BackButton from './BackButton';
 import {
   Alert,
@@ -14,43 +14,34 @@ import {
   View,
   Image,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
-import {NativeBaseProvider, Box, Text, Input, Button} from "native-base";
+import { NativeBaseProvider, Box, Text, Input, Button } from "native-base";
 
 import firestore from '@react-native-firebase/firestore';
-import {DataTable} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
+import { DataTable } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 //image upload
 import ImagePicker from 'react-native-image-picker';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
+import { readFileAssets } from 'react-native-fs';
 
 
+export default function AddListing({ navigation }: { navigation: any }) {
+  const [loading, setLoading] = useState(false);
+  const [isValidAddress, setIsValidAddress] = useState(false);
 
-export default function AddListing({navigation}) {
+  const [submissionStatus, setSubmissionStatus] = useState('');
   const [address, setAddress] = useState('');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
 
   var fieldsFilled = false;
-  // price = priceToNum(price)
 
-  const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
-  const [submitButtonStyle, setSubmitButtonStyle] = useState('none');
-
-  const [houseAddress, setHouseAddress] = useState('');
-  const [houseBedrooms, setHouseBedrooms] = useState('');
-  const [houseBathrooms, setHouseBathrooms] = useState('');
-  const [apiPrice, setAPIPrice] = useState('');
-  const [houseStreetView, setHouseStreetView] = useState('');
-
-  const [submitText, setSubmitText] = useState('');
-  const [enterHouseText, setEnterHouseText] = useState('Enter House Info');
-
-  var fieldsFilled = false;
 
   //image upload vars
   const [image, setImage] = useState('');
@@ -61,19 +52,43 @@ export default function AddListing({navigation}) {
   const [transferred, setTransferred] = useState(0);
   const [review, setReview] = useState(0.0);
 
-  var fieldsFilled = false;
-
   var houseItems = [address, houseType, landlordContact, price];
-  for (var counter: number = 0; counter < 6; counter++) {
-    if (ifFieldsEmpty(String(houseItems[counter]))) {
-      fieldsFilled = false;
-      break;
+  const onHouseEnterPress = async () => {
+    for (var counter: number = 0; counter < 6; counter++) {
+      if (ifFieldsEmpty(String(houseItems[counter]))) {
+        fieldsFilled = false;
+        break;
+      }
+      fieldsFilled = true;
     }
-    fieldsFilled = true;
-  }
-
-  var onHouseEnterPress = () => {
     if (fieldsFilled) {
+      try {
+        setLoading(true);
+       
+        // Set isValidAddress based on validation result
+        setIsValidAddress(fieldsFilled);
+
+      } catch (error) {
+        // Handle any validation error
+        console.error('Validation Error: ', error);
+      } finally {
+        onLoadingAddress()
+        await delay();
+        writeHouseToDB()
+      }
+    } 
+    else {
+      Alert.alert(
+        'Field Error',
+        'One or more fields is blank. Please fill all fields out, then resubmit',
+      );
+    }
+  };
+
+  var apiItems = []
+  const onLoadingAddress = async () => {
+    try {
+      setLoading(true);
       var houseInfo = {
         method: 'GET',
         url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
@@ -90,26 +105,24 @@ export default function AddListing({navigation}) {
       axios
         .request(houseInfo)
         .then(function (response) {
-          var streetAddress = response.data.propertyDetails.abbreviatedAddress;
+          var houseAddress = response.data.propertyDetails.abbreviatedAddress;
           var city = response.data.propertyDetails.city;
           var state = response.data.propertyDetails.state;
           var zipcode = response.data.propertyDetails.address.zipcode;
-          var resBath = response.data.propertyDetails.bathrooms;
-          var resBed = response.data.propertyDetails.bedrooms;
+          var houseBathrooms = response.data.propertyDetails.bathrooms;
+          var houseBedrooms = response.data.propertyDetails.bedrooms;
           var apiPrice = response.data.propertyDetails.price;
-          var houseStreetView =
-            response.data.propertyDetails.originalPhotos[0].mixedSources.jpeg[0]
-              .url;
+          var houseStreetView = response.data.propertyDetails.originalPhotos[0].mixedSources.jpeg[0].url;
 
-          console.log(houseStreetView);
+          var addy = houseAddress + ' ' + city + ' ' + state + ' ' + zipcode
+          var bath = houseBathrooms
+          var bed = houseBedrooms
+          var price = apiPrice
+          var sV = houseStreetView
 
-          setHouseAddress(
-            streetAddress + ' ' + city + ' ' + state + ' ' + zipcode,
-          );
-          setHouseBathrooms(resBath);
-          setHouseBedrooms(resBed);
-          setAPIPrice(apiPrice);
-          setHouseStreetView(houseStreetView);
+          apiItems = setAPIItems(addy, bath, bed, price, sV)
+          console.log(apiItems)
+          setLoading(false)
         })
         .catch(function (error) {
           if (error.response) {
@@ -121,67 +134,54 @@ export default function AddListing({navigation}) {
             console.log('Error', error.message);
           }
         });
-    } else {
-      Alert.alert(
-        'Field Error',
-        'One or more fields is blank. Please fill all fields out, then resubmit',
-      );
     }
-  };
+    catch (error) {
+      console.error('Error:', error);
+      // Handle any errors that may occur during the delayed process
+      setLoading(false)
+    }
+  }
 
-  var apiItems = [
-    houseAddress,
-    houseBedrooms,
-    houseBathrooms,
-    apiPrice,
-    houseStreetView,
-  ];
-  var onSubmitPress = () => {
-    var phoneFormat =
-      phoneCheck(landlordContact.substring(0, 3)) &&
-      landlordContact.substring(3, 4).includes('-') &&
-      phoneCheck(landlordContact.substring(4, 7)) &&
-      landlordContact.substring(7, 8).includes('-') &&
-      phoneCheck(landlordContact.substring(8, 12)) &&
+  
+  const writeHouseToDB = async () => {
+    var phoneFormat = phoneCheck(landlordContact.substring(0, 3)) &&
+      landlordContact.substring(3, 4).includes('-') && phoneCheck(landlordContact.substring(4, 7)) &&
+      landlordContact.substring(7, 8).includes('-') && phoneCheck(landlordContact.substring(8, 12)) &&
       landlordContact.length == 12;
+
     if (phoneFormat || emailCheck(landlordContact)) {
-      if (apiCheck(apiItems)) {
+      if (apiCheck(apiItems) && !loading) {
         var floatingReview = eval(review);
-        //New Writing to data base Section
+        //Writing to data base Section
         firestore()
           .collection('Houses')
           .add({
-            Address: houseAddress,
-            Beds: houseBedrooms,
-            Baths: houseBathrooms,
-            Price: price,
+            Address: apiItems[0],
+            Beds: apiItems[1],
+            Baths: apiItems[2],
+            Price: apiItems[3],
             Type: houseType,
             Landlord: landlordContact,
-            StreetView: houseStreetView,
-            Images:[houseStreetView],
+            StreetView: apiItems[4],
+            Images: [apiItems[4]],
             Review: floatingReview,
-            ReviewCount: 1,
+            ReviewCount: '1',
           })
           .then(() => {
             console.log('House added!');
-            console.log(houseStreetView);
           });
         navigation.navigate('ListingCreated');
-      } else {
-        setSubmitText('');
-        setEnterHouseText('Enter House Info');
-        Alert.alert(
-          'Invalid address',
-          'Please input a valid address and click "Enter House Info" again, then the verify button',
-        );
       }
-    } else {
-      Alert.alert(
-        'Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',
-      );
+      else {
+        Alert.alert('Invalid address',
+          'Please input a valid address and click "Enter House Info" again.');
+      }
+    }
+    else {
+      Alert.alert('Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',);
       Alert.alert('Landlord contact information is formatted incorrectly.');
     }
-  };
+  }
 
   const selectImage = () => {
     const options = {
@@ -194,7 +194,7 @@ export default function AddListing({navigation}) {
       } else if (response.errorMessage) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        const source = {uri: response.assets[0].uri};
+        const source = { uri: response.assets[0].uri };
         console.log(source);
         selectedImage = source.uri;
         uploadImage();
@@ -221,18 +221,19 @@ export default function AddListing({navigation}) {
     });
     try {
       await task;
-    } catch (e) {
+    }
+    catch (e) {
       console.error(e);
     }
     setUploading(false);
-    Alert.alert(
-      'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!',
-    );
+    Alert.alert('Photo uploaded!', 'Your photo has been uploaded to Firebase Cloud Storage!');
     setImage(null);
   };
+
+
   return (
     <NativeBaseProvider>
+
       <Box flex={1} bg="#ffffff" alignItems="center">
         <View style={styles.container}>
           <ScrollView>
@@ -328,36 +329,8 @@ export default function AddListing({navigation}) {
               />
             </Box>
 
-            <Box marginTop="9">
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                display={enterButtonStyle}
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  onHouseEnterPress();
-                  setEnterButtonStyle('none');
-                  setSubmitButtonStyle('flex');
-                }}>
-                Enter House Info
-              </Button>
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                display={enterButtonStyle}
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Upload Images
-              </Button>
-            </Box>
+
+
 
             <Box marginTop="9">
               <Button
@@ -366,16 +339,33 @@ export default function AddListing({navigation}) {
                 size="lg"
                 w="200"
                 borderRadius="50"
-                display={submitButtonStyle}
-                _text={{color: '#001F58'}}
+                marginBottom={5}
+                _text={{ color: '#001F58' }}
                 onPress={() => {
-                  onSubmitPress();
-                  setEnterButtonStyle('flex');
-                  setSubmitButtonStyle('none');
+                  onHouseEnterPress();
                 }}>
                 Verify House Info
               </Button>
+
+              <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                _text={{ color: '#001F58' }}
+                onPress={() => {
+                  selectImage();
+                }}>
+                Upload Images
+              </Button>
             </Box>
+
+            {loading && (
+            <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+            )}
 
             <View>
               <BackButton text="Go Back" />
@@ -391,8 +381,6 @@ export default function AddListing({navigation}) {
 
 function apiCheck(arr: string[]) {
   for (var counter: number = 0; counter < arr.length; counter++) {
-    // console.log("GUHHHH")
-    // console.log(arr[counter])
     if (arr[counter].includes('undefined') || arr[counter].length == 0) {
       return false;
     } else {
@@ -410,20 +398,11 @@ function ifFieldsEmpty(str: string) {
 }
 
 function isNumeric(str: string) {
-  if (
-    str == '1' ||
-    str == '2' ||
-    str == '3' ||
-    str == '4' ||
-    str == '5' ||
-    str == '6' ||
-    str == '7' ||
-    str == '8' ||
-    str == '9' ||
-    str == '0'
-  ) {
+  if (str == '1' || str == '2' || str == '3' || str == '4' || str == '5' || str == '6' ||
+    str == '7' || str == '8' || str == '9' || str == '0') {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
 }
@@ -437,9 +416,14 @@ function phoneCheck(str: string) {
   return true;
 }
 
-function priceToNum(str: string) {
-  var numPrice = parseInt(str);
-  return numPrice;
+function setAPIItems(str: string, str1: string, str2: string, str3: string, str4: string) {
+  var apiItems = ["", "", "", "", ""]
+  apiItems[0] = str
+  apiItems[1] = str1
+  apiItems[2] = str2
+  apiItems[3] = str3
+  apiItems[4] = str4
+  return apiItems
 }
 
 function emailCheck(str: string) {
@@ -451,6 +435,14 @@ function emailCheck(str: string) {
   }
   return hasAt;
 }
+
+const delay = async () => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 2500); // 2.5 seconds in milliseconds
+  });
+};
 
 const styles = StyleSheet.create({
   container: {
