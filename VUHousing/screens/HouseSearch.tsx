@@ -32,9 +32,6 @@ function HouseSearch() {
   const [beds, setBeds] = useState('');
   const [baths, setBaths] = useState('');
   const [price, setPrice] = useState('');
-  const [filteredHouses,setFiltering] = useState(new Set<Object[]>); 
-
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,87 +69,39 @@ function HouseSearch() {
     });
   }
 
-  const getBeds = async()=>{
-    let bedInt = parseInt(beds);
-    var i;
-    const newSet = new Set<String>; 
-    const queryBeds = await firestore().collection('Houses').where("Beds", ">=", bedInt);
-    queryBeds.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        newSet.add(doc.id);
-       
-      });
-      //setFiltering(newSet)
-      console.log("filteredHouses updated:", newSet);
-      
-    });
-    return newSet
-  }
-
   const FilterQuery = async() => {
     let bedInt = parseInt(beds);
     let bathInt = parseInt(baths);
     let priceInt = parseInt(price)
-    let newSet=new Set<String>;
     let newUser=[]
 
-     
-    console.log("BEDS "+bedInt)
-    console.log("PriceInt"+ priceInt)
+    // Alert users if filter values are not populated
     if (isNaN(bedInt) && isNaN(bathInt) && isNaN(priceInt)) {
       Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
     }
+
+    // Declare minimum bounds for bed and baths, max bound for price
     if(isNaN(priceInt)){
       priceInt=1000000000
     }
+
     if(isNaN(bedInt)){
       bedInt==0
     }
+
     if(isNaN(bathInt)){
       bathInt=0
     }
     
-
-    /*const queryBeds = await firestore().collection('Houses').where("Beds", ">=", bedInt);
-    queryBeds.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        newSet.add(doc.id);
-       
-      });
-      console.log("new Set after Bed Query updated:", newSet);
-      
-    });
-
-    const queryBaths = await firestore().collection('Houses').where("Baths", ">=", bathInt);
-    queryBaths.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        newSet.add(doc.id);
-       
-      });
-      console.log("NEW SET AFTER BATHS", newSet);
-      
-    });
-
-    for(id in newSet.values()){
-
+    for(let i=0; i<users.length; i++)
+    {
+      if(users[i].Beds>=bedInt && users[i].Baths>=bathInt && parseInt(users[i].Price)<=priceInt)
+      {
+        newUser.push(users[i])
+      }
     }
-*/
-console.log("QUERY" + users.length)
-for(let i=0; i<users.length; i++){
- if(users[i].Beds>=bedInt && users[i].Baths>=bathInt && parseInt(users[i].Price)<=priceInt){
-  newUser.push(users[i])
- }
-}
-console.log(newUser)
-setUsers(newUser)
 
-
-
-
-    
-    
-   
-
+    setUsers(newUser)
   }
 
   return (
