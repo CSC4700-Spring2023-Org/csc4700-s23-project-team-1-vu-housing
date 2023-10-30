@@ -69,22 +69,39 @@ function HouseSearch() {
     });
   }
 
-  function FilterQuery() {
+  const FilterQuery = async() => {
     let bedInt = parseInt(beds);
     let bathInt = parseInt(baths);
+    let priceInt = parseInt(price)
+    let newUser=[]
 
-    if (bedInt === 0 || bathInt === 0 || price === "") {
+    // Alert users if filter values are not populated
+    if (isNaN(bedInt) && isNaN(bathInt) && isNaN(priceInt)) {
       Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
     }
 
-    const events = firestore().collection('Houses').where("Beds", "==", bedInt).where("Baths", "==", bathInt).where("Price", "==", price);
-    events.get().then((querySnapshot) => {
-      const user = [];
-      querySnapshot.forEach((doc) => {
-        user.push({ id: doc.id, ...doc.data() });
-      });
-      setUsers(user);
-    });
+    // Declare minimum bounds for bed and baths, max bound for price
+    if(isNaN(priceInt)){
+      priceInt=1000000000
+    }
+
+    if(isNaN(bedInt)){
+      bedInt==0
+    }
+
+    if(isNaN(bathInt)){
+      bathInt=0
+    }
+    
+    for(let i=0; i<users.length; i++)
+    {
+      if(users[i].Beds>=bedInt && users[i].Baths>=bathInt && parseInt(users[i].Price)<=priceInt)
+      {
+        newUser.push(users[i])
+      }
+    }
+
+    setUsers(newUser)
   }
 
   return (
@@ -101,19 +118,19 @@ function HouseSearch() {
 
         <Box flexDirection={'row'} w="99%">
           <Input
-            placeholder="Beds"
+            placeholder="Min Beds"
             w="33%"
             onChangeText={(val) => setBeds(val)}
             value={beds}
           />
           <Input
-            placeholder="Baths"
+            placeholder="Min Baths"
             w="33%"
             onChangeText={(val) => setBaths(val)}
             value={baths}
           />
           <Input
-            placeholder="Price"
+            placeholder="Max Price"
             w="33%"
             onChangeText={(val) => setPrice(val)}
             value={price}
