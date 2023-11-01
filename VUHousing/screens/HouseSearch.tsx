@@ -87,7 +87,7 @@ function HouseSearch() {
     }
 
     if(isNaN(bedInt)){
-      bedInt==0
+      bedInt=0
     }
 
     if(isNaN(bathInt)){
@@ -96,6 +96,9 @@ function HouseSearch() {
     
     for(let i=0; i<users.length; i++)
     {
+      console.log("BEDS: "+bedInt);
+      console.log("BATH INT: "+bathInt);
+      console.log("PRICE INT: "+priceInt);
       if(users[i].Beds>=bedInt && users[i].Baths>=bathInt && parseInt(users[i].Price)<=priceInt)
       {
         newUser.push(users[i])
