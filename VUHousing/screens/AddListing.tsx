@@ -150,31 +150,54 @@ export default function AddListing({ navigation }: { navigation: any }) {
       landlordContact.length == 12;
 
     if (phoneFormat || emailCheck(landlordContact)) {
+      console.log("before: " + loading)
       if (apiCheck(apiItems) && !loading) {
-        var floatingReview = eval(review);
-        //Writing to data base Section
+        console.log("After: " + loading)
+        const floatingReview = eval(review)
+        const houseAddress = apiItems[0]
+      
+        // Check if the house with the given address already exists in the database
         firestore()
           .collection('Houses')
-          .add({
-            Address: apiItems[0],
-            Beds: apiItems[1],
-            Baths: apiItems[2],
-            Price: apiItems[3],
-            Type: houseType,
-            Landlord: landlordContact,
-            StreetView: apiItems[4],
-            Images: [apiItems[4]],
-            Review: floatingReview,
-            ReviewCount: '1',
+          .where('Address', '==', houseAddress)
+          .get()
+          .then((querySnapshot: any) => { // Update 'any' with the correct type for querySnapshot
+            if (querySnapshot.size > 0) {
+              // If a house with the same address exists, alert the user
+              Alert.alert(
+                'Duplicate House',
+                'A house with this address already exists in the database.'
+              );
+            } else {
+              // If no existing house found with the same address, add the new house
+              firestore()
+                .collection('Houses')
+                .add({
+                  Address: houseAddress,
+                  Beds: apiItems[1],
+                  Baths: apiItems[2],
+                  Price: apiItems[3],
+                  Type: houseType,
+                  Landlord: landlordContact,
+                  StreetView: apiItems[4],
+                  Images: [apiItems[4]],
+                  Review: floatingReview,
+                  ReviewCount: '1',
+                })
+                .then(() => {
+                  console.log('House added!');
+                });
+              navigation.navigate('ListingCreated');
+            }
           })
-          .then(() => {
-            console.log('House added!');
+          .catch((error: any) => { // Update 'any' with the correct error type
+            console.error('Error checking house existence:', error);
           });
-        navigation.navigate('ListingCreated');
-      }
-      else {
-        Alert.alert('Invalid address',
-          'Please input a valid address and click "Enter House Info" again.');
+      } else {
+        Alert.alert(
+          'Invalid address',
+          'Please input a valid address and click "Enter House Info" again.'
+        );
       }
     }
     else {
@@ -328,9 +351,6 @@ export default function AddListing({ navigation }: { navigation: any }) {
                 onChangeText={val => setReview(val)}
               />
             </Box>
-
-
-
 
             <Box marginTop="9">
               <Button

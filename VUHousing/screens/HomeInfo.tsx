@@ -199,7 +199,7 @@ export default function HomeInfo({route, navigation}) {
             marginRight="2"
             marginLeft="2">
             <View style={styles.sectionContainer}>
-              <Text color="#001F58" fontSize="4xl" bold>
+              <Text color="#001F58" fontSize="3xl" bold>
                 Address:
               </Text>
               <Text fontSize="md">{address}</Text>
@@ -207,9 +207,9 @@ export default function HomeInfo({route, navigation}) {
               <Box
                 flexDirection="row"
                 justifyContent="space-between"
-                marginBottom={2}>
+                marginBottom={0.5}>
                   <Box flex={1}>
-                    <Text color="#001F58" fontSize="4xl" bold>
+                    <Text color="#001F58" fontSize="3xl" bold>
                       Beds:
                     </Text>
                     <Text fontSize="md" alignItems="center">
@@ -227,12 +227,12 @@ export default function HomeInfo({route, navigation}) {
                   </Box>
               </Box>
 
-              <Text color="#001F58" fontSize="4xl" bold>
+              <Text color="#001F58" fontSize="3xl" bold>
                 Price:
               </Text>
               <Text fontSize="md">{price}</Text>
 
-              <Text color="#001F58" fontSize="4xl" bold>
+              <Text color="#001F58" fontSize="3xl" bold>
                 Landlord Contact:
               </Text>
               <Text fontSize="md">{landlord}</Text>
@@ -241,7 +241,7 @@ export default function HomeInfo({route, navigation}) {
                 Reviews:
               </Text>
               <Text fontSize="md">
-                {reviewString} {reviewData}
+                {reviewString} {reviewData} ✌️'s
               </Text>
 
               <Box flexDirection="column">
@@ -261,7 +261,7 @@ export default function HomeInfo({route, navigation}) {
                 />
               </Box>
 
-              <Box marginTop="2" marginBottom="2">
+              <Box marginTop="0.5" marginBottom="0.5">
                 <Button
                   alignSelf="center"
                   bgColor="#0085FF"
@@ -303,13 +303,11 @@ const styles = StyleSheet.create({
     height: 200,
   },
   sectionTitle: {
-    fontSize: 24,
-    lineHeight: 24,
+    fontSize: 15,
     fontWeight: '600',
   },
   sectionDescription: {
     fontSize: 18,
-    lineHeight: 10,
     fontWeight: '400',
   },
   highlight: {
@@ -317,11 +315,11 @@ const styles = StyleSheet.create({
   },
   headers: {
     fontFamily: 'AlNile-Bold',
-    fontSize: 35,
+    fontSize: 25,
   },
   information: {
     fontFamily: 'AlNile',
-    fontSize: 20,
+    fontSize: 10,
   },
 });
 
