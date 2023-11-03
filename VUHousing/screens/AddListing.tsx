@@ -61,7 +61,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
       }
       fieldsFilled = true;
     }
-    if (fieldsFilled) {
+    if (fieldsFilled && parseInt(houseItems[3]) > 0) {
       try {
         setLoading(true);
        
@@ -80,7 +80,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
     else {
       Alert.alert(
         'Field Error',
-        'One or more fields is blank. Please fill all fields out, then resubmit',
+        'One or more fields is incorrectly filled. Please re-fill all fields out, then resubmit',
       );
     }
   };
@@ -117,10 +117,10 @@ export default function AddListing({ navigation }: { navigation: any }) {
           var addy = houseAddress + ' ' + city + ' ' + state + ' ' + zipcode
           var bath = houseBathrooms
           var bed = houseBedrooms
-          var price = apiPrice
+          var fullPrice = apiPrice
           var sV = houseStreetView
 
-          apiItems = setAPIItems(addy, bath, bed, price, sV)
+          apiItems = setAPIItems(addy, bath, bed, fullPrice, sV)
           console.log(apiItems)
           setLoading(false)
         })
@@ -176,7 +176,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
                   Address: houseAddress,
                   Beds: apiItems[1],
                   Baths: apiItems[2],
-                  Price: apiItems[3],
+                  Price: houseItems[3],
                   Type: houseType,
                   Landlord: landlordContact,
                   StreetView: apiItems[4],
