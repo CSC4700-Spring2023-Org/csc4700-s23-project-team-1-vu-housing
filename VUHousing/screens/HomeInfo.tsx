@@ -87,7 +87,11 @@ export default function HomeInfo({route, navigation}) {
   const uploadImage = async () => {
     const uri = selectedImage;
     const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
+    console.log('FILENAME SELECTED IMAGE');
+    console.log(filenameselectedImage);
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+    console.log('UPLOAD URI');
+    console.log(uploadUri);
     setUploading(true);
     setTransferred(0);
     const task = storage().ref(filenameselectedImage).putFile(uploadUri);

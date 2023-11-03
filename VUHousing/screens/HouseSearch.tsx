@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import type { PropsWithChildren } from 'react';
+import React, {useState, useEffect} from 'react';
+import type {PropsWithChildren} from 'react';
 import BackButton from './BackButton';
 import {
   SafeAreaView,
@@ -14,14 +14,14 @@ import {
   Alert,
 } from 'react-native';
 
-import { NativeBaseProvider, Box, Text, Input, Hidden } from "native-base";
+import {NativeBaseProvider, Box, Text, Input, Hidden} from 'native-base';
 
 import HouseTable from '../components/HouseTable';
 import firestore from '@react-native-firebase/firestore';
-import { DataTable } from 'react-native-paper';
-import { Button } from 'react-native-paper';
+import {DataTable} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import {useNavigation} from '@react-navigation/native'; // Import useNavigation
 
 function HouseSearch() {
   const navigation = useNavigation(); // Initialize navigation
@@ -39,8 +39,8 @@ function HouseSearch() {
         const querySnapshot = await firestore().collection('Houses').get();
         const userData = [];
 
-        querySnapshot.forEach((doc) => {
-          userData.push({ id: doc.id, ...doc.data() });
+        querySnapshot.forEach(doc => {
+          userData.push({id: doc.id, ...doc.data()});
         });
 
         setUsers(userData);
@@ -55,15 +55,15 @@ function HouseSearch() {
   }, []);
 
   function clearFilters() {
-    setBeds("");
-    setBaths("");
-    setPrice("");
+    setBeds('');
+    setBaths('');
+    setPrice('');
 
     const events = firestore().collection('Houses');
-    events.get().then((querySnapshot) => {
+    events.get().then(querySnapshot => {
       const user = [];
-      querySnapshot.forEach((doc) => {
-        user.push({ id: doc.id, ...doc.data() });
+      querySnapshot.forEach(doc => {
+        user.push({id: doc.id, ...doc.data()});
       });
       setUsers(user);
     });
@@ -73,15 +73,22 @@ function HouseSearch() {
     let bedInt = parseInt(beds);
     let bathInt = parseInt(baths);
 
-    if (bedInt === 0 || bathInt === 0 || price === "") {
-      Alert.alert("Invalid Filter Input", "Please enter a value > 0 for each filter.");
+    if (bedInt === 0 || bathInt === 0 || price === '') {
+      Alert.alert(
+        'Invalid Filter Input',
+        'Please enter a value > 0 for each filter.',
+      );
     }
 
-    const events = firestore().collection('Houses').where("Beds", "==", bedInt).where("Baths", "==", bathInt).where("Price", "==", price);
-    events.get().then((querySnapshot) => {
+    const events = firestore()
+      .collection('Houses')
+      .where('Beds', '==', bedInt)
+      .where('Baths', '==', bathInt)
+      .where('Price', '==', price);
+    events.get().then(querySnapshot => {
       const user = [];
-      querySnapshot.forEach((doc) => {
-        user.push({ id: doc.id, ...doc.data() });
+      querySnapshot.forEach(doc => {
+        user.push({id: doc.id, ...doc.data()});
       });
       setUsers(user);
     });
@@ -103,24 +110,28 @@ function HouseSearch() {
           <Input
             placeholder="Beds"
             w="33%"
-            onChangeText={(val) => setBeds(val)}
+            onChangeText={val => setBeds(val)}
             value={beds}
           />
           <Input
             placeholder="Baths"
             w="33%"
-            onChangeText={(val) => setBaths(val)}
+            onChangeText={val => setBaths(val)}
             value={baths}
           />
           <Input
             placeholder="Price"
             w="33%"
-            onChangeText={(val) => setPrice(val)}
+            onChangeText={val => setPrice(val)}
             value={price}
           />
         </Box>
         <Box>
-          <CoolButton onPress={FilterQuery} clearFilters={clearFilters} isLoading={loading} />
+          <CoolButton
+            onPress={FilterQuery}
+            clearFilters={clearFilters}
+            isLoading={loading}
+          />
         </Box>
 
         <View style={styles.table}>
@@ -141,13 +152,13 @@ function HouseSearch() {
         </View>
 
         <FlatList
+          style={styles.flat}
           data={users}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('HomeInfo', { docID: item.id }); // Navigate to the "HomeInfo" screen with docID
-              }}
-            >
+                navigation.navigate('HomeInfo', {docID: item.id}); // Navigate to the "HomeInfo" screen with docID
+              }}>
               <View style={styles.row}>
                 <View style={[styles.cell, styles.addressCell]}>
                   <Text>{item.Address}</Text>
@@ -164,9 +175,8 @@ function HouseSearch() {
               </View>
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
         />
-
 
         <View>
           <BackButton text="Go Back" />
@@ -176,7 +186,7 @@ function HouseSearch() {
   );
 }
 
-const CoolButton = ({ onPress, clearFilters, isLoading }) => {
+const CoolButton = ({onPress, clearFilters, isLoading}) => {
   const [isLoadingFilter, setIsLoadingFilter] = useState(false);
   const [isLoadingClear, setIsLoadingClear] = useState(false);
 
@@ -213,32 +223,39 @@ const CoolButton = ({ onPress, clearFilters, isLoading }) => {
 
   return (
     <View>
-      <Box flexDirection='row' alignItems="center" alignSelf='center'>
+      <Box flexDirection="row" alignItems="center" alignSelf="center">
         <Animatable.View animation={isLoadingFilter ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: buttonColorFilter, marginRight: 20, marginTop: 10, marginBottom: 10 }}
+            style={{
+              backgroundColor: buttonColorFilter,
+              marginRight: 20,
+              marginTop: 10,
+              marginBottom: 10,
+            }}
             mode="contained"
             onPress={handlePressFilter}
-            disabled={isLoadingFilter}
-          >
+            disabled={isLoadingFilter}>
             {isLoadingFilter ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text style={{ color: 'white' }}>Filter</Text>
+              <Text style={{color: 'white'}}>Filter</Text>
             )}
           </Button>
         </Animatable.View>
         <Animatable.View animation={isLoadingClear ? 'swing' : undefined}>
           <Button
-            style={{ backgroundColor: buttonColorClear, marginTop: 10, marginBottom: 10 }}
+            style={{
+              backgroundColor: buttonColorClear,
+              marginTop: 10,
+              marginBottom: 10,
+            }}
             mode="contained"
             onPress={handlePressClear}
-            disabled={isLoadingClear}
-          >
+            disabled={isLoadingClear}>
             {isLoadingClear ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text style={{ color: 'white' }}>Clear</Text>
+              <Text style={{color: 'white'}}>Clear</Text>
             )}
           </Button>
         </Animatable.View>
@@ -255,7 +272,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
   },
   houseTable: {
-    justifyContent: "space-evenly",
+    justifyContent: 'space-evenly',
     minWidth: 350,
   },
   filterButton: {
@@ -279,6 +296,9 @@ const styles = StyleSheet.create({
   image: {
     width: 50,
     height: 50,
+  },
+  flat: {
+    height: '65%',
   },
   table: {
     flexDirection: 'column',
