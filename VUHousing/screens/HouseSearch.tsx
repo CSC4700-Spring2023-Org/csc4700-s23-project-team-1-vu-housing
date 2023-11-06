@@ -86,7 +86,7 @@ function HouseSearch() {
     }
 
     if(isNaN(bedInt)){
-      bedInt==0
+      bedInt=0
     }
 
     if(isNaN(bathInt)){
@@ -158,6 +158,7 @@ function HouseSearch() {
         </View>
 
         <FlatList
+          style={{height:'65%'}}
           data={users}
           renderItem={({ item }) => (
             <TouchableOpacity

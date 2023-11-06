@@ -179,6 +179,8 @@ export default function HomeInfo({route, navigation}) {
     }
   };
 
+  
+
   return (
     <ScrollView>
       <NativeBaseProvider>
@@ -279,11 +281,23 @@ export default function HomeInfo({route, navigation}) {
             
 
             <View>
+            <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                _text={{ color: '#001F58' }}
+                onPress={() => {
+                  selectImage();
+                }}>
+                Upload Images
+              </Button>
               <Button
                 onPress={() =>
                   navigation.navigate('HousePictures', {docID: obj.docID})
                 }>
-                Picture Button
+                View Pictures
               </Button>
 
               <BackButton text="Go Back" />

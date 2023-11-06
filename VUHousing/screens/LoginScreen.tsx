@@ -31,7 +31,7 @@ export default function LoginScreen({ navigation }) {
     if (password.length == 0) {
       Alert.alert("Password Field Empty", "Please Enter a non-empty password to login")
     }
-    if (email.length == 0) {
+    else if (email.length == 0) {
       Alert.alert("Email Field Empty", "Please Enter a non-empty email to login")
     }
     //Otherwise Query the database on email and password
