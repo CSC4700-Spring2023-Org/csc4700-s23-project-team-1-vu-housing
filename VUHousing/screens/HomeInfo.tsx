@@ -14,6 +14,7 @@ import {
   Image,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 //import {FieldValue} from 'firebase-admin/firestore'
@@ -52,7 +53,7 @@ export default function HomeInfo({route, navigation}) {
   let imageArray = [];
   const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
   const [reviewData, setReviewData] = useState(0.0);
-  const [reviewCount, setReviewCount] = useState(0);
+  const [reviewCount, setReviewCount] = useState(1);
   const [userReview, setUserReview] = useState(0.0);
   var [reviewString, setReviewString] = useState('');
 
@@ -210,7 +211,7 @@ export default function HomeInfo({route, navigation}) {
             marginRight="2"
             marginLeft="2">
             <View style={styles.sectionContainer}>
-              <Text color="#001F58" fontSize="4xl" bold>
+              <Text color="#001F58" fontSize="3xl" bold>
                 Address:
               </Text>
               <Text fontSize="md">{address}</Text>
@@ -218,9 +219,9 @@ export default function HomeInfo({route, navigation}) {
               <Box
                 flexDirection="row"
                 justifyContent="space-between"
-                marginBottom={2}>
+                marginBottom={0.5}>
                 <Box flex={1}>
-                  <Text color="#001F58" fontSize="4xl" bold>
+                  <Text color="#001F58" fontSize="3xl" bold>
                     Beds:
                   </Text>
                   <Text fontSize="md" alignItems="center">
@@ -238,12 +239,12 @@ export default function HomeInfo({route, navigation}) {
                 </Box>
               </Box>
 
-              <Text color="#001F58" fontSize="4xl" bold>
+              <Text color="#001F58" fontSize="3xl" bold>
                 Price:
               </Text>
               <Text fontSize="md">{price}</Text>
 
-              <Text color="#001F58" fontSize="4xl" bold>
+              <Text color="#001F58" fontSize="3xl" bold>
                 Landlord Contact:
               </Text>
               <Text fontSize="md">{landlord}</Text>
@@ -252,7 +253,7 @@ export default function HomeInfo({route, navigation}) {
                 Reviews:
               </Text>
               <Text fontSize="md">
-                {reviewString} {reviewData}
+                {reviewString} {reviewData} ✌️'s
               </Text>
 
               <Box flexDirection="column">
@@ -272,7 +273,7 @@ export default function HomeInfo({route, navigation}) {
                 />
               </Box>
 
-              <Box marginTop="2" marginBottom="2">
+              <Box marginTop="0.5" marginBottom="0.5">
                 <Button
                   alignSelf="center"
                   bgColor="#0085FF"
@@ -288,61 +289,6 @@ export default function HomeInfo({route, navigation}) {
               </Box>
             </View>
 
-            <Text color="#001F58" fontSize="4xl" bold>
-              Price:
-            </Text>
-            <Text fontSize="md">{price}</Text>
-
-            <Text color="#001F58" fontSize="4xl" bold>
-              Landlord Contact:
-            </Text>
-            <Text fontSize="md">{landlord}</Text>
-
-            <Text color="#001F58" fontSize="4xl" bold>
-              Reviews:
-            </Text>
-            <Text fontSize="md">
-              {reviewString} {reviewData}
-            </Text>
-
-            <Box flexDirection="column">
-              <Text color="#001F58" fontSize="2xl" bold>
-                Leave a review!
-              </Text>
-              <Input
-                borderColor="#001F58"
-                borderRadius="10"
-                borderWidth="2"
-                placeholder="(0.0-5.0 V's up)"
-                w="100%"
-                autoCapitalize="none"
-                h="50"
-                fontSize="lg"
-                onChangeText={val => setUserReview(val)}
-              />
-            </Box>
-
-            <Box marginTop="9">
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  onReviewPress();
-                }}>
-                Submit Review
-              </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('HousePictures', {docID: obj.docID})
-                }>
-                Picture Button
-              </Button>
-            </Box>
-
             <View>
               <Button
                 alignSelf="center"
@@ -350,23 +296,19 @@ export default function HomeInfo({route, navigation}) {
                 size="lg"
                 w="200"
                 borderRadius="50"
-                display={enterButtonStyle}
                 _text={{color: '#001F58'}}
                 onPress={() => {
                   selectImage();
                 }}>
                 Upload Images
               </Button>
-              <BackButton text="Go Back" />
-            </View>
-
-            <View>
               <Button
                 onPress={() =>
                   navigation.navigate('HousePictures', {docID: obj.docID})
                 }>
-                Picture Button
+                View Pictures
               </Button>
+
               <BackButton text="Go Back" />
             </View>
 
@@ -384,13 +326,11 @@ const styles = StyleSheet.create({
     height: 200,
   },
   sectionTitle: {
-    fontSize: 24,
-    lineHeight: 24,
+    fontSize: 15,
     fontWeight: '600',
   },
   sectionDescription: {
     fontSize: 18,
-    lineHeight: 10,
     fontWeight: '400',
   },
   highlight: {
@@ -398,11 +338,11 @@ const styles = StyleSheet.create({
   },
   headers: {
     fontFamily: 'AlNile-Bold',
-    fontSize: 35,
+    fontSize: 25,
   },
   information: {
     fontFamily: 'AlNile',
-    fontSize: 20,
+    fontSize: 10,
   },
 });
 

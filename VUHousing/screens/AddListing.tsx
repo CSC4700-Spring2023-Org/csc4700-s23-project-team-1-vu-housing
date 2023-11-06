@@ -14,7 +14,9 @@ import {
   View,
   Image,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
+import {NativeBaseProvider, Box, Text, Input, Button} from 'native-base';
 
 import {
   NativeBaseProvider,
@@ -34,29 +36,17 @@ import ImagePicker from 'react-native-image-picker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
+import {readFileAssets} from 'react-native-fs';
 
-export default function AddListing({route, navigation}) {
-  const obj = route.params;
+export default function AddListing({navigation}: {navigation: any}) {
+  const [loading, setLoading] = useState(false);
+  const [isValidAddress, setIsValidAddress] = useState(false);
 
+  const [submissionStatus, setSubmissionStatus] = useState('');
   const [address, setAddress] = useState('');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
-
-  var fieldsFilled = false;
-  // price = priceToNum(price)
-
-  const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
-  const [submitButtonStyle, setSubmitButtonStyle] = useState('none');
-
-  const [houseAddress, setHouseAddress] = useState('');
-  const [houseBedrooms, setHouseBedrooms] = useState('');
-  const [houseBathrooms, setHouseBathrooms] = useState('');
-  const [apiPrice, setAPIPrice] = useState('');
-  const [houseStreetView, setHouseStreetView] = useState('');
-
-  const [submitText, setSubmitText] = useState('');
-  const [enterHouseText, setEnterHouseText] = useState('Enter House Info');
 
   var fieldsFilled = false;
 
@@ -69,19 +59,47 @@ export default function AddListing({route, navigation}) {
   const [transferred, setTransferred] = useState(0);
   const [review, setReview] = useState(0.0);
 
-  var fieldsFilled = false;
-
   var houseItems = [address, houseType, landlordContact, price];
-  for (var counter: number = 0; counter < 6; counter++) {
-    if (ifFieldsEmpty(String(houseItems[counter]))) {
-      fieldsFilled = false;
-      break;
+  const onHouseEnterPress = async () => {
+    for (var counter: number = 0; counter < 6; counter++) {
+      if (ifFieldsEmpty(String(houseItems[counter]))) {
+        fieldsFilled = false;
+        break;
+      }
+      fieldsFilled = true;
     }
-    fieldsFilled = true;
-  }
-
-  var onHouseEnterPress = () => {
     if (fieldsFilled) {
+      if (parseInt(houseItems[3]) <= 0) {
+        Alert.alert(
+          'Price Error',
+          'Price field is invalid. Please re-fill field out, then resubmit',
+        );
+      } else {
+        try {
+          setLoading(true);
+          // Set isValidAddress based on validation result
+          setIsValidAddress(fieldsFilled);
+        } catch (error) {
+          // Handle any validation error
+          console.error('Validation Error: ', error);
+        } finally {
+          onLoadingAddress();
+          await delay();
+          writeHouseToDB();
+        }
+      }
+    } else {
+      Alert.alert(
+        'Field Error',
+        'One or more fields is incorrectly filled. Please re-fill all fields out, then resubmit',
+      );
+    }
+  };
+
+  var apiItems = [];
+  const onLoadingAddress = async () => {
+    try {
+      setLoading(true);
       var houseInfo = {
         method: 'GET',
         url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
@@ -98,26 +116,26 @@ export default function AddListing({route, navigation}) {
       axios
         .request(houseInfo)
         .then(function (response) {
-          var streetAddress = response.data.propertyDetails.abbreviatedAddress;
+          var houseAddress = response.data.propertyDetails.abbreviatedAddress;
           var city = response.data.propertyDetails.city;
           var state = response.data.propertyDetails.state;
           var zipcode = response.data.propertyDetails.address.zipcode;
-          var resBath = response.data.propertyDetails.bathrooms;
-          var resBed = response.data.propertyDetails.bedrooms;
+          var houseBathrooms = response.data.propertyDetails.bathrooms;
+          var houseBedrooms = response.data.propertyDetails.bedrooms;
           var apiPrice = response.data.propertyDetails.price;
           var houseStreetView =
             response.data.propertyDetails.originalPhotos[0].mixedSources.jpeg[0]
               .url;
 
-          console.log(houseStreetView);
+          var addy = houseAddress + ' ' + city + ' ' + state + ' ' + zipcode;
+          var bath = houseBathrooms;
+          var bed = houseBedrooms;
+          var fullPrice = apiPrice;
+          var sV = houseStreetView;
 
-          setHouseAddress(
-            streetAddress + ' ' + city + ' ' + state + ' ' + zipcode,
-          );
-          setHouseBathrooms(resBath);
-          setHouseBedrooms(resBed);
-          setAPIPrice(apiPrice);
-          setHouseStreetView(houseStreetView);
+          apiItems = setAPIItems(addy, bath, bed, fullPrice, sV);
+          console.log(apiItems);
+          setLoading(false);
         })
         .catch(function (error) {
           if (error.response) {
@@ -129,22 +147,14 @@ export default function AddListing({route, navigation}) {
             console.log('Error', error.message);
           }
         });
-    } else {
-      Alert.alert(
-        'Field Error',
-        'One or more fields is blank. Please fill all fields out, then resubmit',
-      );
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle any errors that may occur during the delayed process
+      setLoading(false);
     }
   };
 
-  var apiItems = [
-    houseAddress,
-    houseBedrooms,
-    houseBathrooms,
-    apiPrice,
-    houseStreetView,
-  ];
-  var onSubmitPress = () => {
+  const writeHouseToDB = async () => {
     var phoneFormat =
       phoneCheck(landlordContact.substring(0, 3)) &&
       landlordContact.substring(3, 4).includes('-') &&
@@ -152,37 +162,57 @@ export default function AddListing({route, navigation}) {
       landlordContact.substring(7, 8).includes('-') &&
       phoneCheck(landlordContact.substring(8, 12)) &&
       landlordContact.length == 12;
+
     if (phoneFormat || emailCheck(landlordContact)) {
-      console.log(apiItems);
-      if (apiCheck(apiItems)) {
-        var floatingReview = eval(review);
-        //New Writing to data base Section
+      console.log('before: ' + loading);
+      if (apiCheck(apiItems) && !loading) {
+        console.log('After: ' + loading);
+        const floatingReview = eval(review);
+        const houseAddress = apiItems[0];
+
+        // Check if the house with the given address already exists in the database
         firestore()
           .collection('Houses')
-          .add({
-            Address: houseAddress,
-            Beds: houseBedrooms,
-            Baths: houseBathrooms,
-            Price: price,
-            Type: houseType,
-            Landlord: landlordContact,
-            StreetView: houseStreetView,
-            Images: houseStreetView,
-            Review: floatingReview,
-            ReviewCount: 1,
+          .where('Address', '==', houseAddress)
+          .get()
+          .then((querySnapshot: any) => {
+            // Update 'any' with the correct type for querySnapshot
+            if (querySnapshot.size > 0) {
+              // If a house with the same address exists, alert the user
+              Alert.alert(
+                'Duplicate House',
+                'A house with this address already exists in the database.',
+              );
+            } else {
+              // If no existing house found with the same address, add the new house
+              firestore()
+                .collection('Houses')
+                .add({
+                  Address: houseAddress,
+                  Beds: apiItems[1],
+                  Baths: apiItems[2],
+                  Price: houseItems[3],
+                  Type: houseType,
+                  Landlord: landlordContact,
+                  StreetView: apiItems[4],
+                  Images: [apiItems[4]],
+                  Review: floatingReview,
+                  ReviewCount: '1',
+                })
+                .then(() => {
+                  console.log('House added!');
+                });
+              navigation.navigate('ListingCreated');
+            }
           })
-          .then(() => {
-            console.log('House added!');
-            console.log(houseStreetView);
+          .catch((error: any) => {
+            // Update 'any' with the correct error type
+            console.error('Error checking house existence:', error);
           });
-        navigation.navigate('ListingCreated');
-        uploadImage();
       } else {
-        setSubmitText('');
-        setEnterHouseText('Enter House Info');
         Alert.alert(
           'Invalid address',
-          'Please input a valid address and click "Enter House Info" again, then the verify button',
+          'Please input a valid address and click "Enter House Info" again.',
         );
       }
     } else {
@@ -241,20 +271,9 @@ export default function AddListing({route, navigation}) {
       'Photo uploaded!',
       'Your photo has been uploaded to Firebase Cloud Storage!',
     );
-
-    //Write to firestore Textual Database
-    const downloadURL = await storage()
-      .ref('/' + filenameselectedImage)
-      .getDownloadURL();
-    const houseReference = await firestore()
-      .collection('Houses')
-      .doc(obj.docID);
-
-    images?.push(downloadURL);
-
-    const res = houseReference.update({Images: images});
     setImage(null);
   };
+
   return (
     <NativeBaseProvider>
       <Box flex={1} bg="#ffffff" alignItems="center">
@@ -359,47 +378,30 @@ export default function AddListing({route, navigation}) {
                 size="lg"
                 w="200"
                 borderRadius="50"
-                display={enterButtonStyle}
+                marginBottom={5}
                 _text={{color: '#001F58'}}
                 onPress={() => {
                   onHouseEnterPress();
-                  setEnterButtonStyle('none');
-                  setSubmitButtonStyle('flex');
-                }}>
-                Enter House Info
-              </Button>
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                display={enterButtonStyle}
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Pick Image
-              </Button>
-            </Box>
-
-            <Box marginTop="9">
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                display={submitButtonStyle}
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  onSubmitPress();
-                  setEnterButtonStyle('flex');
-                  setSubmitButtonStyle('none');
                 }}>
                 Verify House Info
               </Button>
             </Box>
+
+            {loading && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
+            )}
 
             <View>
               <BackButton text="Go Back" />
@@ -415,8 +417,6 @@ export default function AddListing({route, navigation}) {
 
 function apiCheck(arr: string[]) {
   for (var counter: number = 0; counter < arr.length; counter++) {
-    // console.log("GUHHHH")
-    // console.log(arr[counter])
     if (arr[counter].includes('undefined') || arr[counter].length == 0) {
       return false;
     } else {
@@ -461,9 +461,20 @@ function phoneCheck(str: string) {
   return true;
 }
 
-function priceToNum(str: string) {
-  var numPrice = parseInt(str);
-  return numPrice;
+function setAPIItems(
+  str: string,
+  str1: string,
+  str2: string,
+  str3: string,
+  str4: string,
+) {
+  var apiItems = ['', '', '', '', ''];
+  apiItems[0] = str;
+  apiItems[1] = str1;
+  apiItems[2] = str2;
+  apiItems[3] = str3;
+  apiItems[4] = str4;
+  return apiItems;
 }
 
 function emailCheck(str: string) {
@@ -475,6 +486,14 @@ function emailCheck(str: string) {
   }
   return hasAt;
 }
+
+const delay = async () => {
+  return new Promise<void>(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, 2500); // 2.5 seconds in milliseconds
+  });
+};
 
 const styles = StyleSheet.create({
   container: {
