@@ -61,22 +61,27 @@ export default function AddListing({ navigation }: { navigation: any }) {
       }
       fieldsFilled = true;
     }
-    if (fieldsFilled && parseInt(houseItems[3]) > 0) {
-      try {
-        setLoading(true);
-       
-        // Set isValidAddress based on validation result
-        setIsValidAddress(fieldsFilled);
-
-      } catch (error) {
-        // Handle any validation error
-        console.error('Validation Error: ', error);
-      } finally {
-        onLoadingAddress()
-        await delay();
-        writeHouseToDB()
+    if (fieldsFilled) {
+      if (parseInt(houseItems[3]) <= 0) {
+        Alert.alert("Price Error", "Price field is invalid. Please re-fill field out, then resubmit")
       }
-    } 
+      else {
+        try {
+          setLoading(true);
+          // Set isValidAddress based on validation result
+          setIsValidAddress(fieldsFilled);
+        } 
+        catch (error) {
+          // Handle any validation error
+          console.error('Validation Error: ', error);
+        } 
+        finally {
+          onLoadingAddress()
+          await delay();
+          writeHouseToDB()
+        }
+      }
+    }
     else {
       Alert.alert(
         'Field Error',
