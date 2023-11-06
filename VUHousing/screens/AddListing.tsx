@@ -367,18 +367,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
                 Verify House Info
               </Button>
 
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                _text={{ color: '#001F58' }}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Upload Images
-              </Button>
+              
             </Box>
 
             {loading && (
