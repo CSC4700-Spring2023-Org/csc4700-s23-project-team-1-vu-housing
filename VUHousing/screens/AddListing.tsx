@@ -187,7 +187,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
                   StreetView: apiItems[4],
                   Images: [apiItems[4]],
                   Review: floatingReview,
-                  ReviewCount: '1',
+                  ReviewCount: 1,
                 })
                 .then(() => {
                   console.log('House added!');
