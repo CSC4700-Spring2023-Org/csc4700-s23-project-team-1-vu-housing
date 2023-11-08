@@ -70,11 +70,11 @@ export default function AddListing({ navigation }: { navigation: any }) {
           setLoading(true);
           // Set isValidAddress based on validation result
           setIsValidAddress(fieldsFilled);
-        } 
+        }
         catch (error) {
           // Handle any validation error
           console.error('Validation Error: ', error);
-        } 
+        }
         finally {
           onLoadingAddress()
           await delay();
@@ -101,9 +101,8 @@ export default function AddListing({ navigation }: { navigation: any }) {
           propertyaddress: address,
         },
         headers: {
-          'X-RapidAPI-Key':
-            '03118fad58msh6696f81564e5c1dp135a90jsn0cee7fcf5d12',
-          'X-RapidAPI-Host': 'zillow-working-api.p.rapidapi.com',
+          'X-RapidAPI-Key': 'f64b95a4d3mshf7b654d87fe7687p105ad4jsn5d6b3c0c0c0f',
+          'X-RapidAPI-Host': 'zillow-working-api.p.rapidapi.com'
         },
       };
 
@@ -147,7 +146,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
     }
   }
 
-  
+
   const writeHouseToDB = async () => {
     var phoneFormat = phoneCheck(landlordContact.substring(0, 3)) &&
       landlordContact.substring(3, 4).includes('-') && phoneCheck(landlordContact.substring(4, 7)) &&
@@ -160,7 +159,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
         console.log("After: " + loading)
         const floatingReview = eval(review)
         const houseAddress = apiItems[0]
-      
+
         // Check if the house with the given address already exists in the database
         firestore()
           .collection('Houses')
@@ -372,13 +371,13 @@ export default function AddListing({ navigation }: { navigation: any }) {
                 Verify House Info
               </Button>
 
-              
+
             </Box>
 
             {loading && (
-            <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-              <ActivityIndicator size="large" color="#0000ff" />
-            </View>
+              <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+              </View>
             )}
 
             <View>
