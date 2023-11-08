@@ -14,76 +14,86 @@ import {
   View,
   Image,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
-
-import { createStackNavigator } from '@react-navigation/stack';
+import { NativeBaseProvider, Box, Text, Input, Button } from "native-base";
 
 import firestore from '@react-native-firebase/firestore';
 import { DataTable } from 'react-native-paper';
-import { useNavigation, useRoute, NavigationContainer } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 //image upload
 import ImagePicker from 'react-native-image-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
+import { readFileAssets } from 'react-native-fs';
 
-import { NativeBaseProvider, Box, Button, Text, Input, Hidden } from 'native-base';
 
-const Stack = createStackNavigator();
+export default function AddListing({ navigation }: { navigation: any }) {
+  const [loading, setLoading] = useState(false);
+  const [isValidAddress, setIsValidAddress] = useState(false);
 
-export default function AddListing({ navigation }) {
-
+  const [submissionStatus, setSubmissionStatus] = useState('');
   const [address, setAddress] = useState('');
   const [houseType, setHouseType] = useState('');
   const [landlordContact, setLandlordContact] = useState('');
   var [price, setPrice] = useState('0');
 
   var fieldsFilled = false;
-  // price = priceToNum(price)
 
-
-  const [loadingTextStyle, setLoadingTextStyle] = useState('none');
-  const [submitButtonStyle, setSubmitButtonStyle] = useState('flex');
-
-  const [houseAddress, setHouseAddress] = useState('');
-  const [houseBedrooms, setHouseBedrooms] = useState('');
-  const [houseBathrooms, setHouseBathrooms] = useState('');
-  const [apiPrice, setAPIPrice] = useState('');
-  const [houseStreetView, setHouseStreetView] = useState('');
-
-  const [submitText, setSubmitText] = useState('');
-  const [enterHouseText, setEnterHouseText] = useState('Enter House Info');
-
-  var fieldsFilled = false
 
   //image upload vars
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState('');
   //const [selectedImage, setSelectedImage] = useState("");
-  let imageName = ""
-  let selectedImage = ""
+  let imageName = '';
+  let selectedImage = '';
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [review, setReview] = useState(0.0)
-
-  var fieldsFilled = false;
+  const [review, setReview] = useState(0.0);
 
   var houseItems = [address, houseType, landlordContact, price];
-  for (var counter: number = 0; counter < 6; counter++) {
-
-    if (ifFieldsEmpty(String(houseItems[counter]))) {
-      fieldsFilled = false;
-      break;
+  const onHouseEnterPress = async () => {
+    for (var counter: number = 0; counter < 6; counter++) {
+      if (ifFieldsEmpty(String(houseItems[counter]))) {
+        fieldsFilled = false;
+        break;
+      }
+      fieldsFilled = true;
     }
-    fieldsFilled = true;
-  }
-
-  const moveUser = (validHouse) => {
-    navigation.navigate('AddListingWaitPage', { validHouse });
+    if (fieldsFilled) {
+      if (parseInt(houseItems[3]) <= 0) {
+        Alert.alert("Price Error", "Price field is invalid. Please re-fill field out, then resubmit")
+      }
+      else {
+        try {
+          setLoading(true);
+          // Set isValidAddress based on validation result
+          setIsValidAddress(fieldsFilled);
+        } 
+        catch (error) {
+          // Handle any validation error
+          console.error('Validation Error: ', error);
+        } 
+        finally {
+          onLoadingAddress()
+          await delay();
+          writeHouseToDB()
+        }
+      }
+    }
+    else {
+      Alert.alert(
+        'Field Error',
+        'One or more fields is incorrectly filled. Please re-fill all fields out, then resubmit',
+      );
+    }
   };
 
-  var onHouseSubmitPress = () => {
-    if (fieldsFilled) {
+  var apiItems = []
+  const onLoadingAddress = async () => {
+    try {
+      setLoading(true);
       var houseInfo = {
         method: 'GET',
         url: 'https://zillow-working-api.p.rapidapi.com/pro/byaddress',
@@ -100,100 +110,106 @@ export default function AddListing({ navigation }) {
       axios
         .request(houseInfo)
         .then(function (response) {
-          var streetAddress = response.data.propertyDetails.abbreviatedAddress;
+          var houseAddress = response.data.propertyDetails.abbreviatedAddress;
           var city = response.data.propertyDetails.city;
           var state = response.data.propertyDetails.state;
           var zipcode = response.data.propertyDetails.address.zipcode;
-          var resBath = response.data.propertyDetails.bathrooms;
-          var resBed = response.data.propertyDetails.bedrooms;
+          var houseBathrooms = response.data.propertyDetails.bathrooms;
+          var houseBedrooms = response.data.propertyDetails.bedrooms;
           var apiPrice = response.data.propertyDetails.price;
-          var houseStreetView =
-            response.data.propertyDetails.originalPhotos[0].mixedSources.jpeg[0]
-              .url;
+          var houseStreetView = response.data.propertyDetails.originalPhotos[0].mixedSources.jpeg[0].url;
 
-          console.log(houseStreetView);
+          var addy = houseAddress + ' ' + city + ' ' + state + ' ' + zipcode
+          var bath = houseBathrooms
+          var bed = houseBedrooms
+          var fullPrice = apiPrice
+          var sV = houseStreetView
 
-          setHouseAddress(
-            streetAddress + ' ' + city + ' ' + state + ' ' + zipcode,
-          );
-          setHouseBathrooms(resBath);
-          setHouseBedrooms(resBed);
-          setAPIPrice(apiPrice);
-          setHouseStreetView(houseStreetView);
+          apiItems = setAPIItems(addy, bath, bed, fullPrice, sV)
+          console.log(apiItems)
+          setLoading(false)
+        })
+        .catch(function (error) {
+          if (error.response) {
+            console.log('Error Code: ' + error.response.status);
+            console.log(error.response.data);
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log('Error', error.message);
+          }
+        });
+    }
+    catch (error) {
+      console.error('Error:', error);
+      // Handle any errors that may occur during the delayed process
+      setLoading(false)
+    }
+  }
 
-          var apiItems = [
-            houseAddress,
-            houseBedrooms,
-            houseBathrooms,
-            apiPrice,
-            houseStreetView,
-          ];
+  
+  const writeHouseToDB = async () => {
+    var phoneFormat = phoneCheck(landlordContact.substring(0, 3)) &&
+      landlordContact.substring(3, 4).includes('-') && phoneCheck(landlordContact.substring(4, 7)) &&
+      landlordContact.substring(7, 8).includes('-') && phoneCheck(landlordContact.substring(8, 12)) &&
+      landlordContact.length == 12;
 
-          var phoneFormat =
-            phoneCheck(landlordContact.substring(0, 3)) &&
-            landlordContact.substring(3, 4).includes('-') &&
-            phoneCheck(landlordContact.substring(4, 7)) &&
-            landlordContact.substring(7, 8).includes('-') &&
-            phoneCheck(landlordContact.substring(8, 12)) &&
-            landlordContact.length == 12;
-
-          if (phoneFormat || emailCheck(landlordContact)) {
-            if (apiCheck(apiItems)) {
-              var floatingReview = eval(review);
-
-              // New Writing to the database section
+    if (phoneFormat || emailCheck(landlordContact)) {
+      console.log("before: " + loading)
+      if (apiCheck(apiItems) && !loading) {
+        console.log("After: " + loading)
+        const floatingReview = eval(review)
+        const houseAddress = apiItems[0]
+      
+        // Check if the house with the given address already exists in the database
+        firestore()
+          .collection('Houses')
+          .where('Address', '==', houseAddress)
+          .get()
+          .then((querySnapshot: any) => { // Update 'any' with the correct type for querySnapshot
+            if (querySnapshot.size > 0) {
+              // If a house with the same address exists, alert the user
+              Alert.alert(
+                'Duplicate House',
+                'A house with this address already exists in the database.'
+              );
+            } else {
+              // If no existing house found with the same address, add the new house
               firestore()
                 .collection('Houses')
                 .add({
                   Address: houseAddress,
-                  Beds: houseBedrooms,
-                  Baths: houseBathrooms,
-                  Price: price,
+                  Beds: apiItems[1],
+                  Baths: apiItems[2],
+                  Price: houseItems[3],
                   Type: houseType,
                   Landlord: landlordContact,
-                  StreetView: houseStreetView,
+                  StreetView: apiItems[4],
+                  Images: [apiItems[4]],
                   Review: floatingReview,
                   ReviewCount: 1,
                 })
                 .then(() => {
-                  console.log('House added!')
-                  console.log(houseStreetView)
-                  moveUser(true); // Navigate to the 'AddListingWaitPage' with validHouse set to true
-                })
-                .catch((error) => {
-                  console.error('Error adding house:', error)
+                  console.log('House added!');
                 });
+              navigation.navigate('ListingCreated');
             }
-            else {
-              validHouse = false
-              Alert.alert('Invalid API data')
-              moveUser(false) // Navigate to the 'AddListingWaitPage' with validHouse set to false
-            }
-          }
-          else {
-            validHouse = false
-            Alert.alert('Invalid landlord contact information')
-          }
-        })
-        .catch(function (error) {
-          validHouse = false
-          if (error.response) {
-            console.log('Error Code: ' + error.response.status)
-            console.log(error.response.data)
-          } else if (error.request) {
-            console.log(error.request)
-          } else {
-            console.log('Error', error.message)
-          }
-          Alert.alert('Error fetching house data')
-          moveUser(false) // Navigate to the 'AddListingWaitPage' with validHouse set to false
-        });
+          })
+          .catch((error: any) => { // Update 'any' with the correct error type
+            console.error('Error checking house existence:', error);
+          });
+      } else {
+        Alert.alert(
+          'Invalid address',
+          'Please input a valid address and click "Enter House Info" again.'
+        );
+      }
     }
     else {
-      Alert.alert("Input Error", "One or more fields are blank please fill them and re-submit")
+      Alert.alert('Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',);
+      Alert.alert('Landlord contact information is formatted incorrectly.');
     }
-  };
-
+  }
 
   const selectImage = () => {
     const options = {
@@ -217,11 +233,11 @@ export default function AddListing({ navigation }) {
   const uploadImage = async () => {
     const uri = selectedImage;
     const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
-    console.log("FILENAME SELECTED IMAGE")
-    console.log(filenameselectedImage)
+    console.log('FILENAME SELECTED IMAGE');
+    console.log(filenameselectedImage);
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    console.log("UPLOAD URI")
-    console.log(uploadUri)
+    console.log('UPLOAD URI');
+    console.log(uploadUri);
     setUploading(true);
     setTransferred(0);
     const task = storage().ref(filenameselectedImage).putFile(uploadUri);
@@ -233,154 +249,152 @@ export default function AddListing({ navigation }) {
     });
     try {
       await task;
-    } catch (e) {
+    }
+    catch (e) {
       console.error(e);
     }
     setUploading(false);
-    Alert.alert(
-      'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!',
-    );
+    Alert.alert('Photo uploaded!', 'Your photo has been uploaded to Firebase Cloud Storage!');
     setImage(null);
-
   };
 
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home"> {/* or some other initial route */}
-        <Stack.Screen name="WelcomeScreen" component={'WelcomeScreen'} />
-        <Stack.Screen name="AddListingWaitPage" component={'AddListingWaitPage'} />
-        <NativeBaseProvider>
-          <Box flex={1} bg="#ffffff" alignItems="center">
-            <View style={styles.container}>
-              <ScrollView>
-                <Text color="#001F58" fontSize="4xl" bold>
-                  Create a Listing
-                </Text>
+    <NativeBaseProvider>
 
-                <Box flexDirection="column">
-                  <Text color="#001F58" fontSize="2xl" bold>
-                    Address
-                  </Text>
-                  <Input
-                    borderColor="#001F58"
-                    borderRadius="10"
-                    marginBottom={6}
-                    borderWidth="2"
-                    placeholder="12345 NE Wildcat Avenue Villanova PA 19010"
-                    w="100%"
-                    autoCapitalize="none"
-                    h="50"
-                    fontSize="sm"
-                    onChangeText={val => setAddress(val)}
-                  />
-                </Box>
+      <Box flex={1} bg="#ffffff" alignItems="center">
+        <View style={styles.container}>
+          <ScrollView>
+            <Text color="#001F58" fontSize="4xl" bold>
+              Create a Listing
+            </Text>
 
-                <Box flexDirection="column">
-                  <Text color="#001F58" fontSize="2xl" bold>
-                    House Type
-                  </Text>
-                  <Input
-                    borderColor="#001F58"
-                    borderRadius="10"
-                    marginBottom={6}
-                    borderWidth="2"
-                    placeholder="ex: apartment, house, town-home"
-                    w="100%"
-                    autoCapitalize="none"
-                    h="50"
-                    fontSize="lg"
-                    onChangeText={val => setHouseType(val)}
-                  />
-                </Box>
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                Address
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                marginBottom={6}
+                borderWidth="2"
+                placeholder="12345 NE Wildcat Avenue, Villanova, PA 19010"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                fontSize="sm"
+                onChangeText={val => setAddress(val)}
+              />
+            </Box>
 
-                <Box flexDirection="column">
-                  <Text color="#001F58" fontSize="2xl" bold>
-                    Landlord Contact Information
-                  </Text>
-                  <Input
-                    borderColor="#001F58"
-                    borderRadius="10"
-                    marginBottom={6}
-                    borderWidth="2"
-                    placeholder="email or cell"
-                    w="100%"
-                    autoCapitalize="none"
-                    h="50"
-                    fontSize="lg"
-                    onChangeText={val => setLandlordContact(val)}
-                  />
-                </Box>
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                House Type
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                marginBottom={6}
+                borderWidth="2"
+                placeholder="ex: apartment, house, town-home"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                fontSize="lg"
+                onChangeText={val => setHouseType(val)}
+              />
+            </Box>
 
-                <Box flexDirection="column">
-                  <Text color="#001F58" fontSize="2xl" bold>
-                    Monthly Price
-                  </Text>
-                  <Input
-                    borderColor="#001F58"
-                    borderRadius="10"
-                    marginBottom={6}
-                    borderWidth="2"
-                    placeholder="$1,750"
-                    w="100%"
-                    autoCapitalize="none"
-                    h="50"
-                    onChangeText={val => setPrice(val)}
-                  />
-                </Box>
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                Landlord Contact Information
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                marginBottom={6}
+                borderWidth="2"
+                placeholder="email or cell"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                fontSize="lg"
+                onChangeText={val => setLandlordContact(val)}
+              />
+            </Box>
 
-                <Box flexDirection="column" >
-                  <Text color="#001F58" fontSize="2xl" bold>Review</Text>
-                  <Input borderColor="#001F58" borderRadius="10" marginBottom={2} borderWidth="2" placeholder="(0-5) V's up"
-                    w="100%" autoCapitalize="none" h="50"
-                    onChangeText={(val) => setReview(val)} />
-                </Box>
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                Monthly Price
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                marginBottom={6}
+                borderWidth="2"
+                placeholder="$1,750"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                onChangeText={val => setPrice(val)}
+              />
+            </Box>
 
-                <Box marginTop="9" >
-                  <Button alignSelf="center"
-                    bgColor="#0085FF" size="lg" w="200" borderRadius="50" display={submitButtonStyle} _text={{ color: '#001F58' }}
-                    onPress={() => { onHouseSubmitPress(); setLoadingTextStyle("flex"); }}>
-                    Submit House Info
-                  </Button>
+            <Box flexDirection="column">
+              <Text color="#001F58" fontSize="2xl" bold>
+                Review
+              </Text>
+              <Input
+                borderColor="#001F58"
+                borderRadius="10"
+                marginBottom={2}
+                borderWidth="2"
+                placeholder="(0-5) V's up"
+                w="100%"
+                autoCapitalize="none"
+                h="50"
+                onChangeText={val => setReview(val)}
+              />
+            </Box>
 
-                  <Button
-                    alignSelf="center"
-                    bgColor="#0085FF"
-                    size="lg"
-                    w="200"
-                    borderRadius="50"
-                    display={submitButtonStyle}
-                    _text={{ color: '#001F58' }}
-                    onPress={() => {
-                      selectImage();
-                    }}>
-                    Upload Images
-                  </Button>
-                </Box>
+            <Box marginTop="9">
+              <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                marginBottom={5}
+                _text={{ color: '#001F58' }}
+                onPress={() => {
+                  onHouseEnterPress();
+                }}>
+                Verify House Info
+              </Button>
 
-                <View>
-                  <Text display={loadingTextStyle} style={{ color: "green", fontWeight: "bold", }}>Loading...</Text>
-                </View>
+              
+            </Box>
 
-                <View>
-                  <BackButton text="Go Back" />
-                </View>
-
-                <Text alignSelf="center">©VUHousing 2023</Text>
-              </ScrollView>
+            {loading && (
+            <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+              <ActivityIndicator size="large" color="#0000ff" />
             </View>
-          </Box>
-        </NativeBaseProvider>
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+            )}
 
+            <View>
+              <BackButton text="Go Back" />
+            </View>
+
+            <Text alignSelf="center">©VUHousing 2023</Text>
+          </ScrollView>
+        </View>
+      </Box>
+    </NativeBaseProvider>
+  );
 }
 
 function apiCheck(arr: string[]) {
   for (var counter: number = 0; counter < arr.length; counter++) {
-    // console.log("GUHHHH")
-    // console.log(arr[counter])
     if (arr[counter].includes('undefined') || arr[counter].length == 0) {
       return false;
     } else {
@@ -398,20 +412,11 @@ function ifFieldsEmpty(str: string) {
 }
 
 function isNumeric(str: string) {
-  if (
-    str == '1' ||
-    str == '2' ||
-    str == '3' ||
-    str == '4' ||
-    str == '5' ||
-    str == '6' ||
-    str == '7' ||
-    str == '8' ||
-    str == '9' ||
-    str == '0'
-  ) {
+  if (str == '1' || str == '2' || str == '3' || str == '4' || str == '5' || str == '6' ||
+    str == '7' || str == '8' || str == '9' || str == '0') {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
 }
@@ -425,9 +430,14 @@ function phoneCheck(str: string) {
   return true;
 }
 
-function priceToNum(str: string) {
-  var numPrice = parseInt(str);
-  return numPrice;
+function setAPIItems(str: string, str1: string, str2: string, str3: string, str4: string) {
+  var apiItems = ["", "", "", "", ""]
+  apiItems[0] = str
+  apiItems[1] = str1
+  apiItems[2] = str2
+  apiItems[3] = str3
+  apiItems[4] = str4
+  return apiItems
 }
 
 function emailCheck(str: string) {
@@ -439,6 +449,14 @@ function emailCheck(str: string) {
   }
   return hasAt;
 }
+
+const delay = async () => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 2500); // 2.5 seconds in milliseconds
+  });
+};
 
 const styles = StyleSheet.create({
   container: {
