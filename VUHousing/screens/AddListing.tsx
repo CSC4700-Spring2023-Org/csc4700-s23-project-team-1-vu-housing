@@ -18,15 +18,6 @@ import {
 } from 'react-native';
 import {NativeBaseProvider, Box, Text, Input, Button} from 'native-base';
 
-import {
-  NativeBaseProvider,
-  Box,
-  Text,
-  Input,
-  Button,
-  useToast,
-} from 'native-base';
-
 import firestore from '@react-native-firebase/firestore';
 import {DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';

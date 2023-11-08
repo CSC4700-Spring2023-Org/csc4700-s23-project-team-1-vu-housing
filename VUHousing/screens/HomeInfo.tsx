@@ -275,40 +275,34 @@ export default function HomeInfo({route, navigation}) {
 
               <Box marginTop="0.5" marginBottom="0.5">
                 <Button
-                  alignSelf="center"
-                  bgColor="#0085FF"
-                  size="lg"
-                  w="200"
-                  borderRadius="50"
-                  _text={{color: '#001F58'}}
+                  style={styles.buttons}
                   onPress={() => {
                     onReviewPress();
                   }}>
                   Submit Review
                 </Button>
               </Box>
+              <Box marginTop="0.5" marginBottom="0.5">
+                <Button
+                  style={styles.buttons}
+                  onPress={() => {
+                    selectImage();
+                  }}>
+                  Upload Images
+                </Button>
+              </Box>
+              <Box marginTop="0.5" marginBottom="0.5">
+                <Button
+                  style={styles.buttons}
+                  onPress={() =>
+                    navigation.navigate('HousePictures', {docID: obj.docID})
+                  }>
+                  View Pictures
+                </Button>
+              </Box>
             </View>
 
             <View>
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Upload Images
-              </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('HousePictures', {docID: obj.docID})
-                }>
-                View Pictures
-              </Button>
-
               <BackButton text="Go Back" />
             </View>
 
@@ -343,6 +337,13 @@ const styles = StyleSheet.create({
   information: {
     fontFamily: 'AlNile',
     fontSize: 10,
+  },
+  buttons: {
+    alignSelf: 'center',
+    backgroundColor: '#0085FF',
+    size: 'lg',
+    w: '200',
+    borderRadius: 50,
   },
 });
 
