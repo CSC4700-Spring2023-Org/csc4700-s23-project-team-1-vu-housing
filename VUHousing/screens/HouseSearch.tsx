@@ -312,9 +312,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
-  flat: {
-    height: '65%',
-  },
   table: {
     flexDirection: 'column',
     borderWidth: 1,

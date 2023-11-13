@@ -99,7 +99,7 @@ export default function AddListing({navigation}: {navigation: any}) {
         },
         headers: {
           'X-RapidAPI-Key':
-            '03118fad58msh6696f81564e5c1dp135a90jsn0cee7fcf5d12',
+            'f64b95a4d3mshf7b654d87fe7687p105ad4jsn5d6b3c0c0c0f',
           'X-RapidAPI-Host': 'zillow-working-api.p.rapidapi.com',
         },
       };
@@ -180,15 +180,15 @@ export default function AddListing({navigation}: {navigation: any}) {
                 .collection('Houses')
                 .add({
                   Address: houseAddress,
-                  Beds: apiItems[1],
-                  Baths: apiItems[2],
+                  Beds: apiItems[2],
+                  Baths: apiItems[1],
                   Price: houseItems[3],
                   Type: houseType,
                   Landlord: landlordContact,
                   StreetView: apiItems[4],
                   Images: [apiItems[4]],
                   Review: floatingReview,
-                  ReviewCount: '1',
+                  ReviewCount: 1,
                 })
                 .then(() => {
                   console.log('House added!');
@@ -228,15 +228,13 @@ export default function AddListing({navigation}: {navigation: any}) {
         const source = {uri: response.assets[0].uri};
         console.log(source);
         selectedImage = source.uri;
-        console.log('selectedImage:');
-        console.log(selectedImage);
+        uploadImage();
       }
     });
   };
 
   const uploadImage = async () => {
     const uri = selectedImage;
-
     const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
     console.log('FILENAME SELECTED IMAGE');
     console.log(filenameselectedImage);

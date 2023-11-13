@@ -52,9 +52,8 @@ export default function HomeInfo({route, navigation}) {
   const [images, setImages] = useState();
   let imageArray = [];
   const [enterButtonStyle, setEnterButtonStyle] = useState('flex');
-  const [reviewData, setReviewData] = useState(0.0);
-  const [reviewCount, setReviewCount] = useState(1);
-  const [userReview, setUserReview] = useState(0.0);
+  var [reviewData, setReviewData] = useState(0.0);
+  var [userReview, setUserReview] = useState(0.0);
   var [reviewString, setReviewString] = useState('');
 
   //image upload vars
@@ -88,11 +87,7 @@ export default function HomeInfo({route, navigation}) {
   const uploadImage = async () => {
     const uri = selectedImage;
     const filenameselectedImage = uri.substring(uri.lastIndexOf('/') + 1);
-    console.log('FILENAME SELECTED IMAGE');
-    console.log(filenameselectedImage);
     const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    console.log('UPLOAD URI');
-    console.log(uploadUri);
     setUploading(true);
     setTransferred(0);
     const task = storage().ref(filenameselectedImage).putFile(uploadUri);
@@ -126,6 +121,7 @@ export default function HomeInfo({route, navigation}) {
 
     setImage(null);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -144,9 +140,12 @@ export default function HomeInfo({route, navigation}) {
           setLandlord(data.Landlord);
           setImages(data.Images);
           setStreetView(data.StreetView);
-          setReviewData(data.Review);
-          setReviewCount(data.ReviewCount);
-          setReviewString('(' + String(reviewCount) + ')');
+          var reviewNum = parseFloat(data.Review);
+          reviewCountNum = parseFloat(data.ReviewCount); // Parse as a number
+          console.log('review ' + reviewNum);
+          console.log('count' + reviewCountNum);
+          setReviewData(reviewNum);
+          setReviewString('(' + String(reviewCountNum) + ')');
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -157,37 +156,44 @@ export default function HomeInfo({route, navigation}) {
   }, [obj.docID]);
 
   const onReviewPress = () => {
-    if (ifFieldsEmpty(String(userReview))) {
-      Alert.alert('Review Error:', 'Please fill out the field and try again');
-      return;
-    } else if (userReview < 0 || userReview > 5) {
+    if (userReview === 0 || userReview < 0 || userReview > 5) {
       Alert.alert('Review Error:', 'Review score must be between 0.0 and 5.0.');
       return;
-    } else {
-      var floatingReview = eval(userReview);
-      var floatingReviewData = eval(reviewData);
-      var floatingReviewCount = eval(reviewCount);
+    }
 
-      newReview = floatingReviewData * floatingReviewCount + floatingReview;
-      var newReviewCount = reviewCount + 1;
+    var newReview = parseFloat(userReview);
+    var currentReviewCount = reviewCountNum;
+    var currentReviewData = reviewData;
 
-      var newReview = (newReview / newReviewCount).toFixed(2);
+    var updatedReviewCount = currentReviewCount + 1;
+    var updatedReviewData =
+      (currentReviewData * currentReviewCount + newReview) / updatedReviewCount;
 
+    // Check for NaN to avoid incorrect updates in case of parsing issues
+    if (!isNaN(updatedReviewData) && !isNaN(updatedReviewCount)) {
       firestore()
         .collection('Houses')
         .doc(obj.docID)
         .update({
-          Review: newReview,
-          ReviewCount: newReviewCount,
+          Review: updatedReviewData.toFixed(2),
+          ReviewCount: updatedReviewCount,
         })
         .then(() => {
           console.log('Review added!');
-          console.log('Reviews: ' + newReviewCount + ' Score: ' + newReview);
+          console.log(
+            'Reviews: ' +
+              updatedReviewCount +
+              ' Score: ' +
+              updatedReviewData.toFixed(2),
+          );
           navigation.navigate('HouseSearch');
         })
         .catch(error => {
           console.error('Error updating review:', error);
         });
+    } else {
+      console.log('Error: Updated review data or count is not a number.');
+      // Handle the error as needed
     }
   };
 
@@ -275,34 +281,40 @@ export default function HomeInfo({route, navigation}) {
 
               <Box marginTop="0.5" marginBottom="0.5">
                 <Button
-                  style={styles.buttons}
+                  alignSelf="center"
+                  bgColor="#0085FF"
+                  size="lg"
+                  w="200"
+                  borderRadius="50"
+                  _text={{color: '#001F58'}}
                   onPress={() => {
                     onReviewPress();
                   }}>
                   Submit Review
                 </Button>
               </Box>
-              <Box marginTop="0.5" marginBottom="0.5">
-                <Button
-                  style={styles.buttons}
-                  onPress={() => {
-                    selectImage();
-                  }}>
-                  Upload Images
-                </Button>
-              </Box>
-              <Box marginTop="0.5" marginBottom="0.5">
-                <Button
-                  style={styles.buttons}
-                  onPress={() =>
-                    navigation.navigate('HousePictures', {docID: obj.docID})
-                  }>
-                  View Pictures
-                </Button>
-              </Box>
             </View>
 
             <View>
+              <Button
+                alignSelf="center"
+                bgColor="#0085FF"
+                size="lg"
+                w="200"
+                borderRadius="50"
+                _text={{color: '#001F58'}}
+                onPress={() => {
+                  selectImage();
+                }}>
+                Upload Images
+              </Button>
+              <Button
+                onPress={() =>
+                  navigation.navigate('HousePictures', {docID: obj.docID})
+                }>
+                View Pictures
+              </Button>
+
               <BackButton text="Go Back" />
             </View>
 
@@ -337,13 +349,6 @@ const styles = StyleSheet.create({
   information: {
     fontFamily: 'AlNile',
     fontSize: 10,
-  },
-  buttons: {
-    alignSelf: 'center',
-    backgroundColor: '#0085FF',
-    size: 'lg',
-    w: '200',
-    borderRadius: 50,
   },
 });
 
