@@ -278,14 +278,12 @@ export default function HomeInfo({route, navigation}) {
                   onChangeText={val => setUserReview(val)}
                 />
               </Box>
+            </View>
 
-              <Box marginTop="0.5" marginBottom="0.5">
+            <View>
+              <Box marginTop="1" marginBottom="0.5">
                 <Button
-                  alignSelf="center"
-                  bgColor="#0085FF"
-                  size="lg"
-                  w="200"
-                  borderRadius="50"
+                  style={styles.button}
                   _text={{color: '#001F58'}}
                   onPress={() => {
                     onReviewPress();
@@ -293,27 +291,26 @@ export default function HomeInfo({route, navigation}) {
                   Submit Review
                 </Button>
               </Box>
-            </View>
-
-            <View>
-              <Button
-                alignSelf="center"
-                bgColor="#0085FF"
-                size="lg"
-                w="200"
-                borderRadius="50"
-                _text={{color: '#001F58'}}
-                onPress={() => {
-                  selectImage();
-                }}>
-                Upload Images
-              </Button>
-              <Button
-                onPress={() =>
-                  navigation.navigate('HousePictures', {docID: obj.docID})
-                }>
-                View Pictures
-              </Button>
+              <Box marginTop="0.5" marginBottom="0.5">
+                <Button
+                  style={styles.button}
+                  _text={{color: '#001F58'}}
+                  onPress={() => {
+                    selectImage();
+                  }}>
+                  Upload Images
+                </Button>
+              </Box>
+              <Box marginTop="0.5" marginBottom="0.5">
+                <Button
+                  style={styles.button}
+                  _text={{color: '#001F58'}}
+                  onPress={() =>
+                    navigation.navigate('HousePictures', {docID: obj.docID})
+                  }>
+                  View Pictures
+                </Button>
+              </Box>
 
               <BackButton text="Go Back" />
             </View>
@@ -349,6 +346,13 @@ const styles = StyleSheet.create({
   information: {
     fontFamily: 'AlNile',
     fontSize: 10,
+  },
+  button: {
+    alignSelf: 'center',
+    backgroundColor: '#0085FF',
+    size: 'large',
+    width: 200,
+    borderRadius: 50,
   },
 });
 
