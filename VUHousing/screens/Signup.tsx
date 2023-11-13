@@ -77,9 +77,7 @@ export default function Signup({ navigation }) {
     } 
   
 
-    var phoneFormat = phoneCheck(phone.substring(0, 3)) && phone.substring(3, 4).includes('-')
-      && phoneCheck(phone.substring(4, 7)) && phone.substring(7, 8).includes('-')
-      && phoneCheck(phone.substring(8, 12)) && phone.length == 12
+    var phoneFormat = phoneCheck(phone.substring(0, 10)) && phone.length == 10
 
     if (phoneFormat == false) {
       Alert.alert("Phone Number Error", "Invalid Phone Number Please input it using this format '###-###-####'")
@@ -122,7 +120,7 @@ export default function Signup({ navigation }) {
 
             <Box flexDirection="column" >
               <Text color="#001F58" fontSize="2xl" bold>Phone Number</Text>
-              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="###-###-####"
+              <Input borderColor="#001F58" borderRadius="10" marginBottom={6} borderWidth="2" placeholder="##########"
                 w="100%" autoCapitalize="none" h="50" fontSize="sm"
                 onChangeText={(val) => setPhoneNumber(val)} />
             </Box>

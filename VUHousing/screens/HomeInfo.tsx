@@ -41,7 +41,7 @@ export default function HomeInfo({route, navigation}) {
   const [baths, setBaths] = useState(0);
   const [price, setPrice] = useState(0);
   
-  const [landlord, setLandlord] = useState("");
+  var [landlord, setLandlord] = useState("");
   const [streetView, setStreetView] = useState("");
   const [images, setImages]=useState()
   let imageArray=[]
@@ -130,11 +130,18 @@ useEffect(() => {
         setBeds(data.Beds);
         setBaths(data.Baths);
         setPrice(data.Price);
-        setLandlord(data.Landlord);
+
+        var formattedLandlord = data.Landlord
+        if (phoneCheck(data.Landlord.substring(0, 10))) {
+          formattedLandlord = formattedLandlord.substring(0, 3) + "-" + formattedLandlord.substring(3, 6) 
+          + "-" + formattedLandlord.substring(6, 10)
+        }
+
+        setLandlord(formattedLandlord);
         setImages(data.Images);
         setStreetView(data.StreetView);
         var reviewNum = parseFloat(data.Review);
-        reviewCountNum = parseFloat(data.ReviewCount); // Parse as a number
+        var reviewCountNum = parseFloat(data.ReviewCount); // Parse as a number
         console.log("review " + reviewNum);
         console.log("count" + reviewCountNum);
         setReviewData(reviewNum);
@@ -342,10 +349,21 @@ const styles = StyleSheet.create({
   },
 });
 
-function ifFieldsEmpty(str: string) {
-  if (str.length == 0) {
+function isNumeric(str: string) {
+  if (str == '1' || str == '2' || str == '3' || str == '4' || str == '5' || str == '6' ||
+    str == '7' || str == '8' || str == '9' || str == '0') {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
+}
+
+function phoneCheck(str: string) {
+  for (var counter: number = 0; counter < str.length; counter++) {
+    if (isNumeric(str.substring(counter, counter + 1)) == false) {
+      return false
+    }
+  }
+  return true
 }

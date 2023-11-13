@@ -148,10 +148,9 @@ export default function AddListing({ navigation }: { navigation: any }) {
 
 
   const writeHouseToDB = async () => {
-    var phoneFormat = phoneCheck(landlordContact.substring(0, 3)) &&
-      landlordContact.substring(3, 4).includes('-') && phoneCheck(landlordContact.substring(4, 7)) &&
-      landlordContact.substring(7, 8).includes('-') && phoneCheck(landlordContact.substring(8, 12)) &&
-      landlordContact.length == 12;
+    console.log("Phone len: " + landlordContact.length)
+    var phoneFormat = phoneCheck(landlordContact.substring(0, 10)) && landlordContact.length == 10
+    console.log("Phone true? " + phoneFormat)
 
     if (phoneFormat || emailCheck(landlordContact)) {
       console.log("before: " + loading)
@@ -205,7 +204,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
       }
     }
     else {
-      Alert.alert('Please input a cell as ###-###-#### or a valid email then click "Enter House Info" again, then the verify button',);
+      Alert.alert('Please input a cell as ##########', 'or a valid email then click then the verify button again',);
       Alert.alert('Landlord contact information is formatted incorrectly.');
     }
   }
