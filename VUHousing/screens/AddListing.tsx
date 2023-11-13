@@ -178,8 +178,8 @@ export default function AddListing({ navigation }: { navigation: any }) {
                 .collection('Houses')
                 .add({
                   Address: houseAddress,
-                  Beds: apiItems[1],
-                  Baths: apiItems[2],
+                  Beds: apiItems[2],
+                  Baths: apiItems[1],
                   Price: houseItems[3],
                   Type: houseType,
                   Landlord: landlordContact,
