@@ -28,6 +28,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 import { readFileAssets } from 'react-native-fs';
+import HomeButton from './HomeButton';
 
 
 export default function AddListing({ navigation }: { navigation: any }) {
@@ -259,6 +260,11 @@ export default function AddListing({ navigation }: { navigation: any }) {
 
   return (
     <NativeBaseProvider>
+      <View>
+        <BackButton text="Go Back" />
+      </View>
+     
+      <HomeButton text="Home Screen" />
 
       <Box flex={1} bg="#ffffff" alignItems="center">
         <View style={styles.container}>
@@ -379,9 +385,7 @@ export default function AddListing({ navigation }: { navigation: any }) {
               </View>
             )}
 
-            <View>
-              <BackButton text="Go Back" />
-            </View>
+            
 
             <Text alignSelf="center">©VUHousing 2023</Text>
           </ScrollView>

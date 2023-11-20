@@ -51,6 +51,10 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <NativeBaseProvider>
+      <View>
+        <BackButton text="Go Back" />
+      </View>
+
       <Box flex={1} bg="#ffffff" alignItems="center"  >
         <Box marginTop="75" width="75%" alignItems="center">
           <Text fontSize="4xl" bold>Welcome Back!</Text>
@@ -74,10 +78,6 @@ export default function LoginScreen({ navigation }) {
         </Box>
 
       </Box>
-
-      <View>
-        <BackButton text="Go Back" />
-      </View>
 
       <Text alignSelf="center">©VUHousing 2023</Text>
 

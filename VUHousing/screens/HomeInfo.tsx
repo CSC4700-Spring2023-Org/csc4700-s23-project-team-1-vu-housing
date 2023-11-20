@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import BackButton from './BackButton';
+import HomeButton from './HomeButton';
 
 import type {PropsWithChildren} from 'react';
 import {
@@ -196,6 +197,11 @@ const onReviewPress = () => {
   return (
     <ScrollView>
       <NativeBaseProvider>
+      <View>
+        <BackButton text="Go Back" />
+      </View>
+     
+      <HomeButton text="Home Screen" />
         <View
           id="LogoBand"
           style={{
@@ -312,7 +318,6 @@ const onReviewPress = () => {
                 View Pictures
               </Button>
 
-              <BackButton text="Go Back" />
             </View>
 
             <Text alignSelf="center">©VUHousing 2023</Text>

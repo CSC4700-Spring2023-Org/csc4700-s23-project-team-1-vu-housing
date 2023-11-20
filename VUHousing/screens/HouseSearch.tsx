@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
 import BackButton from './BackButton';
+import HomeButton from './HomeButton';
 import {
   SafeAreaView,
   useColorScheme,
@@ -107,6 +108,11 @@ function HouseSearch() {
   return (
     <NativeBaseProvider>
       <View>
+        <BackButton text="Go Back" />
+      </View>
+     
+      <HomeButton text="Home Screen" />
+      <View>
         <Box alignItems="center" marginTop="2" marginBottom="2">
           <Text color="#001F58" fontSize="3xl" bold>
             House Search
@@ -185,10 +191,6 @@ function HouseSearch() {
           keyExtractor={(item) => item.id}
         />
 
-
-        <View>
-          <BackButton text="Go Back" />
-        </View>
       </View>
     </NativeBaseProvider>
   );

@@ -25,6 +25,11 @@ export default function ListingCreated({navigation}) {
 
     return (
       <NativeBaseProvider>
+        <View>
+          <BackButton text="Go Back" />
+        </View>
+     
+        <HomeButton text="Home Screen" />
         
          <Box flex={1} bg="#ffffff" alignItems="center">
           <Box marginTop="20"  width="75%" alignItems="center">

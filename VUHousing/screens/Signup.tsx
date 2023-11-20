@@ -106,6 +106,10 @@ export default function Signup({ navigation }) {
 
   return (
     <NativeBaseProvider>
+      <View>
+        <BackButton text="Go Back" />
+      </View>
+     
       <Box flex={1} bg="#ffffff" alignItems="center"  >
         <View>
           <ScrollView>
@@ -153,10 +157,6 @@ export default function Signup({ navigation }) {
                 Submit
               </Button>
             </Box>
-
-            <View>
-              <BackButton text="Go Back" />
-            </View>
 
           </ScrollView>
         </View>

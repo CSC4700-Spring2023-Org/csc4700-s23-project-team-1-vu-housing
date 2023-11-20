@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BackButton from './BackButton';
+import HomeButton from './HomeButton';
 
 import type { PropsWithChildren } from 'react';
 import {
@@ -63,6 +64,11 @@ export default function HousePictures({ route, navigation }) {
 
   return (
     <NativeBaseProvider>
+      <View>
+        <BackButton text="Go Back" />
+      </View>
+     
+      <HomeButton text="Home Screen" />
       <Box marginTop='10' width='100%'  >
         <Text color="#001F58" fontSize="xl" bold alignSelf="center">{address}</Text>
       </Box>

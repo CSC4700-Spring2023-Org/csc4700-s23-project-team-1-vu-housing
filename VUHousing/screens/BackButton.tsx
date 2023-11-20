@@ -6,7 +6,7 @@ interface BackButtonProps {
   text?: string;
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ text = 'Back' }) => {
+const BackButton: React.FC<BackButtonProps> = ({ text = 'Go Back' }) => {
   const navigation = useNavigation();
 
   const goBack = () => {
@@ -15,6 +15,7 @@ const BackButton: React.FC<BackButtonProps> = ({ text = 'Back' }) => {
 
   return (
     <TouchableOpacity style={styles.container} onPress={goBack}>
+      <Text style={styles.icon}>{'🔙'}</Text>
       <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
   );
@@ -22,12 +23,24 @@ const BackButton: React.FC<BackButtonProps> = ({ text = 'Back' }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    marginLeft: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+    marginLeft: 5,
+    borderRadius: 15, // Border radius for rounded corners
+    borderWidth: 1.5,  // Border width for the border
+    borderColor: 'black',  // Border color
+    top: 0,
+    right: 0,
+    marginTop: 4,
+  },
+  icon: {
+    fontSize: 20,
+    marginRight: 5,
   },
   text: {
-    fontSize: 16,
-    color: 'blue', // Customize the color as needed
+    fontSize: 20,
+    color: 'black', // Customize the color as needed
   },
 });
 
