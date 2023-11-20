@@ -38,8 +38,7 @@ export default function HomeScreen({navigation}) {
         onPress={()=>navigation.navigate("HouseSearch")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Search for a House</Button>
         <Button 
         onPress={()=>navigation.navigate("AddListing")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Create a Listing</Button>
-        <Button  
-        onPress={()=>navigation.navigate("UserSearch")} bgColor="#001F58" margin="5" size="lg" w="200" h="75" borderRadius="5">Search for Roommates</Button>
+  
       </Box>
 
         <View>
